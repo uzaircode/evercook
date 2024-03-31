@@ -1,6 +1,9 @@
-import 'package:evercook/pages/account_page.dart';
+import 'package:evercook/pages/account/account_page.dart';
+import 'package:evercook/pages/dashboard/dashboard_binding.dart';
+import 'package:evercook/pages/dashboard/dashboard_page.dart';
 import 'package:evercook/pages/login_page.dart';
-import 'package:evercook/pages/splash_page.dart';
+import 'package:evercook/middleware/splash_page.dart';
+import 'package:evercook/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get/get.dart';
@@ -27,12 +30,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/',
-      getPages: [
-        GetPage(name: '/', page: () => const SplashPage()),
-        GetPage(name: '/login', page: () => LoginPage()),
-        GetPage(name: '/account', page: () => AccountPage()),
-      ],
+      initialRoute: RoutesClass.getHomeRoute(),
+      getPages: RoutesClass.routes,
     );
   }
 }

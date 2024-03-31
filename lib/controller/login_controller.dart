@@ -1,5 +1,5 @@
 import 'package:evercook/main.dart';
-import 'package:evercook/pages/account_page.dart';
+import 'package:evercook/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/route_manager.dart';
@@ -55,7 +55,7 @@ class LoginController extends GetxController {
     );
 
     if (result.user != null) {
-      Get.offAll(() => AccountPage());
+      Get.offAndToNamed(RoutesClass.getDashboardRoute());
     } else {
       Get.snackbar('Login Error', 'Failed to sign in with Google');
     }
