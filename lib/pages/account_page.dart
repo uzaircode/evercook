@@ -1,4 +1,4 @@
-import 'package:evercook/services/account_controller.dart';
+import 'package:evercook/controller/account_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +15,7 @@ class AccountPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Obx(() => Text(_accountController.userId.value ?? "Loading...")),
+            Obx(() => Text(_accountController.userId.value)),
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () async {
