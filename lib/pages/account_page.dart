@@ -1,35 +1,29 @@
+import 'package:evercook/services/account_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:get/get.dart';
 
-class AccountPage extends StatefulWidget {
-  const AccountPage({super.key});
+class AccountPage extends StatelessWidget {
+  AccountPage({super.key});
 
-  @override
-  State<AccountPage> createState() => _AccountPageState();
-}
-
-final supabase = Supabase.instance.client;
-
-class _AccountPageState extends State<AccountPage> {
-  String? _userId;
-
-  @override
-  void initState() {
-    super.initState();
-    supabase.auth.onAuthStateChange.listen((data) {
-      setState(() {
-        _userId = data.session?.user.id;
-      });
-    });
-  }
+  final AccountController _accountController = Get.put(AccountController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Account')),
       body: Center(
-        child: Text(
-          _userId ?? "Loading...",
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Obx(() => Text(_accountController.userId.value ?? "Loading...")),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () async {
+                _accountController.signOut();
+              },
+              child: const Text('Sign out'),
+            ),
+          ],
         ),
       ),
     );

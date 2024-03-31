@@ -3,6 +3,7 @@ import 'package:evercook/pages/login_page.dart';
 import 'package:evercook/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:get/get.dart';
 
 void main() async {
   await Supabase.initialize(
@@ -20,18 +21,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashPage(),
-        '/login': (context) => const LoginPage(),
-        '/account': (context) => const AccountPage(),
-      },
+      getPages: [
+        GetPage(name: '/', page: () => const SplashPage()),
+        GetPage(name: '/login', page: () => LoginPage()),
+        GetPage(name: '/account', page: () => AccountPage()),
+      ],
     );
   }
 }
