@@ -1,8 +1,3 @@
-import 'package:evercook/pages/account/account_page.dart';
-import 'package:evercook/pages/dashboard/dashboard_binding.dart';
-import 'package:evercook/pages/dashboard/dashboard_page.dart';
-import 'package:evercook/pages/login_page.dart';
-import 'package:evercook/middleware/splash_page.dart';
 import 'package:evercook/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

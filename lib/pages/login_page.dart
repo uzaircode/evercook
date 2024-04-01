@@ -1,5 +1,7 @@
 import 'package:evercook/controller/login_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 class LoginPage extends StatelessWidget {
   final LoginController _loginController = LoginController();
@@ -34,7 +36,7 @@ class LoginPage extends StatelessWidget {
                 _loginController.signInWithGoogle();
               },
               child: const Text('Sign in with Google'),
-            )
+            ),
           ],
         ),
       ),
