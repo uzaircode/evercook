@@ -1,5 +1,4 @@
 import 'package:evercook/main.dart';
-import 'package:evercook/pages/recipe/recipe_details.dart';
 import 'package:evercook/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +18,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final _recipesStream = supabase.from('recipes').stream(primaryKey: ['id']);
+
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Homepage'),
+      ),
       body: Container(
         padding: const EdgeInsets.all(8),
         child: Column(
@@ -49,6 +52,9 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             print(recipes[index]['id']);
                             // Get.to(const RecipeDetails());
+                            Get.toNamed(RoutesClass.recipeDetails, arguments: {
+                              'name': recipes[index]['name'].toString(),
+                            });
                           },
                           child: Container(
                             height: 100,
