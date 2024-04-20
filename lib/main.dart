@@ -4,10 +4,8 @@ import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/login_page.dart';
 import 'package:evercook/init_dependencies.dart';
 import 'package:evercook/pages/home/home_page.dart';
-import 'package:evercook/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,12 +41,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Evercook',
       theme: AppTheme.themeData,
-      // initialRoute: RoutesClass.getHomeRoute(),
-      // getPages: RoutesClass.routes,
       home: BlocSelector<AppUserCubit, AppUserState, bool>(
         selector: (state) {
           return state is AppUserLoggedIn;

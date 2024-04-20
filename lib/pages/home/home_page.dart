@@ -1,6 +1,4 @@
-import 'package:evercook/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (context) => const HomePage());
@@ -49,13 +47,7 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) => Column(
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            print(recipes[index]['id']);
-                            // Get.to(const RecipeDetails());
-                            Get.toNamed(RoutesClass.recipeDetails, arguments: {
-                              'name': recipes[index]['name'].toString(),
-                            });
-                          },
+                          onTap: () {},
                           child: Container(
                             height: 100,
                             width: 100,
