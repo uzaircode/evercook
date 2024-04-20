@@ -19,7 +19,8 @@ class RoutesClass {
 
   static List<GetPage> routes = [
     GetPage(name: home, page: () => const SplashPage()),
-    GetPage(name: login, page: () => SignUpPage()),
+    // GetPage(name: login, page: () => SignUpPage()),
+    GetPage(name: login, page: () => LoginPage()),
     GetPage(name: dashboard, page: () => const DashboardPage(), binding: DashboardBinding()),
     GetPage(name: recipeDetails, page: () => const RecipeDetails()),
   ];

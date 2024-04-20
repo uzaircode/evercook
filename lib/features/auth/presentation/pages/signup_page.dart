@@ -16,16 +16,16 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final emailController = TextEditingController();
-  final nameController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>(); //why do i need this?
 
   @override
   void dispose() {
-    emailController.dispose();
-    nameController.dispose();
-    passwordController.dispose();
+    _emailController.dispose();
+    _nameController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -34,7 +34,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15.0),
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthFailure) {
@@ -63,12 +63,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  AuthField(controller: nameController, hintText: 'Name'),
+                  AuthField(controller: _nameController, hintText: 'Name'),
                   const SizedBox(height: 15),
-                  AuthField(controller: emailController, hintText: 'Email'),
+                  AuthField(controller: _emailController, hintText: 'Email'),
                   const SizedBox(height: 15),
                   AuthField(
-                    controller: passwordController,
+                    controller: _passwordController,
                     hintText: 'Password',
                     isObscureText: true,
                   ),
@@ -79,9 +79,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       if (formKey.currentState!.validate()) {
                         context.read<AuthBloc>().add(
                               AuthSignUp(
-                                email: emailController.text.trim(),
-                                name: nameController.text.trim(),
-                                password: passwordController.text.trim(),
+                                email: _emailController.text.trim(),
+                                name: _nameController.text.trim(),
+                                password: _passwordController.text.trim(),
                               ),
                             );
                       }
