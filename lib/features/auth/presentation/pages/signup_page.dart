@@ -1,8 +1,10 @@
+import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_button.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_field.dart';
+import 'package:evercook/pages/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,9 +39,18 @@ class _SignUpPageState extends State<SignUpPage> {
           listener: (context, state) {
             if (state is AuthFailure) {
               showSnackBar(context, state.message);
+            } else if (state is AuthSuccess) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                HomePage.route(),
+                (route) => false,
+              );
             }
           },
           builder: (context, state) {
+            if (state is AuthLoading) {
+              return const Loader();
+            }
             return Form(
               key: formKey,
               child: Column(

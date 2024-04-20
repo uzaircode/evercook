@@ -1,9 +1,10 @@
 import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/utils/logger.dart';
+import 'package:evercook/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthRemoteDataSource {
-  Future<String> signUpWithEmailPassword({
+  Future<UserModel> signUpWithEmailPassword({
     required String name,
     required String email,
     required String password,
@@ -16,7 +17,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this.supabaseClient);
 
   @override
-  Future<String> signUpWithEmailPassword({
+  Future<UserModel> signUpWithEmailPassword({
     required String name,
     required String email,
     required String password,
@@ -34,8 +35,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const ServerException('User is null');
       }
 
-      // LoggerService.logger.i(response.user!.id);
-      return response.user!.id;
+      LoggerService.logger.i(response.user!.toJson());
+      return UserModel.fromJson(response.user!.toJson()); //i dont understand here, why fromJson -> toJson?
     } on AuthException catch (e) {
       LoggerService.logger.e('Uknown error: $e');
       throw ServerException(e.toString());

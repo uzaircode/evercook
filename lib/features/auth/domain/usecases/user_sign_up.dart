@@ -1,15 +1,16 @@
+import 'package:evercook/core/common/entities/user.dart';
 import 'package:evercook/core/error/failures.dart';
-import 'package:evercook/core/usecases/usecase.dart';
-import 'package:evercook/features/auth/domain/repositories/auth_repository.dart';
+import 'package:evercook/core/usecase/usecase.dart';
+import 'package:evercook/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
-class UserSignUp implements UseCase<String, UserSignUpParams> {
+class UserSignUp implements UseCase<User, UserSignUpParams> {
   final AuthRepository authRepository;
 
   UserSignUp(this.authRepository);
 
   @override
-  Future<Either<Failure, String>> call(UserSignUpParams params) async {
+  Future<Either<Failure, User>> call(UserSignUpParams params) async {
     return await authRepository.signUpWithEmailPassword(
       name: params.name,
       email: params.email,

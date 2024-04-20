@@ -1,9 +1,9 @@
-import 'package:evercook/main.dart';
 import 'package:evercook/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
+  static route() => MaterialPageRoute(builder: (context) => const HomePage());
   const HomePage({super.key});
 
   @override
