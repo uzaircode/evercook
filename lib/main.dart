@@ -3,7 +3,7 @@ import 'package:evercook/core/theme/theme.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/login_page.dart';
 import 'package:evercook/init_dependencies.dart';
-import 'package:evercook/pages/home/home_page.dart';
+import 'package:evercook/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
         },
         builder: (context, isLoggedIn) {
           if (isLoggedIn) {
-            return const HomePage();
+            return const Dashboard();
           } else {
             return const LoginPage();
           }
