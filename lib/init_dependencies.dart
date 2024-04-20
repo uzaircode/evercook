@@ -1,3 +1,4 @@
+import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/secrets/app_secrets.dart';
 import 'package:evercook/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:evercook/features/auth/data/repositories/auth_repository_impl.dart';
