@@ -18,10 +18,10 @@ class LoginController extends GetxController {
   void signInWithEmail() async {
     try {
       final email = emailController.text.trim();
-      await supabase.auth.signInWithOtp(
-        email: email,
-        emailRedirectTo: 'io.supabase.flutterquickstart://login-callback/',
-      );
+      // await supabase.auth.signInWithOtp(
+      //   email: email,
+      //   emailRedirectTo: 'io.supabase.flutterquickstart://login-callback/',
+      // );
       Get.snackbar('Success', 'Check your inbox');
     } on AuthException catch (error) {
       Get.snackbar('Error', error.message, backgroundColor: Colors.red);
@@ -48,16 +48,16 @@ class LoginController extends GetxController {
       throw 'No ID Token found.';
     }
 
-    final result = await supabase.auth.signInWithIdToken(
-      provider: OAuthProvider.google,
-      idToken: idToken,
-      accessToken: accessToken,
-    );
+    // final result = await supabase.auth.signInWithIdToken(
+    //   provider: OAuthProvider.google,
+    //   idToken: idToken,
+    //   accessToken: accessToken,
+    // );
 
-    if (result.user != null) {
-      Get.offAndToNamed(RoutesClass.getDashboardRoute());
-    } else {
-      Get.snackbar('Login Error', 'Failed to sign in with Google');
-    }
+    // if (result.user != null) {
+    //   Get.offAndToNamed(RoutesClass.getDashboardRoute());
+    // } else {
+    //   Get.snackbar('Login Error', 'Failed to sign in with Google');
+    // }
   }
 }

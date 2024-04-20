@@ -1,4 +1,4 @@
-import 'package:evercook/pages/login_page.dart';
+import 'package:evercook/features/auth/presentation/pages/login_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get/get.dart';
 

@@ -11,13 +11,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<void> deleteRecipe(String recipeId) async {
-    await supabase.from('recipes').delete().eq('id', recipeId);
-  }
+  // Future<void> deleteRecipe(String recipeId) async {
+  //   await supabase.from('recipes').delete().eq('id', recipeId);
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final _recipesStream = supabase.from('recipes').stream(primaryKey: ['id']);
+    // final _recipesStream = supabase.from('recipes').stream(primaryKey: ['id']);
 
     return Scaffold(
       appBar: AppBar(
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Expanded(
               child: StreamBuilder<List<Map<String, dynamic>>>(
-                stream: _recipesStream,
+                stream: null,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(
