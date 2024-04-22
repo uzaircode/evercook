@@ -40,36 +40,37 @@ class RecipeModel extends Recipe {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,
-      'userId': userId,
+      'user_id': userId,
+      'title': title,
       'description': description,
-      'prepTime': prepTime,
-      'cookTime': cookTime,
+      'prep_time': prepTime,
+      'cook_time': cookTime,
       'servings': servings,
-      'imageUrl': imageUrl,
-      'updatedAt': updatedAt.toIso8601String(),
+      'image_url': imageUrl,
+      'updated_at': updatedAt.toIso8601String(),
     };
   }
 
   factory RecipeModel.fromJson(Map<String, dynamic> map) {
     return RecipeModel(
       id: map['id'] as String,
-      userId: map['userId'] as String,
+      userId: map['user_id'] as String,
       title: map['title'] as String,
       description: map['description'] as String,
-      prepTime: map['prepTime'] as String,
-      cookTime: map['cookTime'] as String,
+      prepTime: map['prep_time'] as String,
+      cookTime: map['cook_time'] as String,
       servings: map['servings'] as int,
-      imageUrl: map['imageUrl'] as String,
-      updatedAt: map['updatedAt'] == null
+      imageUrl: map['image_url'] as String,
+      updatedAt: map['updated_at'] == null
           ? DateTime.now()
           : DateTime.parse(
-              map['updatedAt'],
+              map['updated_at'],
             ),
     );
   }
 
   @override
   String toString() {
-    return 'Recipe(id: $id, title: $title, userId: $userId, description: $description, prepTime: $prepTime, cookTime: $cookTime, servings: $servings, imageUrl: $imageUrl, updatedAt: $updatedAt)';
+    return 'Recipe(id: $id, title: $title, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, image_url: $imageUrl, updated_at: $updatedAt)';
   }
 }

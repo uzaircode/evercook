@@ -6,7 +6,6 @@ import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:evercook/core/utils/pick_image.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
-import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
 import 'package:evercook/features/recipe/presentation/widgets/recipe_editor.dart';
