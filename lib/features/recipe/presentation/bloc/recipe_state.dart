@@ -20,3 +20,5 @@ final class RecipeDisplaySuccess extends RecipeState {
 }
 
 final class RecipeDeleteSuccess extends RecipeState {}
+
+final class RecipeUpdateSuccess extends RecipeState {}

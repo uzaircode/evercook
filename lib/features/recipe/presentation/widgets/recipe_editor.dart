@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class RecipeEditor extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
-  const RecipeEditor({super.key, required this.controller, required this.hintText});
+  final String? initialValue;
+  const RecipeEditor({super.key, required this.controller, required this.hintText, this.initialValue});
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +13,7 @@ class RecipeEditor extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
       ),
+      initialValue: initialValue,
       maxLines: null,
       validator: (value) {
         if (value!.isEmpty) {

@@ -19,4 +19,14 @@ abstract interface class RecipeRepository {
   Future<Either<Failure, Recipe>> deleteRecipe({
     required String id,
   });
+
+  Future<Either<Failure, Recipe>> updateRecipe({
+    required String title,
+    required String userId,
+    required String description,
+    required String prepTime,
+    required String cookTime,
+    required int servings,
+    required File image,
+  });
 }

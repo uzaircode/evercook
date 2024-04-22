@@ -13,6 +13,9 @@ abstract interface class RecipeRemoteDataSource {
   });
   Future<List<RecipeModel>> getAllRecipes();
   Future<RecipeModel> deleteRecipe(String id);
+  Future<RecipeModel> updateRecipe({
+    required RecipeModel recipe,
+  });
 }
 
 class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
@@ -95,6 +98,40 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
     } on PostgrestException catch (e) {
       LoggerService.logger.e('$e');
       throw ServerException(e.message);
+    } catch (e) {
+      LoggerService.logger.e('$e');
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<RecipeModel> updateRecipe({
+    required RecipeModel recipe,
+  }) async {
+    try {
+      LoggerService.logger.i('Updating a recipe: $recipe');
+      final recipeData =
+          await supabaseClient.from('recipes').update(recipe.toJson()).eq('id', recipe.id).select().single();
+
+      if (recipeData.containsKey('error')) {
+        final errorMessage = recipeData['error'].toString();
+        LoggerService.logger.e('Error updating recipe: $errorMessage');
+        throw ServerException(errorMessage);
+      }
+      LoggerService.logger.i('Starting to update recipe: $recipe');
+
+      return RecipeModel.fromJson(recipeData);
+    } on ServerException catch (e) {
+      LoggerService.logger.e('$e');
+      throw ServerException(e.message);
+    } on PostgrestException catch (e) {
+      LoggerService.logger.e('$e');
+      throw ServerException(e.message);
+    } on StorageException catch (e) {
+      throw ServerException(e.message);
+    } on Exception catch (e) {
+      LoggerService.logger.e('$e');
+      throw ServerException(e.toString());
     } catch (e) {
       LoggerService.logger.e('$e');
       throw ServerException(e.toString());

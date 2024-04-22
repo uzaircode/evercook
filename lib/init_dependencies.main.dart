@@ -91,6 +91,11 @@ void _initRecipe() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => UpdateRecipe(
+        serviceLocator(),
+      ),
+    )
 
     //Bloc
     ..registerLazySingleton(
@@ -98,6 +103,7 @@ void _initRecipe() {
         uploadRecipe: serviceLocator(),
         getAllRecipes: serviceLocator(),
         deleteRecipe: serviceLocator(),
+        updateRecipe: serviceLocator(),
       ),
     );
 }

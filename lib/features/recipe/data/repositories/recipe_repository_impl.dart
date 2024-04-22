@@ -80,4 +80,55 @@ class RecipeRepositoryImpl implements RecipeRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, Recipe>> updateRecipe({
+    required String title,
+    required String userId,
+    required String description,
+    required String prepTime,
+    required String cookTime,
+    required int servings,
+    required File image,
+  }) async {
+    try {
+      RecipeModel recipeModel = RecipeModel(
+        id: const Uuid().v1(),
+        title: title,
+        userId: userId,
+        description: description,
+        prepTime: prepTime,
+        cookTime: cookTime,
+        servings: servings,
+        imageUrl: '',
+        updatedAt: DateTime.now(),
+      );
+
+      // Assign the result of copyWith to recipeModel
+      recipeModel = recipeModel.copyWith(
+        title: title,
+        description: description,
+        prepTime: prepTime,
+        cookTime: cookTime,
+        servings: servings,
+        updatedAt: DateTime.now(),
+      );
+
+      final imageUrl = await recipeRemoteDataSource.uploadRecipeImage(
+        image: image,
+        recipe: recipeModel,
+      );
+
+      // Assign the result of copyWith to recipeModel
+      recipeModel = recipeModel.copyWith(
+        imageUrl: imageUrl,
+      );
+
+      return right(recipeModel);
+    } on ServerException catch (e) {
+      return left(
+        Failure(e.toString()),
+      );
+    }
+  }
 }
