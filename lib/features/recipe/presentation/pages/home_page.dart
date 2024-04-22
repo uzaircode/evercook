@@ -2,7 +2,6 @@ import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:evercook/features/recipe/presentation/pages/add_new_recipe_page.dart';
-import 'package:evercook/features/recipe/presentation/pages/recipe_details_page.dart';
 import 'package:evercook/features/recipe/presentation/widgets/recipe_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

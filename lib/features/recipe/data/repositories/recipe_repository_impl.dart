@@ -2,13 +2,11 @@ import 'dart:io';
 
 import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/error/failures.dart';
-import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/recipe/data/datasources/recipe_remote_data_source.dart';
 import 'package:evercook/features/recipe/data/models/recipe_model.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/domain/repositories/recipe_repository.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:logger/logger.dart';
 import 'package:uuid/uuid.dart';
 
 class RecipeRepositoryImpl implements RecipeRepository {
@@ -61,6 +59,21 @@ class RecipeRepositoryImpl implements RecipeRepository {
     try {
       final recipes = await recipeRemoteDataSource.getAllRecipes();
       return right(recipes);
+    } on ServerException catch (e) {
+      return left(
+        Failure(e.message),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Recipe>> deleteRecipe({
+    required String id,
+  }) async {
+    try {
+      final deletedRecipe = await recipeRemoteDataSource.deleteRecipe(id);
+
+      return right(deletedRecipe);
     } on ServerException catch (e) {
       return left(
         Failure(e.message),

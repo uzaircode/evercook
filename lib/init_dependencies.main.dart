@@ -74,6 +74,7 @@ void _initRecipe() {
         serviceLocator(),
       ),
     )
+
     //Usecases
     ..registerFactory(
       () => UploadRecipe(
@@ -85,12 +86,18 @@ void _initRecipe() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => DeleteRecipe(
+        serviceLocator(),
+      ),
+    )
 
     //Bloc
     ..registerLazySingleton(
       () => RecipeBloc(
         uploadRecipe: serviceLocator(),
         getAllRecipes: serviceLocator(),
+        deleteRecipe: serviceLocator(),
       ),
     );
 }

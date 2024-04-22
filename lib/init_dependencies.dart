@@ -10,6 +10,7 @@ import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/recipe/data/datasources/recipe_remote_data_source.dart';
 import 'package:evercook/features/recipe/data/repositories/recipe_repository_impl.dart';
 import 'package:evercook/features/recipe/domain/repositories/recipe_repository.dart';
+import 'package:evercook/features/recipe/domain/usecases/delete_recipe.dart';
 import 'package:evercook/features/recipe/domain/usecases/get_all_recipes.dart';
 import 'package:evercook/features/recipe/domain/usecases/upload_recipe.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';

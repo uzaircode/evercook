@@ -12,6 +12,7 @@ abstract interface class RecipeRemoteDataSource {
     required RecipeModel recipe,
   });
   Future<List<RecipeModel>> getAllRecipes();
+  Future<RecipeModel> deleteRecipe(String id);
 }
 
 class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
@@ -69,6 +70,25 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
                 username: recipe['profiles']['name'],
               ))
           .toList();
+    } on ServerException catch (e) {
+      LoggerService.logger.e('$e');
+      throw ServerException(e.message);
+    } on PostgrestException catch (e) {
+      LoggerService.logger.e('$e');
+      throw ServerException(e.message);
+    } catch (e) {
+      LoggerService.logger.e('$e');
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<RecipeModel> deleteRecipe(String id) async {
+    try {
+      LoggerService.logger.i('Deleting a recipe: $id');
+      final recipe = await supabaseClient.from('recipes').delete().eq('id', id).select();
+
+      return RecipeModel.fromJson(recipe.first);
     } on ServerException catch (e) {
       LoggerService.logger.e('$e');
       throw ServerException(e.message);

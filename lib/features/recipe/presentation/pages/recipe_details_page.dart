@@ -1,6 +1,9 @@
 import 'package:evercook/core/utils/format_date.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
+import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
+import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RecipeDetailsPage extends StatelessWidget {
   static route(Recipe recipe) => MaterialPageRoute(
@@ -13,7 +16,18 @@ class RecipeDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('Recipe Details'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.read<RecipeBloc>().add(RecipeDelete(id: recipe.id));
+              Navigator.pushAndRemoveUntil(context, HomePage.route(), (route) => false);
+            },
+            icon: const Icon(Icons.delete),
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

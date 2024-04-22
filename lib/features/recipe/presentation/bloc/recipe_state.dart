@@ -18,3 +18,5 @@ final class RecipeDisplaySuccess extends RecipeState {
   final List<Recipe> recipes;
   RecipeDisplaySuccess(this.recipes);
 }
+
+final class RecipeDeleteSuccess extends RecipeState {}

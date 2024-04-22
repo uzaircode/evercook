@@ -24,3 +24,11 @@ final class RecipeUpload extends RecipeEvent {
 }
 
 final class RecipeFetchAllRecipes extends RecipeEvent {}
+
+final class RecipeDelete extends RecipeEvent {
+  final String id;
+
+  RecipeDelete({
+    required this.id,
+  });
+}
