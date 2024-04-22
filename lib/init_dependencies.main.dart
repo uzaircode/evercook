@@ -4,6 +4,7 @@ final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   _initAuth();
+  _initRecipe();
   final supabase = await Supabase.initialize(
     url: AppSecrets.supabaseUrl,
     anonKey: AppSecrets.supabaseAnonKey,
@@ -54,6 +55,36 @@ void _initAuth() {
         userLogin: serviceLocator(),
         currentUser: serviceLocator(),
         appUserCubit: serviceLocator(),
+      ),
+    );
+}
+
+void _initRecipe() {
+  // Datasource
+  serviceLocator
+    ..registerFactory<RecipeRemoteDataSource>(
+      () => RecipeRemoteDataSourceImpl(
+        serviceLocator(),
+      ),
+    )
+
+    //Repository
+    ..registerFactory<RecipeRepository>(
+      () => RecipeRepositoryImpl(
+        serviceLocator(),
+      ),
+    )
+    //Usecases
+    ..registerFactory(
+      () => UploadRecipe(
+        serviceLocator(),
+      ),
+    )
+
+    //Bloc
+    ..registerLazySingleton(
+      () => RecipeBloc(
+        uploadRecipe: serviceLocator(),
       ),
     );
 }

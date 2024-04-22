@@ -1,6 +1,9 @@
+import 'package:evercook/features/recipe/presentation/pages/add_new_recipe_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
+  static route() => MaterialPageRoute(builder: (context) => const HomePage());
+
   const HomePage({super.key});
 
   @override
@@ -8,6 +11,18 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Homepage'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                AddnewRecipePage.route(),
+                (route) => false,
+              );
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
       ),
       body: Container(
         padding: const EdgeInsets.all(8),
