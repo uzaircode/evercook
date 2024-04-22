@@ -22,3 +22,5 @@ final class RecipeUpload extends RecipeEvent {
     required this.image,
   });
 }
+
+final class RecipeFetchAllRecipes extends RecipeEvent {}

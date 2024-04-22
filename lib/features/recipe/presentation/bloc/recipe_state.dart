@@ -13,3 +13,8 @@ final class RecipeFailure extends RecipeState {
 }
 
 final class RecipeUploadSuccess extends RecipeState {}
+
+final class RecipeDisplaySuccess extends RecipeState {
+  final List<Recipe> recipes;
+  RecipeDisplaySuccess(this.recipes);
+}

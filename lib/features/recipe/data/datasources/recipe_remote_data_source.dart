@@ -11,6 +11,7 @@ abstract interface class RecipeRemoteDataSource {
     required File image,
     required RecipeModel recipe,
   });
+  Future<List<RecipeModel>> getAllRecipes();
 }
 
 class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
@@ -49,6 +50,30 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
             recipe.id,
           );
     } on StorageException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      LoggerService.logger.e('$e');
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<RecipeModel>> getAllRecipes() async {
+    try {
+      final recipes = await supabaseClient.from('recipes').select(
+            '*, profiles (name)',
+          );
+
+      return recipes
+          .map((recipe) => RecipeModel.fromJson(recipe).copyWith(
+                username: recipe['profiles']['name'],
+              ))
+          .toList();
+    } on ServerException catch (e) {
+      LoggerService.logger.e('$e');
+      throw ServerException(e.message);
+    } on PostgrestException catch (e) {
+      LoggerService.logger.e('$e');
       throw ServerException(e.message);
     } catch (e) {
       LoggerService.logger.e('$e');

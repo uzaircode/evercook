@@ -11,6 +11,7 @@ class RecipeModel extends Recipe {
     required super.servings,
     required super.imageUrl,
     required super.updatedAt,
+    super.username,
   });
 
   RecipeModel copyWith({
@@ -23,6 +24,7 @@ class RecipeModel extends Recipe {
     int? servings,
     String? imageUrl,
     DateTime? updatedAt,
+    String? username,
   }) {
     return RecipeModel(
       id: id ?? this.id,
@@ -71,6 +73,6 @@ class RecipeModel extends Recipe {
 
   @override
   String toString() {
-    return 'Recipe(id: $id, title: $title, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, image_url: $imageUrl, updated_at: $updatedAt)';
+    return 'Recipe(id: $id, title: $title, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, image_url: $imageUrl, updated_at: $updatedAt), username: $username';
   }
 }

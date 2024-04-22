@@ -80,11 +80,17 @@ void _initRecipe() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => GetAllRecipes(
+        serviceLocator(),
+      ),
+    )
 
     //Bloc
     ..registerLazySingleton(
       () => RecipeBloc(
         uploadRecipe: serviceLocator(),
+        getAllRecipes: serviceLocator(),
       ),
     );
 }

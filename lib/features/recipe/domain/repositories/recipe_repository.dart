@@ -14,4 +14,6 @@ abstract interface class RecipeRepository {
     required int servings,
     required File image,
   });
+
+  Future<Either<Failure, List<Recipe>>> getAllRecipes();
 }

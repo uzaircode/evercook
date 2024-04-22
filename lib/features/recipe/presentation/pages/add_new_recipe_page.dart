@@ -13,18 +13,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 
-class AddnewRecipePage extends StatefulWidget {
+class AddNewRecipePage extends StatefulWidget {
   static route() => MaterialPageRoute(
-        builder: (context) => const AddnewRecipePage(),
+        builder: (context) => const AddNewRecipePage(),
       );
 
-  const AddnewRecipePage({super.key});
+  const AddNewRecipePage({super.key});
 
   @override
-  State<AddnewRecipePage> createState() => _AddnewRecipePageState();
+  State<AddNewRecipePage> createState() => _AddNewRecipePageState();
 }
 
-class _AddnewRecipePageState extends State<AddnewRecipePage> {
+class _AddNewRecipePageState extends State<AddNewRecipePage> {
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final prepTimeController = TextEditingController();

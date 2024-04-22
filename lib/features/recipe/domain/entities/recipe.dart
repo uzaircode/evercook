@@ -9,6 +9,7 @@ class Recipe {
   final int servings;
   final String imageUrl;
   final DateTime updatedAt;
+  final String? username;
 
   Recipe({
     required this.id,
@@ -20,5 +21,6 @@ class Recipe {
     required this.servings,
     required this.imageUrl,
     required this.updatedAt,
+    this.username,
   });
 }
