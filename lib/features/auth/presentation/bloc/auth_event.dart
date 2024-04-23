@@ -21,3 +21,9 @@ final class AuthLogin extends AuthEvent {
 final class AuthIsUserLoggedIn extends AuthEvent {}
 
 final class AuthSignOut extends AuthEvent {}
+
+final class AuthDeleteAccount extends AuthEvent {
+  final String userId;
+
+  AuthDeleteAccount({required this.userId});
+}

@@ -20,6 +20,10 @@ abstract interface class AuthRemoteDataSource {
   Future<UserModel?> getCurrentUserData();
 
   Future<void> signOut();
+
+  Future<void> deleteAccount({
+    required String userId,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -112,6 +116,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on AuthException catch (e) {
       LoggerService.logger.e('$e');
       throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> deleteAccount({required String userId}) async {
+    try {
+      LoggerService.logger.i('Deleting user account $userId...');
+      final response = await supabaseClient.functions.invoke('user-self-deletion');
+
+      return response;
+    } on AuthException catch (e) {
+      LoggerService.logger.e('Error deleting account: $e');
+      throw ServerException('Error deleting account: $e');
+    } on ServerException catch (e) {
+      LoggerService.logger.e('Error deleting account: $e');
+      throw ServerException('Error deleting account: $e');
+    } catch (e) {
+      LoggerService.logger.e('Error deleting account: $e');
+      throw ServerException('Error deleting account: $e');
     }
   }
 }

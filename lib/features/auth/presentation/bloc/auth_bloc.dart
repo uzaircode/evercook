@@ -2,6 +2,7 @@ import 'package:evercook/core/common/entities/user.dart';
 import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/usecase/usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/current_user.dart';
+import 'package:evercook/features/auth/domain/usecases/delete_account.dart';
 import 'package:evercook/features/auth/domain/usecases/sign_out.dart';
 import 'package:evercook/features/auth/domain/usecases/user_login.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final CurrentUser _currentUser;
   final AppUserCubit _appUserCubit;
   final SignOut _signOut;
+  final DeleteAccount _deleteAccount;
 
   AuthBloc({
     required UserSignUp userSignUp,
@@ -24,17 +26,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required CurrentUser currentUser,
     required AppUserCubit appUserCubit,
     required SignOut signOut,
+    required DeleteAccount deleteAccount,
   })  : _userSignUp = userSignUp,
         _userLogin = userLogin,
         _currentUser = currentUser,
         _appUserCubit = appUserCubit,
         _signOut = signOut,
+        _deleteAccount = deleteAccount,
         super(AuthInitial()) {
     on<AuthEvent>((_, emit) => emit(AuthLoading()));
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthLogin>(_onAuthLogin);
     on<AuthIsUserLoggedIn>(_isCurrentUserLoggedIn);
     on<AuthSignOut>(_signOutUser);
+    on<AuthDeleteAccount>(_deleteUserAccount);
   }
 
   void _signOutUser(
@@ -98,6 +103,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) {
     _appUserCubit.updateUser(user);
     emit(AuthSuccess(user));
+  }
+
+  void _deleteUserAccount(
+    AuthDeleteAccount event,
+    Emitter<AuthState> emit,
+  ) async {
+    final res = await _deleteAccount(UserParams(userId: event.userId));
+
+    res.fold(
+      (l) => emit(AuthFailure(l.message)),
+      (r) => emit(AuthDeletedAccount()),
+    );
   }
 }
 

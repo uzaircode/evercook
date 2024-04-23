@@ -1,6 +1,7 @@
 import 'package:evercook/core/common/entities/user.dart';
 import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/error/failures.dart';
+import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:evercook/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
@@ -68,6 +69,19 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await remoteDataSource.signOut();
 
+      return right(response);
+    } on ServerException catch (e) {
+      return left(
+        Failure(e.message),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteAccount({required String userId}) async {
+    try {
+      LoggerService.logger.i('Executing Auth Repository Impl Delete Account...');
+      final response = await remoteDataSource.deleteAccount(userId: userId);
       return right(response);
     } on ServerException catch (e) {
       return left(

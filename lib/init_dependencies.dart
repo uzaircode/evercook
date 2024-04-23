@@ -4,6 +4,7 @@ import 'package:evercook/features/auth/data/datasources/auth_remote_data_source.
 import 'package:evercook/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:evercook/features/auth/domain/repository/auth_repository.dart';
 import 'package:evercook/features/auth/domain/usecases/current_user.dart';
+import 'package:evercook/features/auth/domain/usecases/delete_account.dart';
 import 'package:evercook/features/auth/domain/usecases/sign_out.dart';
 import 'package:evercook/features/auth/domain/usecases/user_login.dart';
 import 'package:evercook/features/auth/domain/usecases/user_sign_up.dart';
