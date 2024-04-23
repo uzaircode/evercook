@@ -62,4 +62,17 @@ class AuthRepositoryImpl implements AuthRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, void>> signOut() async {
+    try {
+      final response = await remoteDataSource.signOut();
+
+      return right(response);
+    } on ServerException catch (e) {
+      return left(
+        Failure(e.message),
+      );
+    }
+  }
 }
