@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:evercook/core/constant/db_constants.dart';
+import 'package:evercook/core/constant/storage_constants.dart';
+import 'package:evercook/core/error/error_handler.dart';
 import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/recipe/data/models/recipe_model.dart';
@@ -24,15 +27,11 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
   Future<RecipeModel> uploadRecipe(RecipeModel recipe) async {
     try {
       LoggerService.logger.i('Uploading recipe: $recipe.toJson()');
-      final recipeData = await supabaseClient.from('recipes').insert(recipe.toJson()).select();
+      final recipeData = await supabaseClient.from(DBConstants.recipesTable).insert(recipe.toJson()).select();
       LoggerService.logger.i('Recipe uploaded: ${recipeData.first}');
       return RecipeModel.fromJson(recipeData.first);
-    } on PostgrestException catch (e) {
-      LoggerService.logger.e('$e');
-      throw ServerException(e.message);
     } catch (e) {
-      LoggerService.logger.e('$e');
-      throw ServerException(e.toString());
+      throw ErrorHandler.handleError(e);
     }
   }
 
@@ -42,26 +41,23 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
     required RecipeModel recipe,
   }) async {
     try {
-      await supabaseClient.storage.from('recipe_images').upload(
+      await supabaseClient.storage.from(StorageConstants.recipeImagesBucket).upload(
             recipe.id,
             image,
           );
 
-      return supabaseClient.storage.from('recipe_images').getPublicUrl(
+      return supabaseClient.storage.from(StorageConstants.recipeImagesBucket).getPublicUrl(
             recipe.id,
           );
-    } on StorageException catch (e) {
-      throw ServerException(e.message);
     } catch (e) {
-      LoggerService.logger.e('$e');
-      throw ServerException(e.toString());
+      throw ErrorHandler.handleError(e);
     }
   }
 
   @override
   Future<List<RecipeModel>> getAllRecipes() async {
     try {
-      final recipes = await supabaseClient.from('recipes').select(
+      final recipes = await supabaseClient.from(DBConstants.recipesTable).select(
             '*, profiles (name)',
           );
 
@@ -70,15 +66,8 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
                 username: recipe['profiles']['name'],
               ))
           .toList();
-    } on ServerException catch (e) {
-      LoggerService.logger.e('$e');
-      throw ServerException(e.message);
-    } on PostgrestException catch (e) {
-      LoggerService.logger.e('$e');
-      throw ServerException(e.message);
     } catch (e) {
-      LoggerService.logger.e('$e');
-      throw ServerException(e.toString());
+      throw ErrorHandler.handleError(e);
     }
   }
 
@@ -86,18 +75,15 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
   Future<RecipeModel> deleteRecipe(String id) async {
     try {
       LoggerService.logger.i('Deleting a recipe: $id');
-      final recipe = await supabaseClient.from('recipes').delete().eq('id', id).select();
+      final recipe = await supabaseClient.from(DBConstants.recipesTable).delete().eq('id', id).select();
+
+      if (recipe.isEmpty) {
+        throw const ServerException('Recipe not found');
+      }
 
       return RecipeModel.fromJson(recipe.first);
-    } on ServerException catch (e) {
-      LoggerService.logger.e('$e');
-      throw ServerException(e.message);
-    } on PostgrestException catch (e) {
-      LoggerService.logger.e('$e');
-      throw ServerException(e.message);
     } catch (e) {
-      LoggerService.logger.e('$e');
-      throw ServerException(e.toString());
+      throw ErrorHandler.handleError(e);
     }
   }
 }

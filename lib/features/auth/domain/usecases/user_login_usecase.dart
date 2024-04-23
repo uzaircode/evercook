@@ -4,10 +4,10 @@ import 'package:evercook/core/usecase/usecase.dart';
 import 'package:evercook/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
-class UserLogin implements UseCase<User, UserSignInParams> {
+class UserLoginUseCase implements UseCase<User, UserSignInParams> {
   final AuthRepository authRepository;
 
-  UserLogin(this.authRepository);
+  UserLoginUseCase(this.authRepository);
 
   @override
   Future<Either<Failure, User>> call(UserSignInParams params) async {

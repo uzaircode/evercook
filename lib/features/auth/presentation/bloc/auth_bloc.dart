@@ -1,29 +1,29 @@
 import 'package:evercook/core/common/entities/user.dart';
 import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/usecase/usecase.dart';
-import 'package:evercook/features/auth/domain/usecases/current_user.dart';
-import 'package:evercook/features/auth/domain/usecases/sign_out.dart';
-import 'package:evercook/features/auth/domain/usecases/user_login.dart';
+import 'package:evercook/features/auth/domain/usecases/current_user_usecase.dart';
+import 'package:evercook/features/auth/domain/usecases/sign_out_usecase.dart';
+import 'package:evercook/features/auth/domain/usecases/user_login_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:evercook/features/auth/domain/usecases/user_sign_up.dart';
+import 'package:evercook/features/auth/domain/usecases/user_sign_up_usecase.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final UserSignUp _userSignUp;
-  final UserLogin _userLogin;
-  final CurrentUser _currentUser;
+  final UserSignUpUseCase _userSignUp;
+  final UserLoginUseCase _userLogin;
+  final CurrentUserUseCase _currentUser;
   final AppUserCubit _appUserCubit;
-  final SignOut _signOut;
+  final SignOutUseCase _signOut;
 
   AuthBloc({
-    required UserSignUp userSignUp,
-    required UserLogin userLogin,
-    required CurrentUser currentUser,
+    required UserSignUpUseCase userSignUp,
+    required UserLoginUseCase userLogin,
+    required CurrentUserUseCase currentUser,
     required AppUserCubit appUserCubit,
-    required SignOut signOut,
+    required SignOutUseCase signOut,
   })  : _userSignUp = userSignUp,
         _userLogin = userLogin,
         _currentUser = currentUser,

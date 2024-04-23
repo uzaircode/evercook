@@ -1,3 +1,4 @@
+import 'package:evercook/core/constant/db_constants.dart';
 import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/data/models/user_model.dart';
@@ -34,7 +35,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel?> getCurrentUserData() async {
     try {
       if (currentUserSession != null) {
-        final userData = await supabaseClient.from('profiles').select().eq(
+        final userData = await supabaseClient.from(DBConstants.profilesTable).select().eq(
               'id',
               currentUserSession!.user.id,
             );

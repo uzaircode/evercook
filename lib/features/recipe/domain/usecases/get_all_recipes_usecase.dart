@@ -4,20 +4,12 @@ import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/domain/repositories/recipe_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
-class DeleteRecipe implements UseCase<Recipe, DeleteRecipeParams> {
+class GetAllRecipesUseCase implements UseCase<List<Recipe>, NoParams> {
   final RecipeRepository recipeRepository;
+  GetAllRecipesUseCase(this.recipeRepository);
 
-  DeleteRecipe(this.recipeRepository);
   @override
-  Future<Either<Failure, Recipe>> call(params) async {
-    return await recipeRepository.deleteRecipe(id: params.id);
+  Future<Either<Failure, List<Recipe>>> call(NoParams params) async {
+    return await recipeRepository.getAllRecipes();
   }
-}
-
-class DeleteRecipeParams {
-  final String id;
-
-  DeleteRecipeParams({
-    required this.id,
-  });
 }

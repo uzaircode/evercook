@@ -6,10 +6,10 @@ import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/domain/repositories/recipe_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
-class UploadRecipe implements UseCase<Recipe, UploadRecipeParams> {
+class UploadRecipeUseCase implements UseCase<Recipe, UploadRecipeParams> {
   final RecipeRepository recipeRepository;
 
-  UploadRecipe(this.recipeRepository);
+  UploadRecipeUseCase(this.recipeRepository);
 
   @override
   Future<Either<Failure, Recipe>> call(params) async {

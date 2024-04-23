@@ -33,22 +33,22 @@ void _initAuth() {
 
     //Usecases
     ..registerFactory(
-      () => UserSignUp(
+      () => UserSignUpUseCase(
         serviceLocator(),
       ),
     )
     ..registerFactory(
-      () => UserLogin(
+      () => UserLoginUseCase(
         serviceLocator(),
       ),
     )
     ..registerFactory(
-      () => CurrentUser(
+      () => CurrentUserUseCase(
         serviceLocator(),
       ),
     )
     ..registerFactory(
-      () => SignOut(
+      () => SignOutUseCase(
         serviceLocator(),
       ),
     )
@@ -83,17 +83,17 @@ void _initRecipe() {
 
     //Usecases
     ..registerFactory(
-      () => UploadRecipe(
+      () => UploadRecipeUseCase(
         serviceLocator(),
       ),
     )
     ..registerFactory(
-      () => GetAllRecipes(
+      () => GetAllRecipesUseCase(
         serviceLocator(),
       ),
     )
     ..registerFactory(
-      () => DeleteRecipe(
+      () => DeleteRecipeUseCase(
         serviceLocator(),
       ),
     )
