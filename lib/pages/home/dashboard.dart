@@ -1,20 +1,22 @@
 import 'package:evercook/features/auth/presentation/pages/profile_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
+import 'package:evercook/features/recipe/presentation/pages/search_page.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (context) => const Dashboard());
-  const Dashboard({Key? key}) : super(key: key); // Add a nullable key parameter
+  const Dashboard({Key? key}) : super(key: key);
 
   @override
   State<Dashboard> createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
-  int _selectedIndex = 0; // Index of the selected bottom navigation bar item
+  int _selectedIndex = 0;
 
   late final List<Widget> _screens = <Widget>[
     const HomePage(),
+    const SearchPage(),
     const ProfilePage(),
   ];
 
@@ -27,7 +29,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex], // Display the selected screen
+      body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -35,6 +37,10 @@ class _DashboardState extends State<Dashboard> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
