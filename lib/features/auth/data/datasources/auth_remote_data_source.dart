@@ -123,7 +123,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> deleteAccount({required String userId}) async {
     try {
       LoggerService.logger.i('Deleting user account $userId...');
-      final response = await supabaseClient.functions.invoke('user-self-deletion');
+      final response = await supabaseClient.auth.admin.deleteUser(userId);
 
       return response;
     } on AuthException catch (e) {
