@@ -2,6 +2,7 @@ import 'package:evercook/core/common/entities/user.dart';
 import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/usecase/usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/current_user.dart';
+import 'package:evercook/features/auth/domain/usecases/sign_out.dart';
 import 'package:evercook/features/auth/domain/usecases/user_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,21 +16,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserLogin _userLogin;
   final CurrentUser _currentUser;
   final AppUserCubit _appUserCubit;
+  final SignOut _signOut;
 
   AuthBloc({
     required UserSignUp userSignUp,
     required UserLogin userLogin,
     required CurrentUser currentUser,
     required AppUserCubit appUserCubit,
+    required SignOut signOut,
   })  : _userSignUp = userSignUp,
         _userLogin = userLogin,
         _currentUser = currentUser,
         _appUserCubit = appUserCubit,
+        _signOut = signOut,
         super(AuthInitial()) {
     on<AuthEvent>((_, emit) => emit(AuthLoading()));
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthLogin>(_onAuthLogin);
     on<AuthIsUserLoggedIn>(_isCurrentUserLoggedIn);
+    on<AuthSignOut>(_signOutUser);
+  }
+
+  void _signOutUser(
+    AuthSignOut event,
+    Emitter<AuthState> emit,
+  ) async {
+    final res = await _signOut(NoParams());
+
+    res.fold(
+      (l) => emit(AuthFailure(l.message)),
+      (r) => emit(AuthSignedOut()),
+    );
   }
 
   void _onAuthSignUp(
@@ -88,13 +105,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
 
 //call usecase in the bloc
-
-
-
-
-
-
-
 
 /* AuthBloc() : super(AuthInitial()) {
     on<AuthEvent>((event, emit) {});

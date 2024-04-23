@@ -1,4 +1,4 @@
-import 'package:evercook/pages/home/profile_page.dart';
+import 'package:evercook/features/auth/presentation/pages/profile_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
