@@ -1,9 +1,15 @@
+import 'package:evercook/features/ingredient_wiki/domain/entities/ingredient_wiki.dart';
 import 'package:evercook/features/ingredient_wiki/presentation/pages/ingredient_wiki_details.dart';
 import 'package:flutter/material.dart';
 
 class IngredientWikiCard extends StatelessWidget {
+  final IngredientWiki ingredients;
   final Color color;
-  const IngredientWikiCard({super.key, required this.color});
+  const IngredientWikiCard({
+    super.key,
+    required this.ingredients,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +17,7 @@ class IngredientWikiCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, IngredientWikiDetails.route());
+        Navigator.push(context, IngredientWikiDetails.route(ingredients));
       },
       child: Container(
         margin: const EdgeInsets.only(top: 16).copyWith(bottom: 4),
@@ -42,9 +48,9 @@ class IngredientWikiCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Ingredient Name',
-                  style: TextStyle(
+                Text(
+                  ingredients.title,
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,

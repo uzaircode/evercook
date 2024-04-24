@@ -1,10 +1,13 @@
+import 'package:evercook/features/ingredient_wiki/domain/entities/ingredient_wiki.dart';
 import 'package:flutter/material.dart';
 
 class IngredientWikiDetails extends StatelessWidget {
-  static route() => MaterialPageRoute(
-        builder: (context) => const IngredientWikiDetails(),
+  static route(IngredientWiki ingredient) => MaterialPageRoute(
+        builder: (context) => IngredientWikiDetails(ingredient: ingredient),
       );
-  const IngredientWikiDetails({Key? key}) : super(key: key);
+  final IngredientWiki ingredient;
+
+  const IngredientWikiDetails({Key? key, required this.ingredient}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,55 +15,60 @@ class IngredientWikiDetails extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Ingredient Wiki Details'),
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(ingredient.imageUrl),
+              ),
+              const SizedBox(height: 20),
               Text(
-                'Ingredient Title',
-                style: TextStyle(
+                ingredient.title,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
-                'Description of the ingredient goes here.',
-                style: TextStyle(
+                ingredient.description,
+                style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
-                'Storage: Store in a cool, dry place.',
-                style: TextStyle(
+                ingredient.storage,
+                style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
-                'Food Science: Some scientific facts about the ingredient.',
-                style: TextStyle(
+                ingredient.foodScience,
+                style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
-                'Cooking Tips: Tips for cooking with the ingredient.',
-                style: TextStyle(
+                ingredient.cookingTips,
+                style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
-                'Health Benefits: Benefits of consuming the ingredient.',
-                style: TextStyle(
+                ingredient.healthBenefits,
+                style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
                 ),
