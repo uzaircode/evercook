@@ -5,6 +5,8 @@ final serviceLocator = GetIt.instance;
 Future<void> initDependencies() async {
   _initAuth();
   _initRecipe();
+  _initIngredientWiki();
+
   final supabase = await Supabase.initialize(
     url: AppSecrets.supabaseUrl,
     anonKey: AppSecrets.supabaseAnonKey,
@@ -104,6 +106,34 @@ void _initRecipe() {
         uploadRecipe: serviceLocator(),
         getAllRecipes: serviceLocator(),
         deleteRecipe: serviceLocator(),
+      ),
+    );
+}
+
+void _initIngredientWiki() {
+  // Datasource
+  serviceLocator
+    ..registerFactory<IngredientWikiRemoteDataSource>(
+      () => IngredientWikiRemoteDataSourceImpl(
+        serviceLocator(),
+      ),
+    )
+    // Repository
+    ..registerFactory<IngredientWikiRepository>(
+      () => IngredientWikiRepositoryImpl(
+        serviceLocator(),
+      ),
+    )
+    // Usecases
+    ..registerFactory(
+      () => GetAllIngredientWikiUseCase(
+        serviceLocator(),
+      ),
+    )
+    // Bloc
+    ..registerLazySingleton(
+      () => IngredientWikiBloc(
+        getAllIngredientsWiki: serviceLocator(),
       ),
     );
 }
