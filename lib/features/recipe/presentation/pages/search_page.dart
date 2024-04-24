@@ -1,5 +1,5 @@
 import 'package:evercook/core/theme/app_pallete.dart';
-import 'package:evercook/features/recipe/presentation/pages/ingredient_wiki_list.dart';
+import 'package:evercook/features/ingredient/presentation/pages/ingredient_wiki_list.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatelessWidget {

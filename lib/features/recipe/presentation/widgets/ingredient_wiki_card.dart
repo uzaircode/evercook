@@ -1,4 +1,4 @@
-import 'package:evercook/features/recipe/presentation/pages/ingredient_wiki_details.dart';
+import 'package:evercook/features/ingredient/presentation/pages/ingredient_wiki_details.dart';
 import 'package:flutter/material.dart';
 
 class IngredientWikiCard extends StatelessWidget {
