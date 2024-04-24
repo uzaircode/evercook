@@ -1,6 +1,8 @@
 import 'package:evercook/core/common/widgets/loader.dart';
+import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:evercook/features/auth/presentation/pages/recover_page.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_button.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_field.dart';
 import 'package:evercook/pages/home/dashboard.dart';
@@ -76,6 +78,30 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                       buttonText: 'Sign up'),
+                  const SizedBox(height: 12),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        RecoverPasswordPage.route(),
+                      );
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'Don\'t have an account? ',
+                        style: Theme.of(context).textTheme.titleMedium,
+                        children: [
+                          TextSpan(
+                            text: 'Forgot Password',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: AppPallete.gradient2,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: () async {
