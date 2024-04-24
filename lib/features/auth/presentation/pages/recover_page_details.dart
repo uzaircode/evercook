@@ -77,6 +77,7 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
                     },
                   ),
                 ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
                   if (value!.isEmpty || value.length < 6) {
                     return 'Password must be at least 6 characters!';

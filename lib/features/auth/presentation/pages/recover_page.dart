@@ -35,7 +35,6 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                   border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
                   hintText: 'Email',
                 ),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) => !EmailValidator.validate(value!) ? 'Invalid Email Format!' : null,
               ),
               const SizedBox(width: 16, height: 16),
