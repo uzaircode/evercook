@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: () async {
-                      // _loginController.signInWithGoogle();
+                      context.read<AuthBloc>().add(AuthSignOut());
                     },
                     child: const Text('Sign in with Google'),
                   ),
