@@ -1,10 +1,9 @@
 import 'package:evercook/core/common/widgets/loader.dart';
-import 'package:evercook/core/cubit/app_user.dart';
-import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/recover_page.dart';
+import 'package:evercook/features/auth/presentation/pages/signup_page.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_button.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_field.dart';
 import 'package:evercook/pages/home/dashboard.dart';
@@ -35,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Login'),
       ),
@@ -68,6 +68,31 @@ class _LoginPageState extends State<LoginPage> {
                     isObscureText: true,
                   ),
                   const SizedBox(height: 12),
+                  const SizedBox(height: 12),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        RecoverPasswordPage.route(),
+                      );
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'Forgot Password? ',
+                        style: Theme.of(context).textTheme.titleMedium,
+                        children: [
+                          TextSpan(
+                            text: 'Recover Password',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: AppPallete.gradient2,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
                   AuthButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
@@ -79,11 +104,14 @@ class _LoginPageState extends State<LoginPage> {
                               );
                         }
                       },
-                      buttonText: 'Sign up'),
+                      buttonText: 'Sign In'),
                   const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () async {
-                      context.read<AuthBloc>().add(AuthSignOut());
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        SignUpPage.route(),
+                      );
                     },
                     child: RichText(
                       text: TextSpan(
@@ -91,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: Theme.of(context).textTheme.titleMedium,
                         children: [
                           TextSpan(
-                            text: 'Forgot Password',
+                            text: 'Sign Up',
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: AppPallete.gradient2,
                                   fontWeight: FontWeight.bold,

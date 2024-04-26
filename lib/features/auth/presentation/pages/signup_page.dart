@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
+  static route() => MaterialPageRoute(builder: (context) => const SignUpPage());
   const SignUpPage({super.key});
 
   @override
@@ -32,6 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
