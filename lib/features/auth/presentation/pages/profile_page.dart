@@ -1,9 +1,14 @@
+import 'package:evercook/core/cubit/app_user.dart';
+import 'package:evercook/core/theme/app_pallete.dart';
+import 'package:evercook/features/auth/presentation/pages/edit_profile_page.dart';
 import 'package:evercook/core/utils/analytics_engine.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:evercook/features/auth/presentation/pages/login_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -15,31 +20,62 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    final userName = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.name;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
       ),
-      body: BlocListener<AuthBloc, AuthState>(
+      body: BlocConsumer<AppUserCubit, AppUserState>(
         listener: (context, state) {
-          if (state is AuthSignedOut) {
-            Navigator.pushAndRemoveUntil(
+          if (state is AppUserInitial) {
+            Navigator.pushReplacement(
               context,
               LoginPage.route(),
-              (route) => false,
             );
-          } else if (state is AuthFailure) {
-            showSnackBar(context, state.message);
           }
         },
-        child: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              AnalyticsEngine.triggerButton();
-              context.read<AuthBloc>().add(AuthSignOut());
-            },
-            child: const Text('Sign Out'),
-          ),
-        ),
+        builder: (context, state) {
+          return Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    userName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const CircleAvatar(
+                    radius: 80,
+                    backgroundColor: AppPallete.gradient3,
+                    backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        EditProfilePage.route(),
+                      );
+                    },
+                    child: const Text('Edit Profile'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<AuthBloc>().add(AuthSignOut());
+                    },
+                    child: const Text('Sign Out'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

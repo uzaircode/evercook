@@ -1,4 +1,6 @@
 import 'package:evercook/core/common/widgets/loader.dart';
+import 'package:evercook/core/cubit/app_user.dart';
+import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
@@ -79,12 +81,9 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       buttonText: 'Sign up'),
                   const SizedBox(height: 12),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        RecoverPasswordPage.route(),
-                      );
+                  ElevatedButton(
+                    onPressed: () async {
+                      context.read<AuthBloc>().add(AuthSignOut());
                     },
                     child: RichText(
                       text: TextSpan(

@@ -1,6 +1,7 @@
 import 'package:evercook/core/common/entities/user.dart';
 import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/usecase/usecase.dart';
+import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/domain/usecases/current_user_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/user_login_usecase.dart';
@@ -34,18 +35,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthLogin>(_onAuthLogin);
     on<AuthIsUserLoggedIn>(_isCurrentUserLoggedIn);
-    on<AuthSignOut>(_signOutUser);
+    on<AuthSignOut>(_onAuthSignOut);
   }
 
-  void _signOutUser(
-    AuthSignOut event,
-    Emitter<AuthState> emit,
-  ) async {
+  // void _onAuthSignOut(
+  //   AuthSignOut event,
+  //   Emitter<AuthState> emit,
+  // ) async {
+  //   _appUserCubit.updateUser(null);
+  //   await _currentUser(NoParams());
+  //   final res = await _signOut(NoParams());
+
+  //   res.fold(
+  //     (l) => emit(AuthFailure(l.message)),
+  //     (r) {
+  //       LoggerService.logger.i('User signed out.');
+  //       emit(AuthInitial());
+  //     },
+  //   );
+  // }
+
+  void _onAuthSignOut(AuthSignOut event, Emitter<AuthState> emit) async {
+    _appUserCubit.updateUser(null);
     final res = await _signOut(NoParams());
 
     res.fold(
       (l) => emit(AuthFailure(l.message)),
-      (r) => emit(AuthSignedOut()),
+      (r) {
+        LoggerService.logger.i('User signed out.');
+        emit(AuthInitial());
+      },
     );
   }
 
@@ -88,7 +107,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     res.fold(
       (l) => emit(AuthFailure(l.message)),
-      (r) => _emitAuthSuccess(r, emit),
+      (r) {
+        LoggerService.logger.i('User: ${r.email}');
+        _emitAuthSuccess(r, emit);
+      },
     );
   }
 
@@ -96,7 +118,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     User user,
     Emitter<AuthState> emit,
   ) {
+    LoggerService.logger.i('EXECUTING EMIT AUTH SUCCESS');
     _appUserCubit.updateUser(user);
+
+    LoggerService.logger.i('User: ${user.email}');
+
     emit(AuthSuccess(user));
   }
 }
