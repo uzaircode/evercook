@@ -18,70 +18,56 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    final userName = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.email;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
       ),
-      body: BlocListener<AuthBloc, AuthState>(
+      body: BlocConsumer<AppUserCubit, AppUserState>(
         listener: (context, state) {
-          if (state is AuthSignedOut) {
-            Navigator.pushAndRemoveUntil(
+          if (state is AppUserInitial) {
+            Navigator.pushReplacement(
               context,
               LoginPage.route(),
-              (route) => false,
             );
-          } else if (state is AuthFailure) {
-            showSnackBar(context, state.message);
           }
         },
-        child: BlocBuilder<AppUserCubit, AppUserState>(
-          builder: (context, state) {
-            if (state is AppUserLoggedIn) {
-              final User user = state.user;
-              return _buildProfile(user, context);
-            } else {
-              // Handle other states if needed
-              return Container();
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  Align _buildProfile(User user, BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(user.name),
-            const SizedBox(height: 20),
-            const CircleAvatar(
-              radius: 80,
-              backgroundColor: AppPallete.gradient3,
-              backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+        builder: (context, state) {
+          return Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(userName),
+                  const SizedBox(height: 20),
+                  const CircleAvatar(
+                    radius: 80,
+                    backgroundColor: AppPallete.gradient3,
+                    backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        EditProfilePage.route(),
+                      );
+                    },
+                    child: const Text('Edit Profile'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<AuthBloc>().add(AuthSignOut());
+                    },
+                    child: const Text('Sign Out'),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  EditProfilePage.route(),
-                );
-              },
-              child: const Text('Edit Profile'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(AuthSignOut());
-              },
-              child: const Text('Sign Out'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

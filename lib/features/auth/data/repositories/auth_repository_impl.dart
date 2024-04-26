@@ -1,6 +1,7 @@
 import 'package:evercook/core/common/entities/user.dart';
 import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/error/failures.dart';
+import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:evercook/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
@@ -16,7 +17,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = await remoteDataSource.getCurrentUserData();
 
       if (user == null) {
-        return left(Failure('User not logged in!'));
+        return left(Failure('User is not logged in.'));
       }
 
       return right(user);
@@ -67,6 +68,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, void>> signOut() async {
     try {
       final response = await remoteDataSource.signOut();
+
+      final user = await remoteDataSource.getCurrentUserData();
+      LoggerService.logger.i('User: $user');
 
       return right(response);
     } on ServerException catch (e) {

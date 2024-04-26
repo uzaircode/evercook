@@ -1,4 +1,6 @@
 import 'package:evercook/core/common/widgets/loader.dart';
+import 'package:evercook/core/cubit/app_user.dart';
+import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_button.dart';
