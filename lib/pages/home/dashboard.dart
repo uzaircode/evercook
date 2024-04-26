@@ -1,4 +1,5 @@
 import 'package:evercook/features/auth/presentation/pages/profile_page.dart';
+import 'package:evercook/features/meal_plan/presentation/pages/view_meal_plan.dart';
 import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/search_page.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class _DashboardState extends State<Dashboard> {
   late final List<Widget> _screens = <Widget>[
     const HomePage(),
     const SearchPage(),
+    const ViewMealPlan(),
     const ProfilePage(),
   ];
 
@@ -33,6 +35,7 @@ class _DashboardState extends State<Dashboard> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -42,6 +45,10 @@ class _DashboardState extends State<Dashboard> {
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Meal Plan',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

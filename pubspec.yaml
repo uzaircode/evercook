@@ -48,6 +48,7 @@ dependencies:
   email_validator: ^2.1.17
   firebase_analytics: ^10.10.4
   firebase_core: ^2.30.1
+  date_picker_timeline: ^1.2.6
 
 dev_dependencies:
   flutter_test:
