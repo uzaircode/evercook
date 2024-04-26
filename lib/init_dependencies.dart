@@ -22,5 +22,7 @@ import 'package:evercook/features/recipe/domain/usecases/upload_recipe_usecase.d
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 part 'init_dependencies.main.dart';

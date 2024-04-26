@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "908468362758",
+    "project_id": "evercook-da947",
+    "storage_bucket": "evercook-da947.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:908468362758:android:261721211a4b5763196d87",
+        "android_client_info": {
+          "package_name": "com.example.evercook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqQleiOivE2mUJYbP6t31UWfdjhr85N2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
