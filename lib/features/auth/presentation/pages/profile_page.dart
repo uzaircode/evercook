@@ -1,10 +1,8 @@
-import 'package:evercook/core/common/entities/user.dart';
 import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:evercook/features/auth/presentation/pages/edit_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/login_page.dart';
 
@@ -18,7 +16,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    final userName = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.email;
+    final userName = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.name;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -40,7 +38,13 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(userName),
+                  Text(
+                    userName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   const CircleAvatar(
                     radius: 80,
