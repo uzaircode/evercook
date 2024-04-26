@@ -1,3 +1,4 @@
+import 'package:evercook/core/utils/analytics_engine.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/login_page.dart';
@@ -33,6 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Center(
           child: ElevatedButton(
             onPressed: () {
+              AnalyticsEngine.triggerButton();
               context.read<AuthBloc>().add(AuthSignOut());
             },
             child: const Text('Sign Out'),
