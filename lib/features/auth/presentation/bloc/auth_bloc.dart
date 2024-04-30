@@ -3,6 +3,7 @@ import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/usecase/usecase.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/domain/usecases/current_user_usecase.dart';
+import 'package:evercook/features/auth/domain/usecases/recover_password_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/user_login_usecase.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final CurrentUserUseCase _currentUser;
   final AppUserCubit _appUserCubit;
   final SignOutUseCase _signOut;
+  final RecoverPasswordUsecase _recoverPassword;
 
   AuthBloc({
     required UserSignUpUseCase userSignUp,
@@ -25,17 +27,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required CurrentUserUseCase currentUser,
     required AppUserCubit appUserCubit,
     required SignOutUseCase signOut,
+    required RecoverPasswordUsecase recoverPassword,
   })  : _userSignUp = userSignUp,
         _userLogin = userLogin,
         _currentUser = currentUser,
         _appUserCubit = appUserCubit,
         _signOut = signOut,
+        _recoverPassword = recoverPassword,
         super(AuthInitial()) {
     on<AuthEvent>((_, emit) => emit(AuthLoading()));
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthLogin>(_onAuthLogin);
     on<AuthIsUserLoggedIn>(_isCurrentUserLoggedIn);
     on<AuthSignOut>(_onAuthSignOut);
+    on<AuthRecoverPassword>(_onRecoverPassword);
   }
 
   // void _onAuthSignOut(
@@ -90,7 +95,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final res = await _userLogin(
-      UserSignInParams(email: event.email, password: event.password),
+      UserSignInParams(
+        email: event.email,
+        password: event.password,
+      ),
     );
 
     res.fold(
@@ -125,7 +133,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     emit(AuthSuccess(user));
   }
+
+  void _onRecoverPassword(
+    AuthRecoverPassword event,
+    Emitter<AuthState> emit,
+  ) async {
+    final res = await _recoverPassword(
+      UserRecoverPasswordParams(
+        email: event.email,
+      ),
+    );
+
+    res.fold(
+      (l) => emit(AuthFailure(l.message)),
+      (r) => emit(AuthRecoverPasswordSuccess()),
+    );
+  }
 }
+
+
 
 
 
