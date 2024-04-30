@@ -21,3 +21,9 @@ final class AuthLogin extends AuthEvent {
 final class AuthIsUserLoggedIn extends AuthEvent {}
 
 final class AuthSignOut extends AuthEvent {}
+
+final class AuthRecoverPassword extends AuthEvent {
+  final String email;
+
+  AuthRecoverPassword({required this.email});
+}

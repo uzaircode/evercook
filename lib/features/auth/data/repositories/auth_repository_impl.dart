@@ -79,4 +79,21 @@ class AuthRepositoryImpl implements AuthRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, void>> recoverPassword({
+    required String email,
+  }) async {
+    try {
+      final response = await remoteDataSource.recoverPassword(email: email);
+
+      LoggerService.logger.i('Executing for auth repository implementation....');
+
+      return right(response);
+    } on ServerException catch (e) {
+      return left(
+        Failure(e.message),
+      );
+    }
+  }
 }
