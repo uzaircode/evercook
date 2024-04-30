@@ -1,6 +1,7 @@
 import 'package:evercook/features/auth/presentation/pages/profile_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/search_page.dart';
+import 'package:evercook/features/shopping_list/presentation/pages/shopping_list_page.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
@@ -17,6 +18,7 @@ class _DashboardState extends State<Dashboard> {
   late final List<Widget> _screens = <Widget>[
     const HomePage(),
     const SearchPage(),
+    const ShoppingListPage(),
     const ProfilePage(),
   ];
 
@@ -42,6 +44,10 @@ class _DashboardState extends State<Dashboard> {
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag_outlined),
+            label: 'Grocery List',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
