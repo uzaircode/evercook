@@ -33,6 +33,7 @@ class RecipeRepositoryImpl implements RecipeRepository {
         prepTime: prepTime,
         cookTime: cookTime,
         servings: servings,
+        ingredients: [],
         imageUrl: '',
         updatedAt: DateTime.now(),
       );

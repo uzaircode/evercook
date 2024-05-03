@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 
 class RecipeModel extends Recipe {
@@ -9,6 +11,7 @@ class RecipeModel extends Recipe {
     required super.prepTime,
     required super.cookTime,
     required super.servings,
+    required super.ingredients,
     required super.imageUrl,
     required super.updatedAt,
     super.username,
@@ -22,6 +25,7 @@ class RecipeModel extends Recipe {
     String? prepTime,
     String? cookTime,
     int? servings,
+    List<Map<String, dynamic>>? ingredients,
     String? imageUrl,
     DateTime? updatedAt,
     String? username,
@@ -34,6 +38,7 @@ class RecipeModel extends Recipe {
       prepTime: prepTime ?? this.prepTime,
       cookTime: cookTime ?? this.cookTime,
       servings: servings ?? this.servings,
+      ingredients: ingredients ?? this.ingredients,
       imageUrl: imageUrl ?? this.imageUrl,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -48,6 +53,7 @@ class RecipeModel extends Recipe {
       'prep_time': prepTime,
       'cook_time': cookTime,
       'servings': servings,
+      'ingredients': ingredients,
       'image_url': imageUrl,
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -62,17 +68,24 @@ class RecipeModel extends Recipe {
       prepTime: map['prep_time'] as String,
       cookTime: map['cook_time'] as String,
       servings: map['servings'] as int,
+      ingredients: _parseIngredients(map['ingredients']), //HERE
       imageUrl: map['image_url'] as String,
-      updatedAt: map['updated_at'] == null
-          ? DateTime.now()
-          : DateTime.parse(
-              map['updated_at'],
-            ),
+      updatedAt: map['updated_at'] == null ? DateTime.now() : DateTime.parse(map['updated_at'] as String),
     );
+  }
+
+  //I DONT UNDERSTAND THIS
+  static List<Map<String, dynamic>> _parseIngredients(dynamic ingredients) {
+    if (ingredients is List) {
+      // Assuming each ingredient is currently a simple string
+      return ingredients.map((dynamic item) => {"name": item.toString()}).toList();
+    }
+    // Return an empty list if ingredients are not in the expected format or null
+    return [];
   }
 
   @override
   String toString() {
-    return 'Recipe(id: $id, title: $title, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, image_url: $imageUrl, updated_at: $updatedAt), username: $username';
+    return 'Recipe(id: $id, title: $title, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, ingredients: $ingredients, image_url: $imageUrl, updated_at: $updatedAt), username: $username';
   }
 }
