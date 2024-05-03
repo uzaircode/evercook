@@ -1,6 +1,7 @@
 import 'package:evercook/core/utils/format_date.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
+import 'package:evercook/features/recipe/presentation/pages/edit_recipe_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +20,12 @@ class RecipeDetailsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Recipe Details'),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(context, EditRecipePage.route(recipe), (route) => false);
+            },
+            icon: const Icon(Icons.edit),
+          ),
           IconButton(
             onPressed: () {
               context.read<RecipeBloc>().add(RecipeDelete(id: recipe.id));
