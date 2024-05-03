@@ -4,6 +4,7 @@ import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RecipeDetailsPage extends StatelessWidget {
   static route(Recipe recipe) => MaterialPageRoute(
@@ -43,6 +44,18 @@ class RecipeDetailsPage extends StatelessWidget {
             const SizedBox(height: 8),
             const SizedBox(height: 8),
             _imageWidget(recipe.imageUrl),
+            IconButton(
+              onPressed: () async {
+                await Supabase.instance.client.from('meal_plan').insert([
+                  {
+                    'recipe_id': recipe.id,
+                    'user_id': Supabase.instance.client.auth.currentUser!.id,
+                    'date': DateTime.now().toIso8601String(),
+                  }
+                ]);
+              },
+              icon: const Icon(Icons.calendar_month),
+            ),
             _buildDetailRow('Description', recipe.description),
             _buildDetailRow('Prep Time', recipe.prepTime),
             _buildDetailRow('Cook Time', recipe.cookTime),

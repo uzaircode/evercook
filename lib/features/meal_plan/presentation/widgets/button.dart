@@ -9,17 +9,19 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 120,
-        height: 60,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.blue,
-        ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.blue,
+          ),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+            ),
           ),
         ),
       ),
