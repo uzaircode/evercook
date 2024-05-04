@@ -12,7 +12,12 @@
           "package_name": "com.example.evercook"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "908468362758-rdalsblfhdl2nbnh9bui78ubgmhdboi3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBqQleiOivE2mUJYbP6t31UWfdjhr85N2w"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "908468362758-rdalsblfhdl2nbnh9bui78ubgmhdboi3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "908468362758-m5a317hnbtj1ji5mqrrj30ehr34k9bs4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.evercook"
+              }
+            }
+          ]
         }
       }
     }
