@@ -52,6 +52,18 @@ class RecipeDetailsPage extends StatelessWidget {
             const SizedBox(height: 8),
             const SizedBox(height: 8),
             _imageWidget(recipe.imageUrl),
+            IconButton(
+              onPressed: () async {
+                await Supabase.instance.client.from('meal_plan').insert([
+                  {
+                    'recipe_id': recipe.id,
+                    'user_id': Supabase.instance.client.auth.currentUser!.id,
+                    'date': DateTime.now().toIso8601String(),
+                  }
+                ]);
+              },
+              icon: const Icon(Icons.calendar_month),
+            ),
             _buildDetailRow('Description', recipe.description),
             _buildDetailRow('Prep Time', recipe.prepTime),
             _buildDetailRow('Cook Time', recipe.cookTime),
