@@ -1,6 +1,9 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:evercook/core/utils/logger.dart';
+import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/recover_page_details.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RecoverPasswordPage extends StatefulWidget {
@@ -50,9 +53,12 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                         ),
                       ),
                     );
-                    await Supabase.instance.client.auth.resetPasswordForEmail(
-                      emailController.text,
-                    );
+                    // await Supabase.instance.client.auth.resetPasswordForEmail(
+                    //   emailController.text,
+                    // );
+                    BlocProvider.of<AuthBloc>(context).add(AuthRecoverPassword(email: emailController.text));
+
+                    LoggerService.logger.i('Password Reset Token Sent to ${emailController.text}');
                   } else {
                     null;
                   }

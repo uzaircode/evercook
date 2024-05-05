@@ -21,6 +21,10 @@ abstract interface class AuthRemoteDataSource {
   Future<UserModel?> getCurrentUserData();
 
   Future<void> signOut();
+
+  Future<void> recoverPassword({
+    required String email,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -114,5 +118,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       LoggerService.logger.e('$e');
       throw ServerException(e.toString());
     }
+  }
+
+  @override
+  Future<void> recoverPassword({
+    required String email,
+  }) async {
+    try {
+      await supabaseClient.auth.resetPasswordForEmail(email);
+      LoggerService.logger.i(email);
+    } on ServerException catch (e) {
+      LoggerService.logger.e('$e');
+      throw ServerException(e.toString());
+    } catch (e) {
+      LoggerService.logger.e(e.toString());
+      throw ServerException(e.toString());
+    }
+    throw UnimplementedError();
   }
 }
