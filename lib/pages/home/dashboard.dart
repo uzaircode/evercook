@@ -33,7 +33,6 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,
         onTap: _onItemTapped,
