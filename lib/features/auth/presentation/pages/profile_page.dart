@@ -4,6 +4,7 @@ import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/presentation/pages/edit_profile_page.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/login_page.dart';
+import 'package:evercook/features/auth/presentation/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,6 +24,14 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, SettingsPage.route());
+            },
+            icon: const Icon(Icons.settings),
+          )
+        ],
       ),
       body: BlocConsumer<AppUserCubit, AppUserState>(
         listener: (context, state) {
