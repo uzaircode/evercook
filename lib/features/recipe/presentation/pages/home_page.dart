@@ -3,6 +3,7 @@ import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:evercook/features/recipe/presentation/pages/add_new_recipe_page.dart';
 import 'package:evercook/features/recipe/presentation/widgets/recipe_card.dart';
+import 'package:evercook/features/shopping_list/presentation/pages/shopping_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,6 +29,12 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Homepage'),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, ShoppingListPage.route());
+            },
+            icon: const Icon(Icons.local_grocery_store),
+          ),
           IconButton(
             onPressed: () {
               Navigator.pushAndRemoveUntil(

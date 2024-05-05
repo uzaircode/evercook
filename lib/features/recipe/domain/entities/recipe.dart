@@ -7,6 +7,7 @@ class Recipe {
   final String prepTime;
   final String cookTime;
   final int servings;
+  final List<Map<String, dynamic>> ingredients;
   final String imageUrl;
   final DateTime updatedAt;
   final String? username;
@@ -19,6 +20,7 @@ class Recipe {
     required this.prepTime,
     required this.cookTime,
     required this.servings,
+    required this.ingredients,
     required this.imageUrl,
     required this.updatedAt,
     this.username,

@@ -1,9 +1,11 @@
 import 'package:evercook/core/utils/format_date.dart';
+import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RecipeDetailsPage extends StatelessWidget {
   static route(Recipe recipe) => MaterialPageRoute(
@@ -48,6 +50,55 @@ class RecipeDetailsPage extends StatelessWidget {
             _buildDetailRow('Cook Time', recipe.cookTime),
             _buildDetailRow('Servings', recipe.servings.toString()),
             _buildDetailRow('Updated At', formatDatebdMMMYYY(recipe.updatedAt)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Ingredients',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        LoggerService.logger.d('Starting to add to shopping list');
+                        LoggerService.logger.d('Recipe ID: ${recipe.id}');
+                        LoggerService.logger.d('User ID: ${recipe.userId}');
+
+                        try {
+                          // Perform the RPC call and store the result
+                          await Supabase.instance.client.rpc('add_to_shopping_list', params: {
+                            'recipe_id': recipe.id,
+                          });
+                        } catch (e) {
+                          // Log any errors that occur during the RPC call
+                          LoggerService.logger.e('Error updating shopping list: $e');
+                        }
+                      },
+                      icon: const Icon(Icons.local_grocery_store_outlined),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                for (var ingredient in recipe.ingredients)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          '${ingredient['name']}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
             const SizedBox(height: 8),
           ],
         ),
