@@ -5,6 +5,7 @@ import 'package:evercook/core/utils/logger.dart';
 
 class ShoppingListPage extends StatefulWidget {
   const ShoppingListPage({Key? key}) : super(key: key);
+  static route() => MaterialPageRoute(builder: (context) => const ShoppingListPage());
 
   @override
   ShoppingListPageState createState() => ShoppingListPageState();
