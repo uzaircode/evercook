@@ -131,8 +131,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 60),
                   ElevatedButton(
+                    //! Fix error : type 'AppUserInitial' is not a subtype of type 'AppUserLoggedIn' in type cast
                     onPressed: () async {
                       const webClientId = '908468362758-rdalsblfhdl2nbnh9bui78ubgmhdboi3.apps.googleusercontent.com';
                       const iosClientId = '908468362758-m5a317hnbtj1ji5mqrrj30ehr34k9bs4.apps.googleusercontent.com';
@@ -168,7 +169,15 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       }
                     },
-                    child: const Text('Sign in with google'),
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: const Size(395, 55),
+                      backgroundColor: AppPallete.transparentColor,
+                      shadowColor: AppPallete.transparentColor,
+                    ),
+                    child: const Text(
+                      'Sign in with google',
+                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
               ),

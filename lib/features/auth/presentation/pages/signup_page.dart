@@ -2,6 +2,7 @@ import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:evercook/features/auth/presentation/pages/login_page.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_button.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_field.dart';
 import 'package:evercook/pages/home/dashboard.dart';
@@ -91,6 +92,13 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   const SizedBox(height: 20),
                   GestureDetector(
+                    onTap: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        LoginPage.route(),
+                        (route) => false,
+                      );
+                    },
                     child: RichText(
                       text: TextSpan(
                         text: 'Already have an account? ',

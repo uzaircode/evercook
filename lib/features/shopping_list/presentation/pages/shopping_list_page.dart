@@ -56,6 +56,7 @@ class ShoppingListPageState extends State<ShoppingListPage> {
                   flex: 1,
                   child: ListView(
                     children: recipeIds
+                        //TODO UI: show recipe card instead
                         .map((id) => ListTile(
                               title: Text('Recipe ID: $id'),
                               trailing: IconButton(

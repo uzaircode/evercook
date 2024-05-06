@@ -24,10 +24,14 @@ class RecipeDetailsPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pushAndRemoveUntil(context, EditRecipePage.route(recipe), (route) => false);
+              Navigator.push(
+                context,
+                EditRecipePage.route(recipe),
+              );
             },
             icon: const Icon(Icons.edit),
           ),
+          // TODO UI: popup delete confirmation
           IconButton(
             onPressed: () {
               context.read<RecipeBloc>().add(RecipeDelete(id: recipe.id));
@@ -52,6 +56,7 @@ class RecipeDetailsPage extends StatelessWidget {
             const SizedBox(height: 8),
             const SizedBox(height: 8),
             _imageWidget(recipe.imageUrl),
+            // TODO UI: show success snackbar
             IconButton(
               onPressed: () async {
                 await Supabase.instance.client.from('meal_plan').insert([
