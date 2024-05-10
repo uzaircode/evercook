@@ -10,7 +10,7 @@ class RecipeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, RecipeDetailsPage.route(recipe));
+        // Navigator.push(context, RecipeDetailsPage. route());
       },
       child: Container(
         height: 80,
