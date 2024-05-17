@@ -21,26 +21,32 @@ class UploadRecipeUseCase implements UseCase<Recipe, UploadRecipeParams> {
       cookTime: params.cookTime,
       servings: params.servings,
       image: params.imageUrl,
+      notes: params.notes,
+      sources: params.sources,
     );
   }
 }
 
 class UploadRecipeParams {
   final String userId;
-  final String title;
-  final String description;
-  final String prepTime;
-  final String cookTime;
-  final int servings;
-  final File imageUrl;
+  final String? title;
+  final String? description;
+  final String? prepTime;
+  final String? cookTime;
+  final int? servings;
+  final String? notes;
+  final String? sources;
+  final File? imageUrl;
 
   UploadRecipeParams({
     required this.userId,
-    required this.title,
-    required this.description,
-    required this.prepTime,
-    required this.cookTime,
-    required this.servings,
-    required this.imageUrl,
+    this.title,
+    this.description,
+    this.prepTime,
+    this.cookTime,
+    this.servings,
+    this.notes,
+    this.sources,
+    this.imageUrl,
   });
 }

@@ -62,114 +62,134 @@ class _LoginPageState extends State<LoginPage> {
               key: formKey,
               child: Column(
                 children: [
-                  AuthField(controller: _emailController, hintText: 'Email'),
-                  const SizedBox(height: 15),
-                  AuthField(
-                    controller: _passwordController,
-                    hintText: 'Password',
-                    isObscureText: true,
-                  ),
-                  const SizedBox(height: 12),
-                  const SizedBox(height: 12),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        RecoverPasswordPage.route(),
-                      );
-                    },
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Forgot Password? ',
-                        style: Theme.of(context).textTheme.titleMedium,
-                        children: [
-                          TextSpan(
-                            text: 'Recover Password',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: AppPallete.gradient2,
-                                  fontWeight: FontWeight.bold,
+                  Expanded(
+                    flex: 10,
+                    child: Column(
+                      children: [
+                        AuthField(controller: _emailController, hintText: 'Email'),
+                        const SizedBox(height: 15),
+                        AuthField(
+                          controller: _passwordController,
+                          hintText: 'Password',
+                          isObscureText: true,
+                        ),
+                        const SizedBox(height: 12),
+                        const SizedBox(height: 12),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              RecoverPasswordPage.route(),
+                            );
+                          },
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'Forgot Password? ',
+                              style: Theme.of(context).textTheme.titleMedium,
+                              children: [
+                                TextSpan(
+                                  text: 'Recover Password',
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        color: AppPallete.gradient2,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  AuthButton(
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          context.read<auth_bloc.AuthBloc>().add(
-                                auth_bloc.AuthLogin(
-                                  email: _emailController.text.trim(),
-                                  password: _passwordController.text.trim(),
-                                ),
+                        ),
+                        const SizedBox(height: 40),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: AuthButton(
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                context.read<auth_bloc.AuthBloc>().add(
+                                      auth_bloc.AuthLogin(
+                                        email: _emailController.text.trim(),
+                                        password: _passwordController.text.trim(),
+                                      ),
+                                    );
+                              }
+                            },
+                            buttonText: 'Login',
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: () async {
+                            const webClientId =
+                                '908468362758-rdalsblfhdl2nbnh9bui78ubgmhdboi3.apps.googleusercontent.com';
+                            const iosClientId =
+                                '908468362758-m5a317hnbtj1ji5mqrrj30ehr34k9bs4.apps.googleusercontent.com';
+
+                            final GoogleSignIn googleSignIn = GoogleSignIn(
+                              clientId: iosClientId,
+                              serverClientId: webClientId,
+                            );
+                            final googleUser = await googleSignIn.signIn();
+                            final googleAuth = await googleUser!.authentication;
+                            final accessToken = googleAuth.accessToken;
+                            final idToken = googleAuth.idToken;
+
+                            if (accessToken == null) {
+                              throw 'No Access Token found.';
+                            }
+                            if (idToken == null) {
+                              throw 'No ID Token found.';
+                            }
+
+                            await Supabase.instance.client.auth.signInWithIdToken(
+                              provider: OAuthProvider.google,
+                              idToken: idToken,
+                              accessToken: accessToken,
+                            );
+                            if (Supabase.instance.client.auth.currentUser == null) {
+                              throw 'Failed to sign in with Google.';
+                            } else {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                Dashboard.route(),
+                                (route) => false,
                               );
-                        }
-                      },
-                      buttonText: 'Sign In'),
-                  const SizedBox(height: 12),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        SignUpPage.route(),
-                      );
-                    },
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Don\'t have an account? ',
-                        style: Theme.of(context).textTheme.titleMedium,
-                        children: [
-                          TextSpan(
-                            text: 'Sign Up',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: AppPallete.gradient2,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                        ],
-                      ),
+                            }
+                          },
+                          child: const Text('Sign in with google'),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () async {
-                      const webClientId = '908468362758-rdalsblfhdl2nbnh9bui78ubgmhdboi3.apps.googleusercontent.com';
-                      const iosClientId = '908468362758-m5a317hnbtj1ji5mqrrj30ehr34k9bs4.apps.googleusercontent.com';
-
-                      final GoogleSignIn googleSignIn = GoogleSignIn(
-                        clientId: iosClientId,
-                        serverClientId: webClientId,
-                      );
-                      final googleUser = await googleSignIn.signIn();
-                      final googleAuth = await googleUser!.authentication;
-                      final accessToken = googleAuth.accessToken;
-                      final idToken = googleAuth.idToken;
-
-                      if (accessToken == null) {
-                        throw 'No Access Token found.';
-                      }
-                      if (idToken == null) {
-                        throw 'No ID Token found.';
-                      }
-
-                      await Supabase.instance.client.auth.signInWithIdToken(
-                        provider: OAuthProvider.google,
-                        idToken: idToken,
-                        accessToken: accessToken,
-                      );
-                      if (Supabase.instance.client.auth.currentUser == null) {
-                        throw 'Failed to sign in with Google.';
-                      } else {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          Dashboard.route(),
-                          (route) => false,
-                        );
-                      }
-                    },
-                    child: const Text('Sign in with google'),
-                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              SignUpPage.route(),
+                            );
+                          },
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'Don\'t have an account? ',
+                              style: Theme.of(context).textTheme.titleMedium,
+                              children: [
+                                TextSpan(
+                                  text: 'Sign Up',
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        color: AppPallete.gradient2,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             );

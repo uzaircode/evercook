@@ -1,7 +1,7 @@
 import 'package:evercook/features/auth/presentation/pages/profile_page.dart';
 import 'package:evercook/features/meal_plan/presentation/pages/view_meal_plan.dart';
 import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
-import 'package:evercook/features/recipe/presentation/pages/search_page.dart';
+import 'package:evercook/features/shopping_list/presentation/pages/shopping_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -18,7 +18,8 @@ class _DashboardState extends State<Dashboard> {
 
   late final List<Widget> _screens = <Widget>[
     const HomePage(),
-    const SearchPage(),
+    // const SearchPage(),
+    const ShoppingListPage(),
     const ViewMealPlan(),
     const ProfilePage(),
   ];
@@ -51,26 +52,26 @@ class _DashboardState extends State<Dashboard> {
             unselectedFontSize: 12,
             selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            selectedItemColor: Colors.pink[400],
+            selectedItemColor: const Color.fromARGB(255, 244, 118, 160),
             backgroundColor: Colors.grey[50],
             enableFeedback: false,
             elevation: 0,
             onTap: _onItemTapped,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: FaIcon(Icons.book),
+                icon: FaIcon(Icons.book_outlined),
                 label: 'Recipes',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.search),
-                label: 'Search',
+                icon: FaIcon(Icons.shopping_bag_outlined),
+                label: 'Groceries',
               ),
               BottomNavigationBarItem(
-                icon: FaIcon(Icons.calendar_month),
+                icon: FaIcon(Icons.calendar_month_outlined),
                 label: 'Meal Plan',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
+                icon: FaIcon(Icons.person_outline),
                 label: 'Profile',
               ),
             ],

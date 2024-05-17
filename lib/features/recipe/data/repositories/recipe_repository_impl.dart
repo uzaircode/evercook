@@ -17,12 +17,14 @@ class RecipeRepositoryImpl implements RecipeRepository {
   @override
   Future<Either<Failure, Recipe>> uploadRecipe({
     required String userId,
-    required String title,
-    required String description,
-    required String prepTime,
-    required String cookTime,
-    required int servings,
-    required File image,
+    String? title,
+    String? description,
+    String? prepTime,
+    String? cookTime,
+    int? servings,
+    String? notes,
+    String? sources,
+    File? image,
   }) async {
     try {
       RecipeModel recipeModel = RecipeModel(
@@ -34,12 +36,14 @@ class RecipeRepositoryImpl implements RecipeRepository {
         cookTime: cookTime,
         servings: servings,
         ingredients: [],
+        notes: notes,
+        sources: sources,
         imageUrl: '',
         updatedAt: DateTime.now(),
       );
 
       final imageUrl = await recipeRemoteDataSource.uploadRecipeImage(
-        image: image,
+        image: image!,
         recipe: recipeModel,
       );
 

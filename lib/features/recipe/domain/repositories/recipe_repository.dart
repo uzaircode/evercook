@@ -5,13 +5,15 @@ import 'package:fpdart/fpdart.dart';
 
 abstract interface class RecipeRepository {
   Future<Either<Failure, Recipe>> uploadRecipe({
-    required String title,
+    String? title,
     required String userId,
-    required String description,
-    required String prepTime,
-    required String cookTime,
-    required int servings,
-    required File image,
+    String? description,
+    String? prepTime,
+    String? cookTime,
+    int? servings,
+    File? image,
+    String? notes,
+    String? sources,
   });
 
   Future<Either<Failure, List<Recipe>>> getAllRecipes();

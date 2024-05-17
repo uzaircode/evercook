@@ -1,7 +1,5 @@
 import 'package:evercook/core/theme/app_pallete.dart';
-import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EditProfilePage extends StatelessWidget {
   static route() => MaterialPageRoute(
@@ -64,25 +62,6 @@ class EditProfilePage extends StatelessWidget {
                     },
                   ),
                 ],
-              ),
-            ),
-            const SizedBox(height: 40),
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(AuthSignOut());
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // background color
-                ),
-                child: const Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
               ),
             ),
           ],

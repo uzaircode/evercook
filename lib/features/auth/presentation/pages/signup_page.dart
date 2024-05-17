@@ -6,6 +6,7 @@ import 'package:evercook/features/auth/presentation/widgets/auth_button.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_field.dart';
 import 'package:evercook/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -75,19 +76,23 @@ class _SignUpPageState extends State<SignUpPage> {
                     isObscureText: true,
                   ),
                   const SizedBox(height: 30),
-                  AuthButton(
-                    buttonText: 'Sign Up',
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        context.read<AuthBloc>().add(
-                              AuthSignUp(
-                                email: _emailController.text.trim(),
-                                name: _nameController.text.trim(),
-                                password: _passwordController.text.trim(),
-                              ),
-                            );
-                      }
-                    },
+                  SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: AuthButton(
+                      buttonText: 'Sign Up',
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          context.read<AuthBloc>().add(
+                                AuthSignUp(
+                                  email: _emailController.text.trim(),
+                                  name: _nameController.text.trim(),
+                                  password: _passwordController.text.trim(),
+                                ),
+                              );
+                        }
+                      },
+                    ),
                   ),
                   const SizedBox(height: 20),
                   GestureDetector(

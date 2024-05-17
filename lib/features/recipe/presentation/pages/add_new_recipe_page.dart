@@ -7,8 +7,7 @@ import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:evercook/core/utils/pick_image.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
-import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
-import 'package:evercook/features/recipe/presentation/widgets/recipe_editor.dart';
+import 'package:evercook/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
@@ -31,6 +30,8 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
   final cookTimeController = TextEditingController();
   final servingsController = TextEditingController();
   final imageUrlController = TextEditingController();
+  final notesController = TextEditingController();
+  final sourcesController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   File? image;
 
@@ -50,13 +51,15 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
 
       context.read<RecipeBloc>().add(
             RecipeUpload(
-              title: titleController.text.trim(),
               userId: userId,
-              description: descriptionController.text.trim(),
-              prepTime: prepTimeController.text.trim(),
-              cookTime: cookTimeController.text.trim(),
-              servings: int.parse(servingsController.text.trim()),
-              image: image!,
+              title: titleController.text.trim().isEmpty ? null : titleController.text.trim(),
+              description: descriptionController.text.trim().isEmpty ? null : descriptionController.text.trim(),
+              prepTime: prepTimeController.text.trim().isEmpty ? null : prepTimeController.text.trim(),
+              cookTime: cookTimeController.text.trim().isEmpty ? null : cookTimeController.text.trim(),
+              servings: int.tryParse(servingsController.text.trim()),
+              notes: notesController.text.trim().isEmpty ? null : notesController.text.trim(),
+              sources: sourcesController.text.trim().isEmpty ? null : sourcesController.text.trim(),
+              image: image,
             ),
           );
     }
@@ -69,8 +72,10 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
     descriptionController.dispose();
     prepTimeController.dispose();
     cookTimeController.dispose();
-    servingsController.dispose();
     imageUrlController.dispose();
+    servingsController.dispose();
+    notesController.dispose();
+    sourcesController.dispose();
   }
 
   @override
@@ -90,7 +95,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
           if (state is RecipeFailure) {
             showSnackBar(context, state.error);
           } else if (state is RecipeUploadSuccess) {
-            Navigator.pushAndRemoveUntil(context, HomePage.route(), (route) => false);
+            Navigator.pushAndRemoveUntil(context, Dashboard.route(), (route) => false);
           }
         },
         builder: (context, state) {
@@ -155,15 +160,89 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                             ),
                           ),
                     const SizedBox(height: 10),
-                    RecipeEditor(controller: titleController, hintText: 'Title'),
+                    // RecipeEditor(controller: titleController, hintText: 'Title'),
+                    TextFormField(
+                      controller: titleController,
+                      decoration: const InputDecoration(
+                        hintText: 'Title',
+                      ),
+                      maxLines: null,
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                    ),
                     const SizedBox(height: 10),
-                    RecipeEditor(controller: descriptionController, hintText: 'Description'),
+                    // RecipeEditor(controller: descriptionController, hintText: 'Description'),
+                    TextFormField(
+                      controller: descriptionController,
+                      decoration: const InputDecoration(
+                        hintText: 'Description',
+                      ),
+                      maxLines: null,
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                    ),
                     const SizedBox(height: 10),
-                    RecipeEditor(controller: cookTimeController, hintText: 'Cook Time'),
+                    // RecipeEditor(controller: cookTimeController, hintText: 'Cook Time'),
+                    TextFormField(
+                      controller: cookTimeController,
+                      decoration: const InputDecoration(
+                        hintText: 'Cook Time',
+                      ),
+                      maxLines: null,
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                    ),
                     const SizedBox(height: 10),
-                    RecipeEditor(controller: prepTimeController, hintText: 'Prep Time'),
+                    // RecipeEditor(controller: prepTimeController, hintText: 'Prep Time'),
+                    TextFormField(
+                      controller: prepTimeController,
+                      decoration: const InputDecoration(
+                        hintText: 'Prep Time',
+                      ),
+                      maxLines: null,
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                    ),
                     const SizedBox(height: 10),
-                    RecipeEditor(controller: servingsController, hintText: 'Servings'),
+                    // RecipeEditor(controller: servingsController, hintText: 'Servings'),
+                    TextFormField(
+                      controller: servingsController,
+                      decoration: const InputDecoration(
+                        hintText: 'Servings',
+                      ),
+                      maxLines: null,
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    // RecipeEditor(controller: notesController, hintText: 'Notes'),
+                    TextFormField(
+                      controller: notesController,
+                      decoration: const InputDecoration(
+                        hintText: 'Notes',
+                      ),
+                      maxLines: null,
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    // RecipeEditor(controller: sourcesController, hintText: 'Sources'),
+                    TextFormField(
+                      controller: sourcesController,
+                      decoration: const InputDecoration(
+                        hintText: 'Sources',
+                      ),
+                      maxLines: null,
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                    ),
                   ],
                 ),
               ),

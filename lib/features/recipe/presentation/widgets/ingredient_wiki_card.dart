@@ -59,7 +59,6 @@ class IngredientWikiCard extends StatelessWidget {
                 const SizedBox(height: 50),
               ],
             ),
-            // Text('${calculateReadingTime(blog.content)} mins'),
           ],
         ),
       ),

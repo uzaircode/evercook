@@ -4,22 +4,26 @@ part of 'recipe_bloc.dart';
 sealed class RecipeEvent {}
 
 final class RecipeUpload extends RecipeEvent {
-  final String title;
+  final String? title;
   final String userId;
-  final String description;
-  final String prepTime;
-  final String cookTime;
-  final int servings;
-  final File image;
+  final String? description;
+  final String? prepTime;
+  final String? cookTime;
+  final int? servings;
+  final File? image;
+  final String? sources;
+  final String? notes;
 
   RecipeUpload({
-    required this.title,
+    this.title,
     required this.userId,
-    required this.description,
-    required this.prepTime,
-    required this.cookTime,
-    required this.servings,
-    required this.image,
+    this.description,
+    this.prepTime,
+    this.cookTime,
+    this.servings,
+    this.image,
+    this.sources,
+    this.notes,
   });
 }
 

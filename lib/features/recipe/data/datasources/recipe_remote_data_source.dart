@@ -63,9 +63,11 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
 
       LoggerService.logger.i('Recipes: $recipes');
       return recipes
-          .map((recipe) => RecipeModel.fromJson(recipe).copyWith(
-                username: recipe['profiles']['name'],
-              ))
+          .map(
+            (recipe) => RecipeModel.fromJson(recipe).copyWith(
+              username: recipe['profiles']['name'],
+            ),
+          )
           .toList();
     } catch (e) {
       throw ErrorHandler.handleError(e);

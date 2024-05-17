@@ -1,5 +1,7 @@
+import 'package:evercook/core/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ViewMealPlan extends StatefulWidget {
@@ -28,8 +30,8 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
   }
 
   void fetchMealPlans() async {
-    final response = await Supabase.instance.client.from('meal_plan').select();
-
+    final response = await Supabase.instance.client.from('meal_plan').select('*, recipes(title)');
+    LoggerService.logger.i(response.toString());
     final List<Map<String, dynamic>> mealPlans = response;
     for (var day in weekDays) {
       mealPlansByDay[day] =
@@ -115,6 +117,7 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             ...meals.map((meal) {
+                              LoggerService.logger.i(meal);
                               return Container(
                                 margin: const EdgeInsets.symmetric(vertical: 5),
                                 child: Row(
@@ -122,9 +125,10 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                                   children: [
                                     Flexible(
                                       child: Text(
-                                        'Recipe ID: ${meal['recipe_id']}',
+                                        '${meal['recipes']['title']}',
                                         style: const TextStyle(
                                           fontSize: 16,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                         overflow: TextOverflow.ellipsis, // Adjust overflow behavior as needed
                                       ),

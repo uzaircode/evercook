@@ -42,11 +42,16 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       cookTime: event.cookTime,
       servings: event.servings,
       imageUrl: event.image,
+      notes: event.notes,
+      sources: event.sources,
     ));
 
     res.fold(
       (l) => emit(RecipeFailure(l.message)),
-      (r) => emit(RecipeUploadSuccess()),
+      (r) {
+        emit(RecipeUploadSuccess());
+        add(RecipeFetchAllRecipes());
+      },
     );
   }
 
@@ -70,7 +75,10 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
 
     res.fold(
       (l) => emit(RecipeFailure(l.message)),
-      (r) => emit(RecipeDeleteSuccess()),
+      (r) {
+        emit(RecipeDeleteSuccess());
+        add(RecipeFetchAllRecipes());
+      },
     );
   }
 }

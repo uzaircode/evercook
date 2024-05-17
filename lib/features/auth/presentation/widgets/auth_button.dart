@@ -11,14 +11,23 @@ class AuthButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        fixedSize: const Size(395, 55),
-        backgroundColor: AppPallete.transparentColor,
-        shadowColor: AppPallete.transparentColor,
+        elevation: 0,
+        backgroundColor: const Color.fromARGB(255, 244, 118, 160),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
       child: Text(
         buttonText,
-        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+        style: const TextStyle(
+          fontSize: 18,
+          color: Colors.white,
+        ),
       ),
+      // child: Text(
+      //   buttonText,
+      //   style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+      // ),
     );
   }
 }

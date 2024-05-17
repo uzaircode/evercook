@@ -39,10 +39,10 @@ class _EditRecipePageState extends State<EditRecipePage> {
       // Retrieve the recipe passed from the previous page
       final arguments = ModalRoute.of(context)?.settings.arguments;
       if (arguments is Recipe) {
-        titleController.text = widget.recipe.title;
-        descriptionController.text = widget.recipe.description;
-        prepTimeController.text = widget.recipe.prepTime;
-        cookTimeController.text = widget.recipe.cookTime;
+        titleController.text = widget.recipe.title ?? '';
+        descriptionController.text = widget.recipe.description ?? '';
+        prepTimeController.text = widget.recipe.prepTime ?? '';
+        cookTimeController.text = widget.recipe.cookTime ?? '';
         servingsController.text = widget.recipe.servings.toString();
       }
       isInit = false;
@@ -65,7 +65,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
           .from('recipes')
           .update({
             'title': titleController.text.trim(),
-            'description': descriptionController.text.trim(),
+            'description': descriptionController.text.trim().isEmpty ? null : descriptionController.text.trim(),
             'prep_time': prepTimeController.text.trim(),
             'cook_time': cookTimeController.text.trim(),
             'servings': int.parse(servingsController.text.trim()),
@@ -133,13 +133,13 @@ class _EditRecipePageState extends State<EditRecipePage> {
                       ),
               ),
               const SizedBox(height: 10),
-              RecipeEditor(controller: titleController, hintText: widget.recipe.title),
+              RecipeEditor(controller: titleController, hintText: widget.recipe.title ?? ''),
               const SizedBox(height: 10),
-              RecipeEditor(controller: descriptionController, hintText: widget.recipe.description),
+              RecipeEditor(controller: descriptionController, hintText: widget.recipe.description ?? ''),
               const SizedBox(height: 10),
-              RecipeEditor(controller: cookTimeController, hintText: widget.recipe.cookTime),
+              RecipeEditor(controller: cookTimeController, hintText: widget.recipe.cookTime ?? ''),
               const SizedBox(height: 10),
-              RecipeEditor(controller: prepTimeController, hintText: widget.recipe.prepTime),
+              RecipeEditor(controller: prepTimeController, hintText: widget.recipe.prepTime ?? ''),
               const SizedBox(height: 10),
               RecipeEditor(controller: servingsController, hintText: widget.recipe.servings.toString()),
             ],
