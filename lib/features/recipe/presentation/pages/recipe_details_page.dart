@@ -1,8 +1,6 @@
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/recipe/presentation/pages/edit_recipe_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
@@ -132,13 +130,56 @@ class RecipeDetailsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           Divider(color: Colors.grey.shade300),
-                          _buildSectionTitle(context, 'Ingredients'),
+                          _buildSectionTitle(
+                            context,
+                            'Ingredients',
+                            IconButton(
+                              onPressed: () async {
+                                LoggerService.logger.d('Starting to add to shopping list');
+                                LoggerService.logger.d('Recipe ID: ${recipe.id}');
+                                LoggerService.logger.d('User ID: ${recipe.userId}');
+
+                                try {
+                                  // Perform the RPC call and store the result
+                                  await _addShoppingList();
+                                } catch (e) {
+                                  // Log any errors that occur during the RPC call
+                                  LoggerService.logger.e('Error updating shopping list: $e');
+                                }
+                              },
+                              icon: const Icon(Icons.local_grocery_store_outlined),
+                            ),
+                          ),
                           _buildIngredientList(
                             recipe.ingredients,
                           ),
                           const SizedBox(height: 16),
                           Divider(color: Colors.grey.shade300),
-                          _buildSectionTitle(context, 'Directions'),
+                          _buildSectionTitle(context, 'Directions', null),
+                          Text(
+                            recipe.directions ?? '',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Color.fromARGB(255, 109, 107, 107),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Divider(color: Colors.grey.shade300),
+                          _buildSectionTitle(
+                            context,
+                            'Notes',
+                            null,
+                          ),
+                          Text(
+                            recipe.notes ?? '',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Color.fromARGB(255, 109, 107, 107),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
                         ],
                       ),
                     ),
@@ -234,7 +275,7 @@ class RecipeDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
+  Widget _buildSectionTitle(BuildContext context, String title, IconButton? icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -247,22 +288,23 @@ class RecipeDetailsPage extends StatelessWidget {
               fontSize: 20,
             ),
           ),
-          IconButton(
-            onPressed: () async {
-              LoggerService.logger.d('Starting to add to shopping list');
-              LoggerService.logger.d('Recipe ID: ${recipe.id}');
-              LoggerService.logger.d('User ID: ${recipe.userId}');
+          if (icon != null) icon,
+          // IconButton(
+          //   onPressed: () async {
+          //     LoggerService.logger.d('Starting to add to shopping list');
+          //     LoggerService.logger.d('Recipe ID: ${recipe.id}');
+          //     LoggerService.logger.d('User ID: ${recipe.userId}');
 
-              try {
-                // Perform the RPC call and store the result
-                await _addShoppingList();
-              } catch (e) {
-                // Log any errors that occur during the RPC call
-                LoggerService.logger.e('Error updating shopping list: $e');
-              }
-            },
-            icon: const Icon(Icons.local_grocery_store_outlined),
-          ),
+          //     try {
+          //       // Perform the RPC call and store the result
+          //       await _addShoppingList();
+          //     } catch (e) {
+          //       // Log any errors that occur during the RPC call
+          //       LoggerService.logger.e('Error updating shopping list: $e');
+          //     }
+          //   },
+          //   icon: const Icon(Icons.local_grocery_store_outlined),
+          // ),
         ],
       ),
     );

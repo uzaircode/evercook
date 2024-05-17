@@ -1,6 +1,5 @@
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
-import 'package:evercook/features/auth/presentation/pages/profile_page.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:evercook/features/recipe/presentation/pages/add_new_recipe_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/profile_user_page.dart';
@@ -163,8 +162,27 @@ class _HomePageState extends State<HomePage> {
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
+                                            height: 1.3,
                                           ),
                                         ),
+                                        recipe.sources != null
+                                            ? Row(
+                                                children: [
+                                                  const FaIcon(
+                                                    FontAwesomeIcons.book,
+                                                    size: 12,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Text(
+                                                    extractDomain(recipe.sources!),
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : const SizedBox.shrink(),
                                         const SizedBox(height: 5),
                                         Text(
                                           recipe.description ?? '',
@@ -194,6 +212,11 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+String extractDomain(String url) {
+  Uri uri = Uri.parse(url);
+  return uri.host;
 }
 
 class CustomSearch extends SearchDelegate<String> {
@@ -236,6 +259,7 @@ class CustomSearch extends SearchDelegate<String> {
             final profile = results[index];
             return ListTile(
               leading: CircleAvatar(
+                backgroundColor: const Color.fromARGB(255, 238, 198, 202),
                 backgroundImage: NetworkImage(profile['image_url'] ?? 'https://robohash.org/${profile['id']}'),
               ),
               title: Text(
@@ -290,6 +314,7 @@ class CustomSearch extends SearchDelegate<String> {
             final profile = results[index];
             return ListTile(
               leading: CircleAvatar(
+                backgroundColor: const Color.fromARGB(255, 238, 198, 202),
                 backgroundImage: NetworkImage(
                   profile['image_url'] ?? 'https://robohash.org/${profile['id']}',
                 ),

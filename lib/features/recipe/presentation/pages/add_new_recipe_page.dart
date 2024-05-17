@@ -30,6 +30,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
   final cookTimeController = TextEditingController();
   final servingsController = TextEditingController();
   final imageUrlController = TextEditingController();
+  final directionsController = TextEditingController();
   final notesController = TextEditingController();
   final sourcesController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -74,6 +75,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
     cookTimeController.dispose();
     imageUrlController.dispose();
     servingsController.dispose();
+    directionsController.dispose();
     notesController.dispose();
     sourcesController.dispose();
   }
@@ -213,6 +215,18 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                       controller: servingsController,
                       decoration: const InputDecoration(
                         hintText: 'Servings',
+                      ),
+                      maxLines: null,
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    // RecipeEditor(controller: notesController, hintText: 'Notes'),
+                    TextFormField(
+                      controller: notesController,
+                      decoration: const InputDecoration(
+                        hintText: 'Directions',
                       ),
                       maxLines: null,
                       onTapOutside: (event) {

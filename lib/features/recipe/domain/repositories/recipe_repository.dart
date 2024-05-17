@@ -12,6 +12,7 @@ abstract interface class RecipeRepository {
     String? cookTime,
     int? servings,
     File? image,
+    String? directions,
     String? notes,
     String? sources,
   });

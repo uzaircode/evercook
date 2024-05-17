@@ -1,4 +1,3 @@
-import 'package:evercook/features/recipe/presentation/pages/recipe_details_page.dart';
 import 'package:evercook/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';

@@ -19,6 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final userName = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.name;
     final userEmail = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.email;
+    final userId = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
 
     return SafeArea(
       child: Scaffold(
@@ -38,10 +39,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 80,
-                    backgroundColor: Colors.grey,
-                    backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+                    backgroundColor: const Color.fromARGB(255, 238, 198, 202),
+                    backgroundImage: NetworkImage(
+                      'https://robohash.org/$userId',
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Text(

@@ -1,5 +1,4 @@
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
-import 'package:evercook/features/recipe/presentation/pages/recipe_details_page.dart';
 import 'package:flutter/material.dart';
 
 class RecipeCard extends StatelessWidget {

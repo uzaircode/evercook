@@ -44,6 +44,9 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
                   }
                   return null;
                 },
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -55,6 +58,9 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
                 validator: (value) {
                   // Basic email validation
                   return value != null && value.contains('@') ? null : 'Enter a valid email';
+                },
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
                 },
               ),
               const SizedBox(height: 16),
@@ -83,6 +89,9 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
                     return 'Password must be at least 6 characters!';
                   }
                   return null;
+                },
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
                 },
               ),
               const SizedBox(height: 16),

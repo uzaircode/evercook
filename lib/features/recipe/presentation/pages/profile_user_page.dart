@@ -60,7 +60,9 @@ class ProfileUserPageState extends State<ProfileUserPage> {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(widget.profileData['imageUrl'] ?? 'https://via.placeholder.com/150'),
+                    backgroundColor: const Color.fromARGB(255, 238, 198, 202),
+                    backgroundImage: NetworkImage(
+                        widget.profileData['imageUrl'] ?? 'https://robohash.org/${widget.profileData['id']}'),
                   ),
                   const SizedBox(width: 20),
                   Expanded(
@@ -74,7 +76,10 @@ class ProfileUserPageState extends State<ProfileUserPage> {
                         const SizedBox(height: 10),
                         Text(
                           widget.profileData['description'] ?? 'No description available',
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       ],
                     ),
@@ -99,6 +104,7 @@ class ProfileUserPageState extends State<ProfileUserPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: GridView.builder(
                       shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 20,

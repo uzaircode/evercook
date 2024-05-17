@@ -21,6 +21,7 @@ class UploadRecipeUseCase implements UseCase<Recipe, UploadRecipeParams> {
       cookTime: params.cookTime,
       servings: params.servings,
       image: params.imageUrl,
+      directions: params.directions,
       notes: params.notes,
       sources: params.sources,
     );
@@ -34,6 +35,7 @@ class UploadRecipeParams {
   final String? prepTime;
   final String? cookTime;
   final int? servings;
+  final String? directions;
   final String? notes;
   final String? sources;
   final File? imageUrl;
@@ -45,6 +47,7 @@ class UploadRecipeParams {
     this.prepTime,
     this.cookTime,
     this.servings,
+    this.directions,
     this.notes,
     this.sources,
     this.imageUrl,

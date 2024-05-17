@@ -12,6 +12,7 @@ class RecipeModel extends Recipe {
     required super.ingredients,
     required super.imageUrl,
     required super.updatedAt,
+    required super.directions,
     required super.notes,
     required super.sources,
     super.username,
@@ -28,6 +29,7 @@ class RecipeModel extends Recipe {
     List<Map<String, dynamic>>? ingredients,
     String? imageUrl,
     DateTime? updatedAt,
+    String? directions,
     String? notes,
     String? sources,
     String? username,
@@ -42,6 +44,7 @@ class RecipeModel extends Recipe {
       servings: servings ?? this.servings,
       ingredients: ingredients ?? this.ingredients,
       imageUrl: imageUrl ?? this.imageUrl,
+      directions: directions ?? this.directions,
       notes: notes ?? this.notes,
       sources: sources ?? this.sources,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -59,6 +62,7 @@ class RecipeModel extends Recipe {
       'servings': servings,
       'ingredients': ingredients,
       'image_url': imageUrl,
+      'directions': directions,
       'notes': notes,
       'sources': sources,
       'updated_at': updatedAt.toIso8601String(),
@@ -76,6 +80,7 @@ class RecipeModel extends Recipe {
       servings: map['servings'] as int?,
       ingredients: _parseIngredients(map['ingredients']),
       imageUrl: map['image_url'] as String?,
+      directions: map['directions'] as String?,
       notes: map['notes'] as String?,
       sources: map['sources'] as String?,
       updatedAt: map['updated_at'] == null ? DateTime.now() : DateTime.parse(map['updated_at'] as String),
@@ -94,6 +99,6 @@ class RecipeModel extends Recipe {
 
   @override
   String toString() {
-    return 'Recipe(id: $id, title: $title, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, ingredients: $ingredients, image_url: $imageUrl, notes: $notes, sources: $sources, updated_at: $updatedAt), username: $username';
+    return 'Recipe(id: $id, title: $title, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, ingredients: $ingredients, image_url: $imageUrl, directions: $directions, notes: $notes, sources: $sources, updated_at: $updatedAt), username: $username';
   }
 }

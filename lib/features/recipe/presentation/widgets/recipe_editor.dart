@@ -19,6 +19,9 @@ class RecipeEditor extends StatelessWidget {
         }
         return null;
       },
+      onTapOutside: (event) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
     );
   }
 }

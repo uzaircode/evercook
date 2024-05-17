@@ -52,6 +52,9 @@ class EditProfilePage extends StatelessWidget {
                     validator: (value) {
                       return value;
                     },
+                    onTapOutside: (event) {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    },
                   ),
                   TextFormField(
                     decoration: const InputDecoration(
@@ -59,6 +62,9 @@ class EditProfilePage extends StatelessWidget {
                     ),
                     validator: (value) {
                       return value;
+                    },
+                    onTapOutside: (event) {
+                      FocusManager.instance.primaryFocus?.unfocus();
                     },
                   ),
                 ],

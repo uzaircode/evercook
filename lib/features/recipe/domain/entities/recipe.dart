@@ -9,9 +9,10 @@ class Recipe {
   final List<Map<String, dynamic>> ingredients;
   final String? imageUrl;
   final DateTime updatedAt;
-  final String? username;
+  final String? directions;
   final String? notes;
   final String? sources;
+  final String? username;
 
   Recipe({
     required this.id,
@@ -24,6 +25,7 @@ class Recipe {
     required this.ingredients,
     this.imageUrl,
     required this.updatedAt,
+    this.directions,
     this.notes,
     this.sources,
     this.username,
