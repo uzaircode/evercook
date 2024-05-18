@@ -5,6 +5,7 @@ class UserModel extends User {
     required super.id,
     required super.name,
     required super.email,
+    required super.bio,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> map) {
@@ -12,6 +13,7 @@ class UserModel extends User {
       id: map['id'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
+      bio: map['bio'] ?? '',
     );
   }
 
@@ -19,11 +21,13 @@ class UserModel extends User {
     String? id,
     String? email,
     String? name,
+    String? bio,
   }) {
     return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
+      bio: bio ?? this.bio,
     );
   }
 }

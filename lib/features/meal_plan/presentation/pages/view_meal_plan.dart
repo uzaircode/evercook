@@ -103,7 +103,7 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                       List<Map<String, dynamic>> meals = mealPlansByDay[date] ?? [];
                       return Container(
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
+                          color: const Color.fromARGB(255, 241, 242, 241),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

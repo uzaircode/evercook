@@ -65,7 +65,7 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
       return recipes
           .map(
             (recipe) => RecipeModel.fromJson(recipe).copyWith(
-              username: recipe['profiles']['name'],
+              name: recipe['profiles']['name'],
             ),
           )
           .toList();

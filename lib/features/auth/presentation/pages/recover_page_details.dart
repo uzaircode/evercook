@@ -72,7 +72,6 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
                   labelText: 'Password',
                   suffixIcon: IconButton(
                     icon: Icon(
-                      // Toggle the password visibility
                       _passwordVisible ? Icons.visibility : Icons.visibility_off,
                       color: Theme.of(context).primaryColorDark,
                     ),

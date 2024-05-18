@@ -1,4 +1,3 @@
-import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:flutter/material.dart';
 
 class AuthButton extends StatelessWidget {

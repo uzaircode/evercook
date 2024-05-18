@@ -5,6 +5,7 @@ import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/domain/usecases/current_user_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/recover_password_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/sign_out_usecase.dart';
+import 'package:evercook/features/auth/domain/usecases/update_user_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/user_login_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AppUserCubit _appUserCubit;
   final SignOutUseCase _signOut;
   final RecoverPasswordUsecase _recoverPassword;
+  final UpdateUserUseCase _updateUser;
 
   AuthBloc({
     required UserSignUpUseCase userSignUp,
@@ -28,12 +30,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required AppUserCubit appUserCubit,
     required SignOutUseCase signOut,
     required RecoverPasswordUsecase recoverPassword,
+    required UpdateUserUseCase updateUser,
   })  : _userSignUp = userSignUp,
         _userLogin = userLogin,
         _currentUser = currentUser,
         _appUserCubit = appUserCubit,
         _signOut = signOut,
         _recoverPassword = recoverPassword,
+        _updateUser = updateUser,
         super(AuthInitial()) {
     on<AuthEvent>((_, emit) => emit(AuthLoading()));
     on<AuthSignUp>(_onAuthSignUp);
@@ -41,6 +45,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthIsUserLoggedIn>(_isCurrentUserLoggedIn);
     on<AuthSignOut>(_onAuthSignOut);
     on<AuthRecoverPassword>(_onRecoverPassword);
+    on<AuthUpdateUser>(_onUpdateUser);
   }
 
   // void _onAuthSignOut(
@@ -147,6 +152,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     res.fold(
       (l) => emit(AuthFailure(l.message)),
       (r) => emit(AuthRecoverPasswordSuccess()),
+    );
+  }
+
+  void _onUpdateUser(
+    AuthUpdateUser event,
+    Emitter<AuthState> emit,
+  ) async {
+    final res = await _updateUser(
+      UpdateUserParams(
+        name: event.name,
+        bio: event.bio,
+      ),
+    );
+
+    res.fold(
+      (l) => emit(AuthFailure(l.message)),
+      (r) {
+        LoggerService.logger.i('BLoC Success trigggered');
+        emit(AuthUpdateUserSuccess());
+      },
     );
   }
 }

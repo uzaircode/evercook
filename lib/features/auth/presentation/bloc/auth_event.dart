@@ -27,3 +27,10 @@ final class AuthRecoverPassword extends AuthEvent {
 
   AuthRecoverPassword({required this.email});
 }
+
+final class AuthUpdateUser extends AuthEvent {
+  final String name;
+  final String bio;
+
+  AuthUpdateUser({required this.name, required this.bio});
+}

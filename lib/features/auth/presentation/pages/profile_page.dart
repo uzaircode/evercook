@@ -17,7 +17,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    final userName = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.name;
+    final name = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.name;
     final userEmail = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.email;
     final userId = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
 
@@ -48,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    userName,
+                    name,
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,

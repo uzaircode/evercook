@@ -25,6 +25,11 @@ abstract interface class AuthRemoteDataSource {
   Future<void> recoverPassword({
     required String email,
   });
+
+  Future<void> updateUser({
+    required String name,
+    required String bio,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -135,5 +140,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw ServerException(e.toString());
     }
     throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateUser({
+    required String name,
+    required String bio,
+  }) async {
+    try {
+      final response = await supabaseClient.from(DBConstants.profilesTable).update(
+        {
+          'name': name,
+          'bio': bio,
+        },
+      ).eq('id', currentUserSession!.user.id);
+
+      return response;
+    } on AuthException catch (e) {
+      LoggerService.logger.e(e.toString());
+      throw ServerException(e.toString());
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
   }
 }

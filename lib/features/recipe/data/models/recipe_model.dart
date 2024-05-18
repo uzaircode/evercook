@@ -15,7 +15,7 @@ class RecipeModel extends Recipe {
     required super.directions,
     required super.notes,
     required super.sources,
-    super.username,
+    super.name,
   });
 
   RecipeModel copyWith({
@@ -32,7 +32,7 @@ class RecipeModel extends Recipe {
     String? directions,
     String? notes,
     String? sources,
-    String? username,
+    String? name,
   }) {
     return RecipeModel(
       id: id ?? this.id,
@@ -99,6 +99,6 @@ class RecipeModel extends Recipe {
 
   @override
   String toString() {
-    return 'Recipe(id: $id, title: $title, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, ingredients: $ingredients, image_url: $imageUrl, directions: $directions, notes: $notes, sources: $sources, updated_at: $updatedAt), username: $username';
+    return 'Recipe(id: $id, title: $title, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, ingredients: $ingredients, image_url: $imageUrl, directions: $directions, notes: $notes, sources: $sources, updated_at: $updatedAt), name: $name';
   }
 }

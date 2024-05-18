@@ -96,4 +96,26 @@ class AuthRepositoryImpl implements AuthRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateUser({
+    required String name,
+    required String bio,
+  }) async {
+    try {
+      final response = await remoteDataSource.updateUser(
+        name: name,
+        bio: bio,
+      );
+
+      LoggerService.logger.i('Executing for auth repository implementation....');
+      return right(response);
+    } on ServerException catch (e) {
+      LoggerService.logger.i('name: $name, bio: $bio');
+      LoggerService.logger.e('Error in implementation');
+      return left(
+        Failure(e.message),
+      );
+    }
+  }
 }

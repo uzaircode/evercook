@@ -12,7 +12,7 @@ class Recipe {
   final String? directions;
   final String? notes;
   final String? sources;
-  final String? username;
+  final String? name;
 
   Recipe({
     required this.id,
@@ -28,6 +28,6 @@ class Recipe {
     this.directions,
     this.notes,
     this.sources,
-    this.username,
+    this.name,
   });
 }

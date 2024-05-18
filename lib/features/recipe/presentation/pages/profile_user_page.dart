@@ -75,7 +75,7 @@ class ProfileUserPageState extends State<ProfileUserPage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          widget.profileData['description'] ?? 'No description available',
+                          widget.profileData['bio'],
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[600],

@@ -21,4 +21,9 @@ abstract interface class AuthRepository {
   Future<Either<Failure, void>> recoverPassword({
     required String email,
   });
+
+  Future<Either<Failure, void>> updateUser({
+    required String name,
+    required String bio,
+  });
 }

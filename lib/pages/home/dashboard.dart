@@ -35,9 +35,11 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           border: Border(
-            top: BorderSide(color: Colors.grey.withOpacity(0.2), width: 1.0),
+            top: BorderSide(
+              color: Color.fromARGB(255, 226, 227, 227),
+            ),
           ),
         ),
         child: Theme(
@@ -53,7 +55,8 @@ class _DashboardState extends State<Dashboard> {
             selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
             selectedItemColor: const Color.fromARGB(255, 244, 118, 160),
-            backgroundColor: Colors.grey[50],
+            backgroundColor: const Color.fromARGB(255, 249, 250, 250),
+            unselectedItemColor: const Color.fromARGB(255, 167, 167, 167),
             enableFeedback: false,
             elevation: 0,
             onTap: _onItemTapped,

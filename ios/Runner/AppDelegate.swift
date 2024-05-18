@@ -1,5 +1,5 @@
 import UIKit
-import FluRtter
+import Flutter
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
