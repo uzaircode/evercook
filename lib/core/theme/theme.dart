@@ -14,6 +14,7 @@ class AppTheme {
     scaffoldBackgroundColor: AppPallete.backgroundColor,
     appBarTheme: const AppBarTheme(
       backgroundColor: AppPallete.backgroundColor,
+      scrolledUnderElevation: 0,
       elevation: 0,
     ),
     chipTheme: const ChipThemeData(

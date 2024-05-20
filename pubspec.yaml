@@ -54,6 +54,7 @@ dependencies:
   flutter_slidable: ^3.1.0
   flutter_native_splash: ^2.4.0
   skeletonizer: ^1.1.2+1
+  wakelock: ^0.6.2
 
 dev_dependencies:
   flutter_test:

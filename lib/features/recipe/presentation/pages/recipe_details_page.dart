@@ -1,4 +1,5 @@
 import 'package:evercook/core/utils/logger.dart';
+import 'package:evercook/features/recipe/presentation/pages/cook_mode.dart';
 import 'package:evercook/features/recipe/presentation/pages/edit_recipe_page.dart';
 import 'package:evercook/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
@@ -24,32 +25,31 @@ class RecipeDetailsPage extends StatelessWidget {
             elevation: 0,
             leading: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[300], // Grey color background
-                shape: BoxShape.circle, // Rounded shape
+                color: Colors.grey[300],
+                shape: BoxShape.circle,
               ),
-              margin: const EdgeInsets.all(8), // Optional, for spacing around the leading widget
+              margin: const EdgeInsets.all(8),
               child: IconButton(
                 onPressed: () {
-                  // Navigation logic here
                   Navigator.pop(context);
                 },
                 icon: const Icon(Icons.arrow_back),
-                color: const Color.fromARGB(255, 96, 94, 94), // Icon color, change as needed
+                color: const Color.fromARGB(255, 96, 94, 94),
               ),
             ),
             actions: [
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[200], // Grey color background
-                  shape: BoxShape.circle, // Rounded shape
+                  color: Colors.grey[200],
+                  shape: BoxShape.circle,
                 ),
-                margin: const EdgeInsets.all(8), // Optional, for spacing around the button
+                margin: const EdgeInsets.all(8),
                 child: IconButton(
                   onPressed: () {
                     Navigator.push(context, EditRecipePage.route(recipe));
                   },
                   icon: const Icon(Icons.edit),
-                  color: const Color.fromARGB(255, 96, 94, 94), // Icon color, change as needed
+                  color: const Color.fromARGB(255, 96, 94, 94),
                 ),
               ),
               Container(
@@ -107,11 +107,19 @@ class RecipeDetailsPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              IconButton(
-                                onPressed: () async {
-                                  await _addMealPlan();
-                                },
-                                icon: const Icon(Icons.calendar_month),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  shape: BoxShape.circle,
+                                ),
+                                margin: const EdgeInsets.all(8),
+                                child: IconButton(
+                                  onPressed: () async {
+                                    await _addMealPlan();
+                                  },
+                                  icon: const Icon(Icons.calendar_month),
+                                  color: const Color.fromARGB(255, 96, 94, 94),
+                                ),
                               ),
                             ],
                           ),
@@ -120,6 +128,41 @@ class RecipeDetailsPage extends StatelessWidget {
                             recipe.prepTime ?? '',
                             recipe.cookTime ?? '',
                             recipe.servings?.toString() ?? '',
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(context, _createRoute(recipe));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: const Color.fromARGB(255, 244, 118, 160),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center, // Centers the row content
+                                children: [
+                                  Icon(
+                                    Icons.play_arrow_outlined,
+                                    color: Colors.white,
+                                  ), // Adds an icon beside the text
+                                  SizedBox(width: 8), // Provides spacing between the icon and text
+                                  Text(
+                                    'Cook Mode',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -134,27 +177,34 @@ class RecipeDetailsPage extends StatelessWidget {
                           _buildSectionTitle(
                             context,
                             'Ingredients',
-                            IconButton(
-                              onPressed: () async {
-                                LoggerService.logger.d('Starting to add to shopping list');
-                                LoggerService.logger.d('Recipe ID: ${recipe.id}');
-                                LoggerService.logger.d('User ID: ${recipe.userId}');
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                shape: BoxShape.circle,
+                              ),
+                              margin: const EdgeInsets.all(8),
+                              child: IconButton(
+                                onPressed: () async {
+                                  LoggerService.logger.d('Starting to add to shopping list');
+                                  LoggerService.logger.d('Recipe ID: ${recipe.id}');
+                                  LoggerService.logger.d('User ID: ${recipe.userId}');
 
-                                try {
-                                  // Perform the RPC call and store the result
-                                  await _addShoppingList();
+                                  try {
+                                    // Perform the RPC call and store the result
+                                    await _addShoppingList();
 
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    Dashboard.route(),
-                                    (route) => false,
-                                  );
-                                } catch (e) {
-                                  // Log any errors that occur during the RPC call
-                                  LoggerService.logger.e('Error updating shopping list: $e');
-                                }
-                              },
-                              icon: const Icon(Icons.local_grocery_store_outlined),
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      Dashboard.route(),
+                                      (route) => false,
+                                    );
+                                  } catch (e) {
+                                    // Log any errors that occur during the RPC call
+                                    LoggerService.logger.e('Error updating shopping list: $e');
+                                  }
+                                },
+                                icon: const Icon(Icons.local_grocery_store_outlined),
+                              ),
                             ),
                           ),
                           _buildIngredientList(
@@ -282,7 +332,7 @@ class RecipeDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title, IconButton? icon) {
+  Widget _buildSectionTitle(BuildContext context, String title, Container? icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -350,5 +400,24 @@ class RecipeDetailsPage extends StatelessWidget {
 
   void _showSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Route _createRoute(Recipe recipe) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => CookModePage(recipe: recipe),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
   }
 }
