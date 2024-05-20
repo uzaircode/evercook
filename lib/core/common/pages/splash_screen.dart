@@ -5,9 +5,10 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 253, 167, 182),
       body: Center(
-        child: CircularProgressIndicator(),
+        child: Image.asset('assets/images/evercook_splash_screen.png'),
       ),
     );
   }

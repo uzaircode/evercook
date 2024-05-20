@@ -1,8 +1,9 @@
-import 'package:evercook/pages/home/dashboard.dart';
+import 'package:evercook/core/common/widgets/empty_value.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/core/utils/logger.dart';
+import 'package:evercook/pages/home/dashboard.dart';
 
 class ShoppingListPage extends StatefulWidget {
   const ShoppingListPage({Key? key}) : super(key: key);
@@ -84,127 +85,6 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shopping List'),
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Flexible(
-                  flex: 2,
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: recipes.length,
-                      itemBuilder: (context, index) {
-                        var entry = recipes.entries.elementAt(index);
-                        return GestureDetector(
-                          onTap: () {
-                            // Optionally, navigate or perform another action
-                          },
-                          child: Card(
-                            margin: const EdgeInsets.all(8),
-                            child: SizedBox(
-                              width: 180,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Stack(
-                                      children: [
-                                        Positioned.fill(
-                                          child: ClipRRect(
-                                            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                                            child: Image.network(
-                                              entry.value['image_url'],
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          right: 4,
-                                          top: 4,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[100],
-                                              borderRadius: BorderRadius.circular(40),
-                                            ),
-                                            child: IconButton(
-                                              icon: const Icon(Icons.close, color: Colors.red),
-                                              onPressed: () {
-                                                _deleteRecipe(entry.key, context);
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    color: Colors.grey.shade50,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        entry.value['title'],
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Divider(color: Colors.grey.shade300),
-                Expanded(
-                  flex: 4,
-                  child: ListView.builder(
-                    itemCount: ingredients.length,
-                    itemBuilder: (context, index) {
-                      var item = ingredients[index];
-                      return ListTile(
-                        title: Text(
-                          item['ingredient'],
-                          style: TextStyle(
-                            decoration: item['purchased'] ? TextDecoration.lineThrough : null,
-                            color: item['purchased'] ? Colors.grey : null,
-                            decorationColor: item['purchased'] ? Colors.grey : null,
-                          ),
-                        ),
-                        trailing: Checkbox(
-                          value: item['purchased'] as bool?,
-                          onChanged: (bool? newValue) {
-                            if (newValue == null) return;
-                            _updateItem(index, newValue);
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10), // Adjust the value as needed
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-    );
-  }
-
   Future<void> _updateItem(int index, bool newValue) async {
     var item = ingredients[index];
     try {
@@ -224,5 +104,144 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
         ingredients[index]['purchased'] = !newValue;
       });
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CupertinoPageScaffold(
+        child: CustomScrollView(
+          slivers: [
+            CupertinoSliverNavigationBar(
+              largeTitle: const Text('Groceries'),
+              backgroundColor: Colors.white,
+              border: null,
+            ),
+            SliverFillRemaining(
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : recipes.isEmpty
+                      ? EmptyValue(
+                          iconData: Icons.shopping_bag_outlined,
+                          description: 'No recipes in',
+                          value: 'Groceries',
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Flexible(
+                              flex: 2,
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: recipes.length,
+                                  itemBuilder: (context, index) {
+                                    var entry = recipes.entries.elementAt(index);
+                                    return GestureDetector(
+                                      onTap: () {
+                                        // Optionally, navigate or perform another action
+                                      },
+                                      child: Card(
+                                        margin: const EdgeInsets.all(8),
+                                        child: SizedBox(
+                                          width: 180,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                child: Stack(
+                                                  children: [
+                                                    Positioned.fill(
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            const BorderRadius.vertical(top: Radius.circular(4)),
+                                                        child: Image.network(
+                                                          entry.value['image_url'],
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Positioned(
+                                                      right: 4,
+                                                      top: 4,
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.grey[100],
+                                                          borderRadius: BorderRadius.circular(40),
+                                                        ),
+                                                        child: IconButton(
+                                                          icon: const Icon(Icons.close, color: Colors.red),
+                                                          onPressed: () {
+                                                            _deleteRecipe(entry.key, context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Container(
+                                                color: Colors.grey.shade50,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    entry.value['title'],
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Divider(color: Colors.grey.shade300),
+                            Expanded(
+                              flex: 4,
+                              child: ListView.builder(
+                                itemCount: ingredients.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  var item = ingredients[index];
+                                  return ListTile(
+                                    title: Text(
+                                      item['ingredient'],
+                                      style: TextStyle(
+                                        decoration: item['purchased'] ? TextDecoration.lineThrough : null,
+                                        color: item['purchased'] ? Colors.grey : null,
+                                        decorationColor: item['purchased'] ? Colors.grey : null,
+                                      ),
+                                    ),
+                                    trailing: Checkbox(
+                                      value: item['purchased'] as bool?,
+                                      onChanged: (bool? newValue) {
+                                        if (newValue == null) return;
+                                        _updateItem(index, newValue);
+                                      },
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10), // Adjust the value as needed
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

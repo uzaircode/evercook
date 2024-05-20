@@ -9,6 +9,8 @@ import 'package:evercook/features/recipe/data/models/recipe_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class RecipeRemoteDataSource {
+  Session? get currentUserSession;
+
   Future<RecipeModel> uploadRecipe(RecipeModel recipe);
   Future<String> uploadRecipeImage({
     required File image,
@@ -22,6 +24,9 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
   final SupabaseClient supabaseClient;
 
   RecipeRemoteDataSourceImpl(this.supabaseClient);
+
+  @override
+  Session? get currentUserSession => supabaseClient.auth.currentSession;
 
   @override
   Future<RecipeModel> uploadRecipe(RecipeModel recipe) async {
@@ -57,11 +62,16 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
   @override
   Future<List<RecipeModel>> getAllRecipes() async {
     try {
-      final recipes = await supabaseClient.from(DBConstants.recipesTable).select(
+      final recipes = await supabaseClient
+          .from(DBConstants.recipesTable)
+          .select(
             '*, profiles (name)',
+          )
+          .eq(
+            'user_id',
+            currentUserSession!.user.id,
           );
 
-      LoggerService.logger.i('Recipes: $recipes');
       return recipes
           .map(
             (recipe) => RecipeModel.fromJson(recipe).copyWith(

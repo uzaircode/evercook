@@ -108,7 +108,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     res.fold(
       (l) => emit(AuthFailure(l.message)),
-      (r) => _emitAuthSuccess(r, emit),
+      (r) async {
+        _emitAuthSuccess(r, emit);
+      },
     );
   }
 
@@ -121,7 +123,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     res.fold(
       (l) => emit(AuthFailure(l.message)),
       (r) {
-        LoggerService.logger.i('User: ${r.email}');
         _emitAuthSuccess(r, emit);
       },
     );
@@ -131,11 +132,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     User user,
     Emitter<AuthState> emit,
   ) {
-    LoggerService.logger.i('EXECUTING EMIT AUTH SUCCESS');
     _appUserCubit.updateUser(user);
-
-    LoggerService.logger.i('User: ${user.email}');
-
     emit(AuthSuccess(user));
   }
 

@@ -1,4 +1,6 @@
+import 'package:evercook/core/common/pages/splash_screen.dart';
 import 'package:evercook/core/cubit/app_user.dart';
+import 'package:evercook/core/observer/bloc_observer.dart';
 import 'package:evercook/core/theme/theme.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/login_page.dart';
@@ -9,9 +11,12 @@ import 'package:evercook/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependencies();
+
+  Bloc.observer = MyBlocObserver();
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -41,11 +46,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
     context.read<AuthBloc>().add(AuthIsUserLoggedIn());
-    context.read<RecipeBloc>().add(RecipeFetchAllRecipes());
+    Future.delayed(Duration(milliseconds: 1500), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
@@ -54,18 +65,16 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Evercook',
       theme: AppTheme.themeData,
-      home: BlocSelector<AppUserCubit, AppUserState, bool>(
-        selector: (state) {
-          return state is AppUserLoggedIn;
-        },
-        builder: (context, isLoggedIn) {
-          if (isLoggedIn) {
-            return const Dashboard();
-          } else {
-            return const LoginPage();
-          }
-        },
-      ),
+      home: _isLoading
+          ? SplashScreen()
+          : BlocSelector<AppUserCubit, AppUserState, bool>(
+              selector: (state) {
+                return state is AppUserLoggedIn;
+              },
+              builder: (context, isLoggedIn) {
+                return isLoggedIn ? const Dashboard() : const LoginPage();
+              },
+            ),
     );
   }
 }

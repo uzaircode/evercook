@@ -28,6 +28,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     on<RecipeUpload>(_onRecipeUpload);
     on<RecipeFetchAllRecipes>(_onFetchAllRecipes);
     on<RecipeDelete>(_onDeleteRecipe);
+    on<RecipeClearState>(_onClearState);
   }
 
   void _onRecipeUpload(
@@ -80,5 +81,12 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
         add(RecipeFetchAllRecipes());
       },
     );
+  }
+
+  void _onClearState(
+    RecipeClearState event,
+    Emitter<RecipeState> emit,
+  ) {
+    emit(RecipeInitial());
   }
 }

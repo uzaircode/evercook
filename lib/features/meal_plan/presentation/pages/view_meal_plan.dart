@@ -30,7 +30,6 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
 
   void fetchMealPlans() async {
     final response = await Supabase.instance.client.from('meal_plan').select('*, recipes(title)');
-    LoggerService.logger.i(response.toString());
     final List<Map<String, dynamic>> mealPlans = response;
     for (var day in weekDays) {
       mealPlansByDay[day] =
@@ -106,7 +105,7 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                           color: const Color.fromARGB(255, 241, 242, 241),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         padding: const EdgeInsets.all(8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

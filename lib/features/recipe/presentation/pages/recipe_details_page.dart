@@ -1,5 +1,6 @@
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/recipe/presentation/pages/edit_recipe_page.dart';
+import 'package:evercook/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -142,6 +143,12 @@ class RecipeDetailsPage extends StatelessWidget {
                                 try {
                                   // Perform the RPC call and store the result
                                   await _addShoppingList();
+
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    Dashboard.route(),
+                                    (route) => false,
+                                  );
                                 } catch (e) {
                                   // Log any errors that occur during the RPC call
                                   LoggerService.logger.e('Error updating shopping list: $e');
@@ -205,7 +212,7 @@ class RecipeDetailsPage extends StatelessWidget {
 
   Widget _buildHeaderImage(String imageUrl) {
     return Hero(
-      tag: 'transition',
+      tag: 'transition_${recipe.id}',
       child: SizedBox(
         height: 250,
         width: double.infinity,
