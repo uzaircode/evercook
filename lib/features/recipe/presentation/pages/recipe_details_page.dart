@@ -1,4 +1,5 @@
 import 'package:evercook/core/utils/logger.dart';
+import 'package:evercook/features/recipe/presentation/pages/confirm_ingredients_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/cook_mode.dart';
 import 'package:evercook/features/recipe/presentation/pages/edit_recipe_page.dart';
 import 'package:evercook/pages/home/dashboard.dart';
@@ -116,6 +117,7 @@ class RecipeDetailsPage extends StatelessWidget {
                                 child: IconButton(
                                   onPressed: () async {
                                     await _addMealPlan();
+                                    Navigator.pushAndRemoveUntil(context, Dashboard.route(), (route) => false);
                                   },
                                   icon: const Icon(Icons.calendar_month),
                                   color: const Color.fromARGB(255, 96, 94, 94),
@@ -135,7 +137,7 @@ class RecipeDetailsPage extends StatelessWidget {
                             height: 50,
                             child: ElevatedButton(
                               onPressed: () {
-                                Navigator.push(context, _createRoute(recipe));
+                                Navigator.push(context, _createRoute(CookModePage(recipe: recipe)));
                               },
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
@@ -190,16 +192,14 @@ class RecipeDetailsPage extends StatelessWidget {
                                   LoggerService.logger.d('User ID: ${recipe.userId}');
 
                                   try {
-                                    // Perform the RPC call and store the result
-                                    await _addShoppingList();
-
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      Dashboard.route(),
-                                      (route) => false,
-                                    );
+                                    Navigator.push(context, _createRoute(ConfirmIngredientsPage(recipe: recipe)));
+                                    // await _addShoppingList();
+                                    // Navigator.pushAndRemoveUntil(
+                                    //   context,
+                                    //   Dashboard.route(),
+                                    //   (route) => false,
+                                    // );
                                   } catch (e) {
-                                    // Log any errors that occur during the RPC call
                                     LoggerService.logger.e('Error updating shopping list: $e');
                                   }
                                 },
@@ -368,9 +368,13 @@ class RecipeDetailsPage extends StatelessWidget {
   }
 
   Future<void> _addShoppingList() async {
-    await Supabase.instance.client.rpc('add_to_shopping_list', params: {
-      'recipe_id': recipe.id,
-    });
+    try {
+      await Supabase.instance.client.rpc('add_to_shopping_list', params: {
+        'recipe_id': recipe.id,
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   void _showDeleteDialog(BuildContext context) {
@@ -402,9 +406,9 @@ class RecipeDetailsPage extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Route _createRoute(Recipe recipe) {
+  Route _createRoute(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => CookModePage(recipe: recipe),
+      pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(0.0, 1.0);
         const end = Offset.zero;

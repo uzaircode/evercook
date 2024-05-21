@@ -144,6 +144,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                       },
                                       child: Card(
                                         margin: const EdgeInsets.all(8),
+                                        elevation: 2,
                                         child: SizedBox(
                                           width: 180,
                                           child: Column(
@@ -205,10 +206,14 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                 ),
                               ),
                             ),
-                            Divider(color: Colors.grey.shade300),
+                            Divider(
+                              color: Colors.grey.shade300,
+                              thickness: 2,
+                            ),
                             Expanded(
                               flex: 4,
                               child: ListView.builder(
+                                padding: EdgeInsets.all(0),
                                 itemCount: ingredients.length,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
@@ -220,6 +225,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                         decoration: item['purchased'] ? TextDecoration.lineThrough : null,
                                         color: item['purchased'] ? Colors.grey : null,
                                         decorationColor: item['purchased'] ? Colors.grey : null,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                     trailing: Checkbox(
