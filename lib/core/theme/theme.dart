@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static _border([Color color = const Color.fromARGB(255, 230, 230, 234)]) => OutlineInputBorder(
-        borderSide: BorderSide(
-          color: color,
-          width: 3,
-        ),
         borderRadius: BorderRadius.circular(10),
       );
 
@@ -23,9 +19,6 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: const EdgeInsets.all(27),
-      border: _border(),
-      enabledBorder: _border(),
-      focusedBorder: _border(AppPallete.gradient2),
       errorBorder: _border(AppPallete.errorColor),
     ),
     textSelectionTheme: const TextSelectionThemeData(

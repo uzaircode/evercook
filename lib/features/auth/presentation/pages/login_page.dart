@@ -37,9 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
+      appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: BlocConsumer<auth_bloc.AuthBloc, auth_bloc.AuthState>(
@@ -66,6 +64,45 @@ class _LoginPageState extends State<LoginPage> {
                     flex: 10,
                     child: Column(
                       children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 60.0,
+                              height: 60.0,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(1.0),
+                                child: Image.asset(
+                                  'assets/images/ic_launcher.png',
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Evercook',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          'Welcome back!',
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          'Please login to continue.',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                          ),
+                        ),
                         AuthField(controller: _emailController, hintText: 'Email'),
                         const SizedBox(height: 15),
                         AuthField(
@@ -101,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 40),
                         SizedBox(
                           width: double.infinity,
-                          height: 60,
+                          height: 65,
                           child: AuthButton(
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
@@ -117,45 +154,77 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        ElevatedButton(
-                          onPressed: () async {
-                            const webClientId =
-                                '908468362758-rdalsblfhdl2nbnh9bui78ubgmhdboi3.apps.googleusercontent.com';
-                            const iosClientId =
-                                '908468362758-m5a317hnbtj1ji5mqrrj30ehr34k9bs4.apps.googleusercontent.com';
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Divider(
+                                color: Colors.black,
+                                thickness: 1.0,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text("or"),
+                            ),
+                            Expanded(
+                              child: Divider(
+                                color: Colors.black,
+                                thickness: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          width: double.infinity,
+                          height: 65,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              const webClientId =
+                                  '908468362758-rdalsblfhdl2nbnh9bui78ubgmhdboi3.apps.googleusercontent.com';
+                              const iosClientId =
+                                  '908468362758-m5a317hnbtj1ji5mqrrj30ehr34k9bs4.apps.googleusercontent.com';
 
-                            final GoogleSignIn googleSignIn = GoogleSignIn(
-                              clientId: iosClientId,
-                              serverClientId: webClientId,
-                            );
-                            final googleUser = await googleSignIn.signIn();
-                            final googleAuth = await googleUser!.authentication;
-                            final accessToken = googleAuth.accessToken;
-                            final idToken = googleAuth.idToken;
-
-                            if (accessToken == null) {
-                              throw 'No Access Token found.';
-                            }
-                            if (idToken == null) {
-                              throw 'No ID Token found.';
-                            }
-
-                            await Supabase.instance.client.auth.signInWithIdToken(
-                              provider: OAuthProvider.google,
-                              idToken: idToken,
-                              accessToken: accessToken,
-                            );
-                            if (Supabase.instance.client.auth.currentUser == null) {
-                              throw 'Failed to sign in with Google.';
-                            } else {
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                Dashboard.route(),
-                                (route) => false,
+                              final GoogleSignIn googleSignIn = GoogleSignIn(
+                                clientId: iosClientId,
+                                serverClientId: webClientId,
                               );
-                            }
-                          },
-                          child: const Text('Sign in with google'),
+                              final googleUser = await googleSignIn.signIn();
+                              final googleAuth = await googleUser!.authentication;
+                              final accessToken = googleAuth.accessToken;
+                              final idToken = googleAuth.idToken;
+
+                              if (accessToken == null) {
+                                throw 'No Access Token found.';
+                              }
+                              if (idToken == null) {
+                                throw 'No ID Token found.';
+                              }
+
+                              await Supabase.instance.client.auth.signInWithIdToken(
+                                provider: OAuthProvider.google,
+                                idToken: idToken,
+                                accessToken: accessToken,
+                              );
+                              if (Supabase.instance.client.auth.currentUser == null) {
+                                throw 'Failed to sign in with Google.';
+                              } else {
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  Dashboard.route(),
+                                  (route) => false,
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              elevation: 1,
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text('Sign in with google'),
+                          ),
                         ),
                       ],
                     ),
