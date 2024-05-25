@@ -215,11 +215,7 @@ class RecipeDetailsPage extends StatelessWidget {
                           _buildSectionTitle(context, 'Directions', null),
                           Text(
                             recipe.directions ?? '',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Color.fromARGB(255, 109, 107, 107),
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 16),
                           Divider(color: Colors.grey.shade300),

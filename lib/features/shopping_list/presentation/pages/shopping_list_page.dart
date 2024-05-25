@@ -114,7 +114,6 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
           slivers: [
             CupertinoSliverNavigationBar(
               largeTitle: const Text('Groceries'),
-              backgroundColor: Colors.white,
               border: null,
             ),
             SliverFillRemaining(
@@ -183,7 +182,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                                 ),
                                               ),
                                               Container(
-                                                color: Colors.grey.shade50,
+                                                // color: Colors.grey.shade50,
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(8.0),
                                                   child: Text(

@@ -7,7 +7,7 @@ class AppTheme {
       );
 
   static final themeData = ThemeData.light().copyWith(
-    scaffoldBackgroundColor: AppPallete.backgroundColor,
+    scaffoldBackgroundColor: Colors.deepOrange,
     appBarTheme: const AppBarTheme(
       backgroundColor: AppPallete.backgroundColor,
       scrolledUnderElevation: 0,

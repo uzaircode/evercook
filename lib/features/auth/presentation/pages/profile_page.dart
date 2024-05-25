@@ -94,10 +94,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
                       children: [
-                        _buildListTile('Help Center', Icons.help_outline_outlined, Colors.black, () {}),
-                        _buildListTile('Rate the App', Icons.star_outline, Colors.black, () {}),
-                        _buildListTile('Privacy Policy', Icons.privacy_tip_outlined, Colors.black, () {}),
-                        _buildListTile('Logout', Icons.exit_to_app_outlined, Colors.red, () {
+                        _buildListTile('Help Center', Icons.help_outline_outlined, () {}),
+                        _buildListTile('Rate the App', Icons.star_outline, () {}),
+                        _buildListTile('Privacy Policy', Icons.privacy_tip_outlined, () {}),
+                        _buildListTile('Logout', Icons.exit_to_app_outlined, () {
                           context.read<AuthBloc>().add(AuthSignOut());
                         }),
                       ],
@@ -112,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildListTile(String title, IconData icon, Color textColor, VoidCallback onPressed) {
+  Widget _buildListTile(String title, IconData icon, VoidCallback onPressed) {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
@@ -138,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 alignment: Alignment.center,
                 child: FaIcon(
                   icon,
-                  color: textColor,
+                  // color: textColor,
                   size: 22,
                 ),
               ),
@@ -147,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 title,
                 style: TextStyle(
                   fontSize: 16,
-                  color: textColor,
+                  // color: textColor,
                   fontWeight: FontWeight.w500,
                 ),
               ),

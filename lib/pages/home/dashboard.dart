@@ -1,3 +1,4 @@
+import 'package:evercook/core/theme/theme_services.dart';
 import 'package:evercook/features/auth/presentation/pages/profile_page.dart';
 import 'package:evercook/features/meal_plan/presentation/pages/view_meal_plan.dart';
 import 'package:evercook/features/recipe/presentation/pages/home_page.dart';
@@ -38,7 +39,7 @@ class _DashboardState extends State<Dashboard> {
         children: _screens,
       ),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
               color: Color.fromARGB(255, 226, 227, 227),
@@ -55,11 +56,6 @@ class _DashboardState extends State<Dashboard> {
             type: BottomNavigationBarType.fixed,
             selectedFontSize: 12,
             unselectedFontSize: 12,
-            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            selectedItemColor: const Color.fromARGB(255, 244, 118, 160),
-            backgroundColor: const Color.fromARGB(255, 249, 250, 250),
-            unselectedItemColor: const Color.fromARGB(255, 167, 167, 167),
             enableFeedback: false,
             elevation: 0,
             onTap: _onItemTapped,
