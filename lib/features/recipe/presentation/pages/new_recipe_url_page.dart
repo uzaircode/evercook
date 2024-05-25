@@ -19,6 +19,7 @@ class NewRecipeUrlPage extends StatelessWidget {
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
+        LoggerService.logger.d(jsonResponse.toString());
         return jsonResponse;
       } else {
         LoggerService.logger.e('Request failed with status: ${response.statusCode}');
@@ -39,26 +40,32 @@ class NewRecipeUrlPage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () async {
-              var jsonResponse = await fetchRecipe(urlController.text);
-              if (jsonResponse != null) {
-                Navigator.push(
-                  context,
-                  AddNewRecipePage.route(
-                    imageUrl: jsonResponse['imageUrl'] ?? '',
-                    title: jsonResponse['title'] ?? '',
-                    description: jsonResponse['description'] ?? '',
-                    prepTime: jsonResponse['prepTime'] ?? '',
-                    cookTime: jsonResponse['cookTime'] ?? '',
-                    servings: jsonResponse['servings'] ?? '',
-                    directions: jsonResponse['instructions'] ?? '',
-                    notes: jsonResponse['notes'] ?? '',
-                    sources: jsonResponse['sources'] ?? '',
-                  ),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to load recipe')),
-                );
+              try {
+                var jsonResponse = await fetchRecipe(urlController.text);
+                LoggerService.logger.d(jsonResponse.toString);
+                if (jsonResponse != null) {
+                  Navigator.push(
+                    context,
+                    AddNewRecipePage.route(
+                      name: jsonResponse['name'] ?? '',
+                      description: jsonResponse['description'] ?? '',
+                      servings: jsonResponse['servings'] ?? '',
+                      imageUrl: jsonResponse['imageUrl'] ?? '',
+                      prepTime: jsonResponse['prepTime'] ?? '',
+                      cookTime: jsonResponse['cookTime'] ?? '',
+                      ingredients: List<String>.from(jsonResponse['ingredients']),
+                      directions: (jsonResponse['directions'] as List<dynamic>).join('\n\n'),
+                      notes: jsonResponse['notes'] ?? '',
+                      sources: jsonResponse['sources'] ?? '',
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to load recipe')),
+                  );
+                }
+              } catch (e) {
+                LoggerService.logger.e(e);
               }
             },
             child: Text('Save'),

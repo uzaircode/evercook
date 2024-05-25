@@ -1,22 +1,22 @@
 class Recipe {
   final String id;
-  final String? title;
+  final String? name;
   final String userId;
   final String? description;
   final String? prepTime;
   final String? cookTime;
-  final int? servings;
-  final List<Map<String, dynamic>> ingredients;
+  final String? servings;
+  final List<String> ingredients;
   final String? imageUrl;
   final DateTime updatedAt;
   final String? directions;
   final String? notes;
   final String? sources;
-  final String? name;
+  final String? userName;
 
   Recipe({
     required this.id,
-    this.title,
+    this.name,
     required this.userId,
     this.description,
     this.prepTime,
@@ -28,6 +28,6 @@ class Recipe {
     this.directions,
     this.notes,
     this.sources,
-    this.name,
+    this.userName,
   });
 }

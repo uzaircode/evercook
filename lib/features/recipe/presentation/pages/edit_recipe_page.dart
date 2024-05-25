@@ -23,7 +23,7 @@ class EditRecipePage extends StatefulWidget {
 }
 
 class _EditRecipePageState extends State<EditRecipePage> {
-  final titleController = TextEditingController();
+  final nameController = TextEditingController();
   final descriptionController = TextEditingController();
   final prepTimeController = TextEditingController();
   final cookTimeController = TextEditingController();
@@ -39,7 +39,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
       // Retrieve the recipe passed from the previous page
       final arguments = ModalRoute.of(context)?.settings.arguments;
       if (arguments is Recipe) {
-        titleController.text = widget.recipe.title ?? '';
+        nameController.text = widget.recipe.name ?? '';
         descriptionController.text = widget.recipe.description ?? '';
         prepTimeController.text = widget.recipe.prepTime ?? '';
         cookTimeController.text = widget.recipe.cookTime ?? '';
@@ -64,7 +64,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
       await supabase
           .from('recipes')
           .update({
-            'title': titleController.text.trim(),
+            'name': nameController.text.trim(),
             'description': descriptionController.text.trim().isEmpty ? null : descriptionController.text.trim(),
             'prep_time': prepTimeController.text.trim(),
             'cook_time': cookTimeController.text.trim(),
@@ -133,7 +133,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
                       ),
               ),
               const SizedBox(height: 10),
-              RecipeEditor(controller: titleController, hintText: widget.recipe.title ?? ''),
+              RecipeEditor(controller: nameController, hintText: widget.recipe.name ?? ''),
               const SizedBox(height: 10),
               RecipeEditor(controller: descriptionController, hintText: widget.recipe.description ?? ''),
               const SizedBox(height: 10),

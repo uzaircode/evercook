@@ -17,11 +17,12 @@ class RecipeRepositoryImpl implements RecipeRepository {
   @override
   Future<Either<Failure, Recipe>> uploadRecipe({
     required String userId,
-    String? title,
+    String? name,
     String? description,
     String? prepTime,
     String? cookTime,
-    int? servings,
+    String? servings,
+    List<String>? ingredients,
     String? directions,
     String? notes,
     String? sources,
@@ -30,13 +31,13 @@ class RecipeRepositoryImpl implements RecipeRepository {
     try {
       RecipeModel recipeModel = RecipeModel(
         id: const Uuid().v1(),
-        title: title,
+        name: name,
         userId: userId,
         description: description,
         prepTime: prepTime,
         cookTime: cookTime,
         servings: servings,
-        ingredients: [],
+        ingredients: ingredients ?? [],
         directions: directions,
         notes: notes,
         sources: sources,

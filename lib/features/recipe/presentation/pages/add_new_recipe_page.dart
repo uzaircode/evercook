@@ -18,12 +18,13 @@ import 'package:path_provider/path_provider.dart';
 
 class AddNewRecipePage extends StatefulWidget {
   static route({
-    String? imageUrl,
-    String? title,
+    String? name,
     String? description,
+    String? servings,
+    String? imageUrl,
     String? prepTime,
     String? cookTime,
-    String? servings,
+    List<String>? ingredients,
     String? directions,
     String? notes,
     String? sources,
@@ -31,11 +32,12 @@ class AddNewRecipePage extends StatefulWidget {
       MaterialPageRoute(
         builder: (context) => AddNewRecipePage(
           imageUrl: imageUrl,
-          title: title,
+          name: name,
           description: description,
           prepTime: prepTime,
           cookTime: cookTime,
           servings: servings,
+          ingredients: ingredients,
           directions: directions,
           notes: notes,
           sources: sources,
@@ -43,11 +45,12 @@ class AddNewRecipePage extends StatefulWidget {
       );
 
   final String? imageUrl;
-  final String? title;
+  final String? name;
   final String? description;
   final String? prepTime;
   final String? cookTime;
   final String? servings;
+  final List<String>? ingredients;
   final String? directions;
   final String? notes;
   final String? sources;
@@ -55,11 +58,12 @@ class AddNewRecipePage extends StatefulWidget {
   const AddNewRecipePage({
     super.key,
     this.imageUrl,
-    this.title,
+    this.name,
     this.description,
     this.prepTime,
     this.cookTime,
     this.servings,
+    this.ingredients,
     this.directions,
     this.notes,
     this.sources,
@@ -70,7 +74,7 @@ class AddNewRecipePage extends StatefulWidget {
 }
 
 class _AddNewRecipePageState extends State<AddNewRecipePage> {
-  final titleController = TextEditingController();
+  final nameController = TextEditingController();
   final descriptionController = TextEditingController();
   final prepTimeController = TextEditingController();
   final cookTimeController = TextEditingController();
@@ -86,7 +90,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
   void initState() {
     super.initState();
     if (widget.imageUrl != null) imageUrlController.text = widget.imageUrl!;
-    if (widget.title != null) titleController.text = widget.title!;
+    if (widget.name != null) nameController.text = widget.name!;
     if (widget.description != null) descriptionController.text = widget.description!;
     if (widget.prepTime != null) prepTimeController.text = widget.prepTime!;
     if (widget.cookTime != null) cookTimeController.text = widget.cookTime!;
@@ -134,14 +138,16 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
       context.read<RecipeBloc>().add(
             RecipeUpload(
               userId: userId,
-              title: titleController.text.trim().isEmpty ? null : titleController.text.trim(),
+              name: nameController.text.trim().isEmpty ? null : nameController.text.trim(),
               description: descriptionController.text.trim().isEmpty ? null : descriptionController.text.trim(),
+              servings: servingsController.text.trim().isEmpty ? null : servingsController.text.trim(),
+              image: imageFile,
               prepTime: prepTimeController.text.trim().isEmpty ? null : prepTimeController.text.trim(),
               cookTime: cookTimeController.text.trim().isEmpty ? null : cookTimeController.text.trim(),
-              servings: int.tryParse(servingsController.text.trim()),
+              ingredients: widget.ingredients,
+              directions: directionsController.text.isEmpty ? null : directionsController.text,
               notes: notesController.text.trim().isEmpty ? null : notesController.text.trim(),
               sources: sourcesController.text.trim().isEmpty ? null : sourcesController.text.trim(),
-              image: imageFile,
             ),
           );
     }
@@ -149,7 +155,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
 
   @override
   void dispose() {
-    titleController.dispose();
+    nameController.dispose();
     descriptionController.dispose();
     prepTimeController.dispose();
     cookTimeController.dispose();
@@ -170,16 +176,18 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
 
+        LoggerService.logger.d(jsonResponse.toString());
+
         setState(() {
-          titleController.text = jsonResponse['title'] ?? '';
+          nameController.text = jsonResponse['name'] ?? '';
           descriptionController.text = jsonResponse['description'] ?? '';
           prepTimeController.text = jsonResponse['prepTime'] ?? '';
           cookTimeController.text = jsonResponse['cookTime'] ?? '';
           servingsController.text = jsonResponse['servings'] ?? '';
-          directionsController.text = jsonResponse['instructions'] ?? '';
+          directionsController.text = jsonResponse['directions'] ?? '';
           notesController.text = jsonResponse['notes'] ?? '';
-          sourcesController.text = jsonResponse['sources'] ?? '';
           imageUrlController.text = jsonResponse['imageUrl'] ?? '';
+          sourcesController.text = jsonResponse['sources'] ?? '';
         });
 
         LoggerService.logger.i(jsonResponse.toString());
@@ -293,9 +301,9 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                               ),
                     const SizedBox(height: 10),
                     TextFormField(
-                      controller: titleController,
+                      controller: nameController,
                       decoration: const InputDecoration(
-                        hintText: 'Title',
+                        hintText: 'Name',
                       ),
                       maxLines: null,
                       onTapOutside: (event) {

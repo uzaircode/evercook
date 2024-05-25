@@ -29,7 +29,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     try {
       final res = await Supabase.instance.client
           .from('shopping_list')
-          .select('*, recipes:recipe_id (title, image_url)')
+          .select('*, recipes:recipe_id (name, image_url)')
           .order('list_id', ascending: true);
 
       Map<String, dynamic> tempRecipes = {};
@@ -39,7 +39,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
         String recipeId = item['recipe_id'];
         if (!tempRecipes.containsKey(recipeId)) {
           tempRecipes[recipeId] = {
-            'title': item['recipes']['title'],
+            'name': item['recipes']['name'],
             'image_url': item['recipes']['image_url'],
             'ingredients': [],
           };
@@ -186,7 +186,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(8.0),
                                                   child: Text(
-                                                    entry.value['title'],
+                                                    entry.value['name'],
                                                     style: const TextStyle(
                                                       fontSize: 16,
                                                       fontWeight: FontWeight.bold,

@@ -37,11 +37,13 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
   ) async {
     final res = await _uploadRecipe(UploadRecipeParams(
       userId: event.userId,
-      title: event.title,
+      name: event.name,
       description: event.description,
       prepTime: event.prepTime,
       cookTime: event.cookTime,
       servings: event.servings,
+      ingredients: event.ingredients,
+      directions: event.directions,
       imageUrl: event.image,
       notes: event.notes,
       sources: event.sources,

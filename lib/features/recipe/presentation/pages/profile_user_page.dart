@@ -70,12 +70,12 @@ class ProfileUserPageState extends State<ProfileUserPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.profileData['name'],
+                          widget.profileData['name'] ?? 'Unknown User',
                           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          widget.profileData['bio'],
+                          widget.profileData['bio'] ?? 'No bio available.',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[600],
@@ -140,7 +140,7 @@ class ProfileUserPageState extends State<ProfileUserPage> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 16.0),
                                 child: Text(
-                                  recipe['title'] ?? '',
+                                  recipe['name'] ?? 'Unnamed Recipe',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,

@@ -4,7 +4,7 @@ class RecipeModel extends Recipe {
   RecipeModel({
     required super.id,
     required super.userId,
-    required super.title,
+    required super.name,
     required super.description,
     required super.prepTime,
     required super.cookTime,
@@ -15,29 +15,29 @@ class RecipeModel extends Recipe {
     required super.directions,
     required super.notes,
     required super.sources,
-    super.name,
+    super.userName,
   });
 
   RecipeModel copyWith({
     String? id,
     String? userId,
-    String? title,
+    String? name,
     String? description,
     String? prepTime,
     String? cookTime,
-    int? servings,
-    List<Map<String, dynamic>>? ingredients,
+    String? servings,
+    List<String>? ingredients,
     String? imageUrl,
     DateTime? updatedAt,
     String? directions,
     String? notes,
     String? sources,
-    String? name,
+    String? userName,
   }) {
     return RecipeModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
-      title: title ?? this.title,
+      name: name ?? this.name,
       description: description ?? this.description,
       prepTime: prepTime ?? this.prepTime,
       cookTime: cookTime ?? this.cookTime,
@@ -55,7 +55,7 @@ class RecipeModel extends Recipe {
     return <String, dynamic>{
       'id': id,
       'user_id': userId,
-      'title': title,
+      'name': name,
       'description': description,
       'prep_time': prepTime,
       'cook_time': cookTime,
@@ -73,11 +73,11 @@ class RecipeModel extends Recipe {
     return RecipeModel(
       id: map['id'] as String,
       userId: map['user_id'] as String,
-      title: map['title'] as String?,
+      name: map['name'] as String?,
       description: map['description'] as String?,
       prepTime: map['prep_time'] as String?,
       cookTime: map['cook_time'] as String?,
-      servings: map['servings'] as int?,
+      servings: map['servings'] as String?,
       ingredients: _parseIngredients(map['ingredients']),
       imageUrl: map['image_url'] as String?,
       directions: map['directions'] as String?,
@@ -87,11 +87,11 @@ class RecipeModel extends Recipe {
     );
   }
 
-  //I DONT UNDERSTAND THIS
-  static List<Map<String, dynamic>> _parseIngredients(dynamic ingredients) {
+// Modify _parseIngredients to return a List<String>
+  static List<String> _parseIngredients(dynamic ingredients) {
     if (ingredients is List) {
       // Assuming each ingredient is currently a simple string
-      return ingredients.map((dynamic item) => {"name": item.toString()}).toList();
+      return List<String>.from(ingredients.map((dynamic item) => item.toString()));
     }
     // Return an empty list if ingredients are not in the expected format or null
     return [];
@@ -99,6 +99,6 @@ class RecipeModel extends Recipe {
 
   @override
   String toString() {
-    return 'Recipe(id: $id, title: $title, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, ingredients: $ingredients, image_url: $imageUrl, directions: $directions, notes: $notes, sources: $sources, updated_at: $updatedAt), name: $name';
+    return 'Recipe(id: $id, name: $name, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, ingredients: $ingredients, image_url: $imageUrl, directions: $directions, notes: $notes, sources: $sources, updated_at: $updatedAt), username: $userName';
   }
 }

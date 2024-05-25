@@ -238,7 +238,7 @@ class _HomePageState extends State<HomePage> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          recipe.title ?? '(No Title)',
+                                          recipe.name ?? '(No Title)',
                                           softWrap: true,
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -397,6 +397,7 @@ class CustomSearch extends SearchDelegate<String> {
                 ),
               ),
               onTap: () {
+                LoggerService.logger.d(profile);
                 Navigator.push(context, ProfileUserPage.route(profile));
               },
             );

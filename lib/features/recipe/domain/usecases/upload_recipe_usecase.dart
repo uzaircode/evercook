@@ -15,12 +15,13 @@ class UploadRecipeUseCase implements UseCase<Recipe, UploadRecipeParams> {
   Future<Either<Failure, Recipe>> call(params) async {
     return await recipeRepository.uploadRecipe(
       userId: params.userId,
-      title: params.title,
+      name: params.name,
       description: params.description,
       prepTime: params.prepTime,
       cookTime: params.cookTime,
       servings: params.servings,
       image: params.imageUrl,
+      ingredients: params.ingredients,
       directions: params.directions,
       notes: params.notes,
       sources: params.sources,
@@ -30,23 +31,25 @@ class UploadRecipeUseCase implements UseCase<Recipe, UploadRecipeParams> {
 
 class UploadRecipeParams {
   final String userId;
-  final String? title;
+  final String? name;
   final String? description;
   final String? prepTime;
   final String? cookTime;
-  final int? servings;
+  final String? servings;
   final String? directions;
+  final List<String>? ingredients;
   final String? notes;
   final String? sources;
   final File? imageUrl;
 
   UploadRecipeParams({
     required this.userId,
-    this.title,
+    this.name,
     this.description,
     this.prepTime,
     this.cookTime,
     this.servings,
+    this.ingredients,
     this.directions,
     this.notes,
     this.sources,

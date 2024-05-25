@@ -99,7 +99,7 @@ class RecipeDetailsPage extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: Text(
-                                  recipe.title ?? '',
+                                  recipe.name ?? '',
                                   softWrap: true,
                                   style: const TextStyle(
                                     fontSize: 35,
@@ -312,12 +312,12 @@ class RecipeDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildIngredientList(List<Map<String, dynamic>> ingredients) {
+  Widget _buildIngredientList(List<String> ingredients) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: ingredients
           .map((ingredient) => Text(
-                '${ingredient['name']}',
+                ingredient,
                 style: const TextStyle(
                   fontSize: 15,
                   height: 2,

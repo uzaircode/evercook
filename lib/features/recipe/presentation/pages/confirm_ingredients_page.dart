@@ -17,11 +17,12 @@ class ConfirmIngredientsPage extends StatefulWidget {
 
 class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
   List<String> _selectedIngredients = [];
+
   @override
   void initState() {
     super.initState();
     // Initialize _selectedIngredients with all ingredients from the recipe
-    _selectedIngredients = widget.recipe.ingredients.map((ingredient) => ingredient['name'] as String).toList();
+    _selectedIngredients = List<String>.from(widget.recipe.ingredients);
   }
 
   @override
@@ -57,19 +58,19 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
                         final ingredient = widget.recipe.ingredients[index];
                         return CheckboxListTile(
                           title: Text(
-                            ingredient['name'],
+                            ingredient,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 17,
                             ),
                           ),
-                          value: _selectedIngredients.contains(ingredient['name']),
+                          value: _selectedIngredients.contains(ingredient),
                           onChanged: (bool? value) {
                             setState(() {
                               if (value == true) {
-                                _selectedIngredients.add(ingredient['name']);
+                                _selectedIngredients.add(ingredient);
                               } else {
-                                _selectedIngredients.remove(ingredient['name']);
+                                _selectedIngredients.remove(ingredient);
                               }
                             });
                           },
