@@ -1,12 +1,10 @@
 // import 'dart:convert';
 import 'package:evercook/core/common/widgets/empty_value.dart';
 import 'package:evercook/core/common/widgets/loader.dart';
-import 'package:evercook/core/common/widgets/skeleton/homepage_skeleton.dart';
-import 'package:evercook/core/theme/app_pallete.dart';
+import 'package:evercook/core/common/widgets/skeleton/skeleton_homepage.dart';
 import 'package:evercook/core/theme/theme_services.dart';
 import 'package:evercook/core/utils/extract_domain.dart';
 import 'package:evercook/core/utils/logger.dart';
-// import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
@@ -21,7 +19,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-// import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (context) => const HomePage());
@@ -50,46 +47,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (BuildContext context) {
-              return Container(
-                height: 250,
-                padding: EdgeInsets.all(16),
-                child: Wrap(
-                  children: [
-                    SizedBox(height: 16),
-                    Text(
-                      'Add New Recipe',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Color.fromARGB(255, 127, 127, 127),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Divider(color: Colors.grey[300], thickness: 1),
-                    ListTile(
-                      leading: Icon(Icons.link_outlined),
-                      title: Text('Save Recipe From the Web'),
-                      contentPadding: EdgeInsets.symmetric(vertical: 0.5),
-                      onTap: () => Navigator.push(
-                        context,
-                        NewRecipeUrlPage.route(),
-                      ),
-                    ),
-                    Divider(color: Colors.grey[300], thickness: 1),
-                    ListTile(
-                      leading: Icon(Icons.edit_note_outlined),
-                      title: Text('Create New Recipe'),
-                      contentPadding: EdgeInsets.symmetric(vertical: 2),
-                      onTap: () => Navigator.push(context, AddNewRecipePage.route()),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
+          AddRecipeBottomSheet(context);
         },
         child: const Icon(
           Icons.add,
@@ -138,7 +96,7 @@ class _HomePageState extends State<HomePage> {
           },
           builder: (context, state) {
             if (state is RecipeLoading) {
-              return const HomepageSkeleton();
+              return const SkeletonHomepage();
             }
             if (state is RecipeDisplaySuccess) {
               return state.recipes.isEmpty
@@ -240,11 +198,7 @@ class _HomePageState extends State<HomePage> {
                                         Text(
                                           recipe.name ?? '(No Title)',
                                           softWrap: true,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                            height: 1.3,
-                                          ),
+                                          style: Theme.of(context).textTheme.titleSmall,
                                         ),
                                         recipe.sources != null
                                             ? Row(
@@ -286,6 +240,71 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
+    );
+  }
+
+  Future<dynamic> AddRecipeBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 250,
+          padding: EdgeInsets.all(16),
+          child: Wrap(
+            children: [
+              SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Add New Recipe',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Color.fromARGB(255, 127, 127, 127),
+                  ),
+                ),
+              ),
+              SizedBox(height: 8),
+              Divider(color: Colors.grey[300], thickness: 1),
+              ListTile(
+                leading: Icon(Icons.link_outlined),
+                title: Text(
+                  'Save Recipe From the Web',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 0.5),
+                onTap: () {
+                  Navigator.pop(context); // Close the bottom sheet first
+                  Navigator.push(
+                    context,
+                    NewRecipeUrlPage.route(),
+                  );
+                },
+              ),
+              Divider(color: Colors.grey[300], thickness: 1),
+              ListTile(
+                leading: Icon(Icons.edit_note_outlined),
+                title: Text(
+                  'Create New Recipe',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 2),
+                onTap: () {
+                  Navigator.pop(context); // Close the bottom sheet first
+                  Navigator.push(
+                    context,
+                    AddNewRecipePage.route(),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

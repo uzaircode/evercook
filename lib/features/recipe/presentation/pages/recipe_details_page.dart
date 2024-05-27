@@ -72,7 +72,7 @@ class RecipeDetailsPage extends StatelessWidget {
             ],
             stretch: true,
             pinned: true,
-            expandedHeight: 400,
+            expandedHeight: 500,
             flexibleSpace: FlexibleSpaceBar(
               background: _buildHeaderImage(recipe.imageUrl ?? ''),
             ),
@@ -99,13 +99,15 @@ class RecipeDetailsPage extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: Text(
-                                  recipe.name ?? '',
+                                  recipe.name ?? '(No Title)',
                                   softWrap: true,
-                                  style: const TextStyle(
-                                    fontSize: 35,
-                                    fontWeight: FontWeight.bold,
-                                    height: 1.2,
-                                  ),
+                                  //   style: const TextStyle(
+                                  //     fontSize: 35,
+                                  //     fontWeight: FontWeight.bold,
+                                  //     height: 1.2,
+                                  //   ),
+                                  // ),
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ),
                               ),
                               Container(
@@ -129,7 +131,7 @@ class RecipeDetailsPage extends StatelessWidget {
                           _buildDetailsRow(
                             recipe.prepTime ?? '',
                             recipe.cookTime ?? '',
-                            recipe.servings?.toString() ?? '',
+                            recipe.servings ?? '',
                           ),
                           const SizedBox(height: 16),
                           Container(
@@ -152,7 +154,7 @@ class RecipeDetailsPage extends StatelessWidget {
                                   Icon(
                                     Icons.play_arrow_outlined,
                                     color: Colors.white,
-                                  ), // Adds an icon beside the text
+                                  ),
                                   SizedBox(width: 8), // Provides spacing between the icon and text
                                   Text(
                                     'Cook Mode',
@@ -170,16 +172,18 @@ class RecipeDetailsPage extends StatelessWidget {
                           Text(
                             recipe.description ?? '',
                             style: const TextStyle(
+                              color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           const SizedBox(height: 16),
                           Divider(color: Colors.grey.shade300),
-                          _buildSectionTitle(
+                          _buildSectionWithContent(
                             context,
                             'Ingredients',
-                            Container(
+                            recipe.ingredients.join('\n'),
+                            icon: Container(
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
                                 shape: BoxShape.circle,
@@ -187,18 +191,8 @@ class RecipeDetailsPage extends StatelessWidget {
                               margin: const EdgeInsets.all(8),
                               child: IconButton(
                                 onPressed: () async {
-                                  LoggerService.logger.d('Starting to add to shopping list');
-                                  LoggerService.logger.d('Recipe ID: ${recipe.id}');
-                                  LoggerService.logger.d('User ID: ${recipe.userId}');
-
                                   try {
                                     Navigator.push(context, _createRoute(ConfirmIngredientsPage(recipe: recipe)));
-                                    // await _addShoppingList();
-                                    // Navigator.pushAndRemoveUntil(
-                                    //   context,
-                                    //   Dashboard.route(),
-                                    //   (route) => false,
-                                    // );
                                   } catch (e) {
                                     LoggerService.logger.e('Error updating shopping list: $e');
                                   }
@@ -207,31 +201,12 @@ class RecipeDetailsPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          _buildIngredientList(
-                            recipe.ingredients,
-                          ),
                           const SizedBox(height: 16),
                           Divider(color: Colors.grey.shade300),
-                          _buildSectionTitle(context, 'Directions', null),
-                          Text(
-                            recipe.directions ?? '',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
+                          _buildSectionWithContent(context, 'Directions', recipe.directions),
                           const SizedBox(height: 16),
                           Divider(color: Colors.grey.shade300),
-                          _buildSectionTitle(
-                            context,
-                            'Notes',
-                            null,
-                          ),
-                          Text(
-                            recipe.notes ?? '',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Color.fromARGB(255, 109, 107, 107),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                          _buildSectionWithContent(context, 'Notes', recipe.notes),
                           const SizedBox(height: 16),
                         ],
                       ),
@@ -279,98 +254,75 @@ class RecipeDetailsPage extends StatelessWidget {
   }
 
   Widget _buildDetailColumn(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8), // Rounded corners
-          border: Border.all(
-            color: Colors.grey[300]!, // Border color
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8), // Rounded corners
+            border: Border.all(
+              color: Colors.grey[300]!, // Border color
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: TextStyle(
-                color: Colors.grey[600],
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildIngredientList(List<String> ingredients) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: ingredients
-          .map((ingredient) => Text(
-                ingredient,
-                style: const TextStyle(
-                  fontSize: 15,
-                  height: 2,
-                  fontWeight: FontWeight.w500,
-                ),
-              ))
-          .toList(),
-    );
-  }
+  Widget _buildSectionWithContent(BuildContext context, String title, String? content, {Widget? icon}) {
+    if (content == null || content.isEmpty) {
+      return SizedBox.shrink(); // Return an empty widget if content is null or empty
+    }
 
-  Widget _buildSectionTitle(BuildContext context, String title, Container? icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              if (icon != null) icon,
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              content,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
-          if (icon != null) icon,
-          // IconButton(
-          //   onPressed: () async {
-          //     LoggerService.logger.d('Starting to add to shopping list');
-          //     LoggerService.logger.d('Recipe ID: ${recipe.id}');
-          //     LoggerService.logger.d('User ID: ${recipe.userId}');
-
-          //     try {
-          //       // Perform the RPC call and store the result
-          //       await _addShoppingList();
-          //     } catch (e) {
-          //       // Log any errors that occur during the RPC call
-          //       LoggerService.logger.e('Error updating shopping list: $e');
-          //     }
-          //   },
-          //   icon: const Icon(Icons.local_grocery_store_outlined),
-          // ),
         ],
       ),
     );
-  }
-
-  Future<void> _addShoppingList() async {
-    try {
-      await Supabase.instance.client.rpc('add_to_shopping_list', params: {
-        'recipe_id': recipe.id,
-      });
-    } catch (e) {
-      print(e.toString());
-    }
   }
 
   void _showDeleteDialog(BuildContext context) {

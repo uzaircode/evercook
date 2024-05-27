@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/cubit/app_user.dart';
-import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/utils/pick_image.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
@@ -12,7 +11,7 @@ import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:evercook/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
@@ -205,11 +204,31 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add a new Recipe'),
+        leading: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            shape: BoxShape.circle,
+          ),
+          margin: const EdgeInsets.all(8),
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back),
+            color: const Color.fromARGB(255, 96, 94, 94),
+          ),
+        ),
         actions: [
-          IconButton(
-            onPressed: () => uploadRecipe(),
-            icon: const Icon(Icons.done_rounded),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              shape: BoxShape.circle,
+            ),
+            margin: const EdgeInsets.all(8),
+            child: IconButton(
+              onPressed: () => uploadRecipe(),
+              icon: const Icon(Icons.done_rounded),
+            ),
           ),
         ],
       ),
@@ -231,161 +250,70 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
               child: Form(
                 key: formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    image != null
-                        ? GestureDetector(
-                            onTap: () {
-                              selectImage();
-                            },
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 150,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.file(
-                                  image!,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          )
-                        : imageUrlController.text.isNotEmpty
-                            ? GestureDetector(
-                                onTap: () {
-                                  selectImage();
-                                },
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  height: 150,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      imageUrlController.text,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : GestureDetector(
-                                onTap: () {
-                                  Logger().d('Image selected');
-                                  selectImage();
-                                },
-                                child: DottedBorder(
-                                  dashPattern: const [10, 4],
-                                  radius: const Radius.circular(10),
-                                  borderType: BorderType.RRect,
-                                  strokeCap: StrokeCap.round,
-                                  color: AppPallete.borderColor,
-                                  child: const SizedBox(
-                                    height: 150,
-                                    width: double.infinity,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.folder_open,
-                                          size: 40,
-                                        ),
-                                        SizedBox(height: 15),
-                                        Text(
-                                          'Select your image',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                        hintText: 'Name',
+                    Text(
+                      'Create Recipe',
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 54, 54, 54),
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
                       ),
-                      maxLines: null,
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
                     ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: descriptionController,
-                      decoration: const InputDecoration(
-                        hintText: 'Description',
-                      ),
-                      maxLines: null,
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
+                    SizedBox(height: 20),
+                    buildImageField(),
+                    SizedBox(height: 20),
+                    buildTextField(
+                      'Name',
+                      hintText: 'Type your recipe name here',
+                      nameController,
                     ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: cookTimeController,
-                      decoration: const InputDecoration(
-                        hintText: 'Cook Time',
-                      ),
-                      maxLines: null,
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
+                    SizedBox(height: 20),
+                    buildTextField(
+                      'Description',
+                      descriptionController,
+                      hintText: "What’s special about your recipe?",
+                      isExpanded: true,
+                      maxLines: 2,
                     ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: prepTimeController,
-                      decoration: const InputDecoration(
-                        hintText: 'Prep Time',
-                      ),
-                      maxLines: null,
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
+                    SizedBox(height: 20),
+                    buildTextField(
+                      'Prep Time',
+                      hintText: '12 minutes',
+                      prepTimeController,
                     ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: servingsController,
-                      decoration: const InputDecoration(
-                        hintText: 'Servings',
-                      ),
-                      maxLines: null,
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
+                    SizedBox(height: 20),
+                    buildTextField(
+                      'Cook Time',
+                      hintText: '50 minutes',
+                      cookTimeController,
                     ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: directionsController,
-                      decoration: const InputDecoration(
-                        hintText: 'Directions',
-                      ),
-                      maxLines: null,
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
+                    SizedBox(height: 20),
+                    buildTextField(
+                      'Servings',
+                      hintText: '4 servings',
+                      servingsController,
                     ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: notesController,
-                      decoration: const InputDecoration(
-                        hintText: 'Notes',
-                      ),
-                      maxLines: null,
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
+                    SizedBox(height: 20),
+                    buildTextField(
+                      'Directions',
+                      directionsController,
+                      hintText: 'Add one or multiple steps (e.g. "transfer to a small bowl")',
+                      isExpanded: true,
+                      maxLines: 2,
                     ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: sourcesController,
-                      decoration: const InputDecoration(
-                        hintText: 'Sources',
-                      ),
-                      maxLines: null,
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
+                    SizedBox(height: 20),
+                    buildTextField(
+                      'Notes',
+                      hintText: 'Add tips or tricks for this recipe',
+                      notesController,
+                    ),
+                    SizedBox(height: 20),
+                    buildTextField(
+                      'Sources',
+                      hintText: 'URL source',
+                      sourcesController,
+                      validator: DomainValidator.validate,
                     ),
                   ],
                 ),
@@ -395,5 +323,129 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
         },
       ),
     );
+  }
+
+  Widget buildImageField() {
+    return GestureDetector(
+      onTap: () {
+        selectImage();
+      },
+      child: image != null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.file(
+                image!,
+                height: 180,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            )
+          : imageUrlController.text.isNotEmpty
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    imageUrlController.text,
+                    height: 180,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : DottedBorder(
+                  dashPattern: const [10, 6],
+                  radius: const Radius.circular(10),
+                  borderType: BorderType.RRect,
+                  strokeWidth: 2,
+                  strokeCap: StrokeCap.round,
+                  color: Color.fromARGB(255, 212, 212, 216),
+                  child: Container(
+                    height: 180,
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.image,
+                          size: 60,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Add Cover Photo',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          '(up to 12 Mb)',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+    );
+  }
+
+  Widget buildTextField(
+    String title,
+    TextEditingController controller, {
+    String? Function(String?)? validator,
+    int? maxLines,
+    String? hintText,
+    bool isExpanded = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$title (Optional)',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[600],
+          ),
+        ),
+        SizedBox(height: 10),
+        TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: hintText,
+            filled: true,
+            fillColor: Colors.grey[200],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          validator: validator,
+          maxLines: isExpanded ? null : maxLines,
+          minLines: isExpanded ? (maxLines ?? 3) : null,
+          keyboardType: isExpanded ? TextInputType.multiline : TextInputType.text,
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class DomainValidator {
+  static String? validate(String? value) {
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+    // Regular expression to match a valid domain format
+    RegExp regex = RegExp(r'^(?:http(s)?:\/\/)?[\w.-]+\.[a-zA-Z]{2,}(?:\/\S*)?$');
+    if (!regex.hasMatch(value)) {
+      return 'Invalid domain format';
+    }
+    return null;
   }
 }

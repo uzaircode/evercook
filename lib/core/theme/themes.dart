@@ -47,6 +47,19 @@ class Themes {
     textTheme: TextTheme(
       titleLarge: TextStyle(
         color: Colors.black,
+        fontSize: 35,
+        fontWeight: FontWeight.bold,
+        height: 1.2,
+      ),
+      titleMedium: TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 20,
+      ),
+      titleSmall: TextStyle(
+        color: Colors.black,
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        height: 1.5,
       ),
       bodySmall: TextStyle(
         color: Colors.grey[600],
@@ -54,7 +67,7 @@ class Themes {
       ),
       bodyMedium: TextStyle(
         fontSize: 16,
-        color: Colors.black,
+        color: Color.fromARGB(255, 127, 127, 127),
         fontWeight: FontWeight.w500,
       ),
     ),
@@ -75,7 +88,8 @@ class Themes {
       side: BorderSide.none,
     ),
     inputDecorationTheme: InputDecorationTheme(
-      contentPadding: const EdgeInsets.all(27),
+      contentPadding: const EdgeInsets.all(16),
+      hintStyle: TextStyle(fontSize: 16, color: Colors.grey[500]),
       errorBorder: _border(LightPallete.errorColor),
     ),
     textSelectionTheme: const TextSelectionThemeData(
@@ -110,6 +124,12 @@ class Themes {
         color: Colors.white,
         fontSize: 32,
         fontWeight: FontWeight.bold,
+      ),
+      titleSmall: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        height: 1.5,
       ),
       bodySmall: TextStyle(
         color: Color.fromARGB(255, 113, 113, 115),

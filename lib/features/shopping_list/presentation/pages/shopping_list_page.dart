@@ -61,23 +61,16 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
 
   void _deleteRecipe(String recipeId, BuildContext context) async {
     try {
-      // Delete from 'shopping_list' table where 'recipe_id' matches.
       await Supabase.instance.client.from('shopping_list').delete().eq('recipe_id', recipeId);
-
-      // Show a snackbar to inform the user about successful deletion.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Recipe deleted successfully')),
       );
-
       Navigator.pushAndRemoveUntil(
         context,
         Dashboard.route(),
         (route) => false,
       );
-
-      // Navigate back to the dashboard page.
     } catch (e) {
-      // Handle any errors that occur during the deletion process.
       print('Error deleting recipe: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error when attempting to delete recipe')),
@@ -110,141 +103,133 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CupertinoPageScaffold(
-        child: CustomScrollView(
-          slivers: [
+        child: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
             CupertinoSliverNavigationBar(
               largeTitle: const Text('Groceries'),
               border: null,
             ),
-            SliverFillRemaining(
-              child: isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : recipes.isEmpty
-                      ? EmptyValue(
-                          iconData: Icons.shopping_bag_outlined,
-                          description: 'No recipes in',
-                          value: 'Groceries',
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Flexible(
-                              flex: 2,
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: recipes.length,
-                                  itemBuilder: (context, index) {
-                                    var entry = recipes.entries.elementAt(index);
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // Optionally, navigate or perform another action
-                                      },
-                                      child: Card(
-                                        margin: const EdgeInsets.all(8),
-                                        elevation: 2,
-                                        child: SizedBox(
-                                          width: 180,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+          ],
+          body: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : recipes.isEmpty
+                  ? EmptyValue(
+                      iconData: Icons.shopping_bag_outlined,
+                      description: 'No recipes in',
+                      value: 'Groceries',
+                    )
+                  : ListView(
+                      padding: EdgeInsets.zero,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          height: 240,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: recipes.length,
+                            itemBuilder: (context, index) {
+                              var entry = recipes.entries.elementAt(index);
+                              return GestureDetector(
+                                onTap: () {
+                                  // Optionally, navigate or perform another action
+                                },
+                                child: Card(
+                                  margin: const EdgeInsets.all(8),
+                                  elevation: 2,
+                                  child: SizedBox(
+                                    width: 180,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Stack(
                                             children: [
-                                              Expanded(
-                                                child: Stack(
-                                                  children: [
-                                                    Positioned.fill(
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            const BorderRadius.vertical(top: Radius.circular(4)),
-                                                        child: Image.network(
-                                                          entry.value['image_url'],
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Positioned(
-                                                      right: 4,
-                                                      top: 4,
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.grey[100],
-                                                          borderRadius: BorderRadius.circular(40),
-                                                        ),
-                                                        child: IconButton(
-                                                          icon: const Icon(Icons.close, color: Colors.red),
-                                                          onPressed: () {
-                                                            _deleteRecipe(entry.key, context);
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                              Positioned.fill(
+                                                child: ClipRRect(
+                                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                                                  child: Image.network(
+                                                    entry.value['image_url'],
+                                                    fit: BoxFit.cover,
+                                                  ),
                                                 ),
                                               ),
-                                              Container(
-                                                // color: Colors.grey.shade50,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(8.0),
-                                                  child: Text(
-                                                    entry.value['name'],
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                    maxLines: 2,
-                                                    overflow: TextOverflow.ellipsis,
+                                              Positioned(
+                                                right: 4,
+                                                top: 4,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.grey[100],
+                                                    borderRadius: BorderRadius.circular(40),
+                                                  ),
+                                                  child: IconButton(
+                                                    icon: const Icon(Icons.close, color: Colors.red),
+                                                    onPressed: () {
+                                                      _deleteRecipe(entry.key, context);
+                                                    },
                                                   ),
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
+                                        Container(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              entry.value['name'],
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey.shade300,
+                          thickness: 2,
+                        ),
+                        ListView.builder(
+                          padding: const EdgeInsets.all(0),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: ingredients.length,
+                          itemBuilder: (context, index) {
+                            var item = ingredients[index];
+                            return ListTile(
+                              title: Text(
+                                item['ingredient'],
+                                style: TextStyle(
+                                  decoration: item['purchased'] ? TextDecoration.lineThrough : null,
+                                  color: item['purchased'] ? Colors.grey : null,
+                                  decorationColor: item['purchased'] ? Colors.grey : null,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            ),
-                            Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 2,
-                            ),
-                            Expanded(
-                              flex: 4,
-                              child: ListView.builder(
-                                padding: EdgeInsets.all(0),
-                                itemCount: ingredients.length,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  var item = ingredients[index];
-                                  return ListTile(
-                                    title: Text(
-                                      item['ingredient'],
-                                      style: TextStyle(
-                                        decoration: item['purchased'] ? TextDecoration.lineThrough : null,
-                                        color: item['purchased'] ? Colors.grey : null,
-                                        decorationColor: item['purchased'] ? Colors.grey : null,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    trailing: Checkbox(
-                                      value: item['purchased'] as bool?,
-                                      onChanged: (bool? newValue) {
-                                        if (newValue == null) return;
-                                        _updateItem(index, newValue);
-                                      },
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10), // Adjust the value as needed
-                                      ),
-                                    ),
-                                  );
+                              trailing: Checkbox(
+                                value: item['purchased'] as bool?,
+                                onChanged: (bool? newValue) {
+                                  if (newValue == null) return;
+                                  _updateItem(index, newValue);
                                 },
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10), // Adjust the value as needed
+                                ),
                               ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
-            )
-          ],
+                      ],
+                    ),
         ),
       ),
     );
