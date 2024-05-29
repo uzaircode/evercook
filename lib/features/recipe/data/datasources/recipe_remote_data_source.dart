@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:evercook/core/constant/db_constants.dart';
-import 'package:evercook/core/constant/storage_constants.dart';
+import 'package:evercook/core/constant/bucket_constants.dart';
 import 'package:evercook/core/error/error_handler.dart';
 import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/utils/logger.dart';
@@ -46,12 +46,12 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
     required RecipeModel recipe,
   }) async {
     try {
-      await supabaseClient.storage.from(StorageConstants.recipeImagesBucket).upload(
+      await supabaseClient.storage.from(BucketConstants.recipeImagesBucket).upload(
             recipe.id,
             image,
           );
 
-      return supabaseClient.storage.from(StorageConstants.recipeImagesBucket).getPublicUrl(
+      return supabaseClient.storage.from(BucketConstants.recipeImagesBucket).getPublicUrl(
             recipe.id,
           );
     } catch (e) {

@@ -1,3 +1,4 @@
+import 'package:evercook/core/constant/db_constants.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -28,8 +29,9 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
     return List.generate(7, (index) => startOfWeek.add(Duration(days: index)));
   }
 
+  //todo separate to business logic
   void fetchMealPlans() async {
-    final response = await Supabase.instance.client.from('meal_plan').select('*, recipes(title)');
+    final response = await Supabase.instance.client.from(DBConstants.mealPlan).select('*, recipes(title)');
     final List<Map<String, dynamic>> mealPlans = response;
     for (var day in weekDays) {
       mealPlansByDay[day] =
@@ -41,9 +43,10 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
     });
   }
 
+  //todo separate to business logic
   void deleteMealPlan(String id) async {
     setState(() => isLoading = true);
-    await Supabase.instance.client.from('meal_plan').delete().match({'id': id});
+    await Supabase.instance.client.from(DBConstants.mealPlan).delete().match({'id': id});
     fetchMealPlans(); // Refresh the meal plans after deleting
   }
 
@@ -140,8 +143,10 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                               );
                             }).toList(),
                             if (meals.isEmpty)
-                              const Text('No meal plans for this day',
-                                  style: TextStyle(fontSize: 16, color: Colors.grey)),
+                              const Text(
+                                'No meal plans for this day',
+                                style: TextStyle(fontSize: 16, color: Colors.grey),
+                              ),
                           ],
                         ),
                       );

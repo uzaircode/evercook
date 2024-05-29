@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+//todo - standardize this color const red - Color.fromARGB(255, 221, 56, 32),
 class LightPallete {
   static const Color backgroundColor = Color.fromRGBO(255, 255, 255, 1);
   static const Color gradient1 = Color.fromRGBO(187, 63, 221, 1);
@@ -45,37 +47,47 @@ class Themes {
     ),
     scaffoldBackgroundColor: LightPallete.backgroundColor,
     textTheme: TextTheme(
-      titleLarge: TextStyle(
-        color: Colors.black,
-        fontSize: 35,
-        fontWeight: FontWeight.bold,
-        height: 1.2,
+      titleLarge: GoogleFonts.notoSerif(
+        textStyle: TextStyle(
+          color: Color.fromARGB(255, 64, 64, 64),
+          fontSize: 35,
+          fontWeight: FontWeight.w700,
+          height: 1.2,
+        ),
       ),
       titleMedium: TextStyle(
         fontWeight: FontWeight.w600,
         fontSize: 20,
       ),
-      titleSmall: TextStyle(
-        color: Colors.black,
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-        height: 1.5,
-      ),
-      bodySmall: TextStyle(
-        color: Colors.grey[600],
-        fontSize: 14,
+      // titleSmall: TextStyle(
+      //   color: Color.fromARGB(255, 63, 63, 63),
+      //   fontWeight: FontWeight.bold,
+      //   fontSize: 16,
+      //   height: 1.5,
+      // ),
+      titleSmall: GoogleFonts.inter(
+        textStyle: TextStyle(
+          color: Color.fromARGB(255, 63, 63, 63),
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+          height: 1.5,
+        ),
       ),
       bodyMedium: TextStyle(
         fontSize: 16,
         color: Color.fromARGB(255, 127, 127, 127),
         fontWeight: FontWeight.w500,
       ),
+      bodySmall: TextStyle(
+        color: Colors.grey[600],
+        fontSize: 14,
+      ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Color.fromARGB(255, 249, 250, 250),
       selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
       unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-      selectedItemColor: Color.fromARGB(255, 244, 118, 160),
+      selectedItemColor: Color.fromARGB(255, 221, 56, 32),
       unselectedItemColor: Color.fromARGB(255, 167, 167, 167),
     ),
     appBarTheme: const AppBarTheme(
@@ -93,10 +105,10 @@ class Themes {
       errorBorder: _border(LightPallete.errorColor),
     ),
     textSelectionTheme: const TextSelectionThemeData(
-      cursorColor: LightPallete.gradient1,
+      cursorColor: Color.fromARGB(255, 221, 56, 32),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: Color.fromARGB(255, 244, 118, 160),
+      backgroundColor: Color.fromARGB(255, 221, 56, 32),
       elevation: 0,
     ),
   );
@@ -146,11 +158,11 @@ class Themes {
       backgroundColor: DarkPallete.backgroundColor,
       selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
       unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-      selectedItemColor: Color.fromARGB(255, 244, 118, 160),
+      selectedItemColor: Color.fromARGB(255, 221, 56, 32),
       unselectedItemColor: Color.fromARGB(255, 167, 167, 167),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: Color.fromARGB(255, 244, 118, 160),
+      backgroundColor: Color.fromARGB(255, 221, 56, 32),
       elevation: 0,
     ),
   );

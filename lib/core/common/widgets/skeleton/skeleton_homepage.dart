@@ -11,7 +11,7 @@ class SkeletonHomepage extends StatelessWidget {
       child: ListView.builder(
         physics: NeverScrollableScrollPhysics(),
         padding: EdgeInsets.all(0),
-        itemCount: 10,
+        itemCount: 3,
         itemBuilder: (context, index) {
           return CustomListTile(
             leadingWidth: 100,
@@ -40,7 +40,7 @@ class CustomListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 18),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start, // Align row children at the start
         children: <Widget>[

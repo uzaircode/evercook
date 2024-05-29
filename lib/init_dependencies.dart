@@ -10,11 +10,6 @@ import 'package:evercook/features/auth/domain/usecases/update_user_usecase.dart'
 import 'package:evercook/features/auth/domain/usecases/user_login_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/user_sign_up_usecase.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:evercook/features/ingredient_wiki/data/datasources/ingredient_wiki_remote_data_source.dart';
-import 'package:evercook/features/ingredient_wiki/data/repositories/ingredient_wiki_repository_impl.dart';
-import 'package:evercook/features/ingredient_wiki/domain/repositories/ingredient_wiki_repository.dart';
-import 'package:evercook/features/ingredient_wiki/domain/usecases/get_all_ingredient_wiki_usecase.dart';
-import 'package:evercook/features/ingredient_wiki/presentation/bloc/ingredient_wiki_bloc.dart';
 import 'package:evercook/features/recipe/data/datasources/recipe_remote_data_source.dart';
 import 'package:evercook/features/recipe/data/repositories/recipe_repository_impl.dart';
 import 'package:evercook/features/recipe/domain/repositories/recipe_repository.dart';

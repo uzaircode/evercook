@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ? this one too, loader? give me something else!!!
 class Loader extends StatelessWidget {
   const Loader({super.key});
 
@@ -7,7 +8,7 @@ class Loader extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
       child: CircularProgressIndicator(
-        color: const Color.fromARGB(255, 244, 118, 160),
+        color: const Color.fromARGB(255, 221, 56, 32),
       ),
     );
   }
