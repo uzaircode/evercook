@@ -4,15 +4,38 @@ import 'package:get_storage/get_storage.dart';
 
 class ThemeService {
   final _box = GetStorage();
-  final _key = 'isDarkMode';
-  _saveThemeToBox(bool isDarkMode) => _box.write(_key, isDarkMode);
+  final _key = 'themeMode'; // changed key to accommodate more than boolean
 
-  bool _loadThemeFromBox() => _box.read(_key) ?? false;
+  void _saveThemeToBox(String themeMode) => _box.write(_key, themeMode);
 
-  ThemeMode get theme => _loadThemeFromBox() ? ThemeMode.dark : ThemeMode.light;
+  String _loadThemeFromBox() => _box.read(_key) ?? 'System';
 
-  void switchTheme() {
-    Get.changeThemeMode(_loadThemeFromBox() ? ThemeMode.light : ThemeMode.dark);
-    _saveThemeToBox(!_loadThemeFromBox());
+  ThemeMode get theme {
+    String themeMode = _loadThemeFromBox();
+    switch (themeMode) {
+      case 'Light':
+        return ThemeMode.light;
+      case 'Dark':
+        return ThemeMode.dark;
+      default:
+        return ThemeMode.system;
+    }
+  }
+
+  void switchTheme(String themeMode) {
+    ThemeMode mode;
+    switch (themeMode) {
+      case 'Light':
+        mode = ThemeMode.light;
+        break;
+      case 'Dark':
+        mode = ThemeMode.dark;
+        break;
+      default:
+        mode = ThemeMode.system;
+        break;
+    }
+    Get.changeThemeMode(mode);
+    _saveThemeToBox(themeMode);
   }
 }

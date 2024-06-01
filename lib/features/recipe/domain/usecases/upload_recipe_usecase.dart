@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:evercook/core/error/failures.dart';
 import 'package:evercook/core/usecase/usecase.dart';
+import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/domain/repositories/recipe_repository.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:logger/logger.dart';
 
 class UploadRecipeUseCase implements UseCase<Recipe, UploadRecipeParams> {
   final RecipeRepository recipeRepository;
@@ -13,6 +15,7 @@ class UploadRecipeUseCase implements UseCase<Recipe, UploadRecipeParams> {
 
   @override
   Future<Either<Failure, Recipe>> call(params) async {
+    LoggerService.logger.i(params.public);
     return await recipeRepository.uploadRecipe(
       userId: params.userId,
       name: params.name,
@@ -25,6 +28,8 @@ class UploadRecipeUseCase implements UseCase<Recipe, UploadRecipeParams> {
       directions: params.directions,
       notes: params.notes,
       sources: params.sources,
+      utensils: params.utensils,
+      public: params.public,
     );
   }
 }
@@ -41,6 +46,8 @@ class UploadRecipeParams {
   final String? notes;
   final String? sources;
   final File? imageUrl;
+  final String? utensils;
+  final bool? public;
 
   UploadRecipeParams({
     required this.userId,
@@ -54,5 +61,7 @@ class UploadRecipeParams {
     this.notes,
     this.sources,
     this.imageUrl,
+    this.utensils,
+    this.public,
   });
 }

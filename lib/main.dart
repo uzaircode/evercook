@@ -3,6 +3,8 @@ import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/observer/bloc_observer.dart';
 import 'package:evercook/core/theme/theme_services.dart';
 import 'package:evercook/core/theme/themes.dart';
+import 'package:evercook/core/theme_test/bloc/theme_test_bloc.dart';
+import 'package:evercook/core/theme_test/theme_test.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/auth_pages/login_page.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
@@ -32,6 +34,9 @@ Future<void> main() async {
         BlocProvider(
           create: (_) => serviceLocator<RecipeBloc>(),
         ),
+        BlocProvider(
+          create: (_) => serviceLocator<ThemeTestBloc>(),
+        )
       ],
       child: const MyApp(),
     ),
@@ -61,22 +66,26 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Evercook',
-      theme: Themes.light,
-      darkTheme: Themes.dark,
-      themeMode: ThemeService().theme,
-      home: _isLoading
-          ? SplashScreen()
-          : BlocSelector<AppUserCubit, AppUserState, bool>(
-              selector: (state) {
-                return state is AppUserLoggedIn;
-              },
-              builder: (context, isLoggedIn) {
-                return isLoggedIn ? const Dashboard() : const LoginPage();
-              },
-            ),
+    return BlocBuilder<ThemeTestBloc, ThemeMode>(
+      builder: (context, state) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Evercook',
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: state,
+          home: _isLoading
+              ? SplashScreen()
+              : BlocSelector<AppUserCubit, AppUserState, bool>(
+                  selector: (state) {
+                    return state is AppUserLoggedIn;
+                  },
+                  builder: (context, isLoggedIn) {
+                    return isLoggedIn ? const Dashboard() : const LoginPage();
+                  },
+                ),
+        );
+      },
     );
   }
 }

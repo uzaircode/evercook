@@ -16,7 +16,7 @@ Widget buildTextField(
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w500,
-          color: Colors.grey[600],
+          color: Color.fromARGB(255, 64, 64, 64),
         ),
       ),
       SizedBox(height: 10),

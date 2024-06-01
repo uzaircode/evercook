@@ -16,6 +16,8 @@ abstract interface class RecipeRepository {
     String? directions,
     String? notes,
     String? sources,
+    String? utensils,
+    bool? public,
   });
 
   Future<Either<Failure, List<Recipe>>> getAllRecipes();

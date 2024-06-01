@@ -4,30 +4,34 @@ class UserModel extends User {
   UserModel({
     required super.id,
     required super.name,
-    required super.email,
     required super.bio,
+    required super.avatar,
+    required super.email,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'] ?? '',
       name: map['name'] ?? '',
-      email: map['email'] ?? '',
       bio: map['bio'] ?? '',
+      avatar: map['avatar_url'] ?? '',
+      email: map['email'] ?? '',
     );
   }
 
   UserModel copyWith({
     String? id,
-    String? email,
     String? name,
     String? bio,
+    String? avatar,
+    String? email,
   }) {
     return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
-      email: email ?? this.email,
       bio: bio ?? this.bio,
+      avatar: avatar ?? this.avatar,
+      email: email ?? this.email,
     );
   }
 }

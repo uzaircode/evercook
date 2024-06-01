@@ -4,6 +4,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/utils/domain_validator.dart';
+import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/utils/pick_image.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
@@ -27,6 +28,8 @@ class AddNewRecipePage extends StatefulWidget {
     String? directions,
     String? notes,
     String? sources,
+    String? utensils,
+    bool? public,
   }) =>
       MaterialPageRoute(
         builder: (context) => AddNewRecipePage(
@@ -40,6 +43,8 @@ class AddNewRecipePage extends StatefulWidget {
           directions: directions,
           notes: notes,
           sources: sources,
+          utensils: utensils,
+          public: public,
         ),
       );
 
@@ -53,6 +58,8 @@ class AddNewRecipePage extends StatefulWidget {
   final String? directions;
   final String? notes;
   final String? sources;
+  final String? utensils;
+  final bool? public;
 
   const AddNewRecipePage({
     super.key,
@@ -66,6 +73,8 @@ class AddNewRecipePage extends StatefulWidget {
     this.directions,
     this.notes,
     this.sources,
+    this.utensils,
+    this.public,
   });
 
   @override
@@ -82,8 +91,11 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
   final directionsController = TextEditingController();
   final notesController = TextEditingController();
   final sourcesController = TextEditingController();
+  final utensilsController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   File? image;
+  bool? isPublic = true;
+  List<TextEditingController> ingredientsControllers = [];
 
   @override
   void initState() {
@@ -97,6 +109,28 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
     if (widget.directions != null) directionsController.text = widget.directions!;
     if (widget.notes != null) notesController.text = widget.notes!;
     if (widget.sources != null) sourcesController.text = widget.sources!;
+    LoggerService.logger.d(widget.ingredients);
+    if (widget.ingredients != null) {
+      ingredientsControllers = widget.ingredients!.map((ingredient) {
+        return TextEditingController(text: ingredient);
+      }).toList();
+    } else {
+      ingredientsControllers.add(TextEditingController());
+    }
+  }
+
+  void addIngredientField() {
+    setState(() {
+      ingredientsControllers.add(TextEditingController());
+    });
+  }
+
+  void removeIngredientField(int index) {
+    setState(() {
+      if (ingredientsControllers.length > 1) {
+        ingredientsControllers.removeAt(index);
+      }
+    });
   }
 
   void selectImage() async {
@@ -133,6 +167,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
           imageFile = await convertUrlToFile(imageUrlController.text.trim());
         }
       }
+      LoggerService.logger.d(isPublic);
 
       context.read<RecipeBloc>().add(
             RecipeUpload(
@@ -147,6 +182,8 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
               directions: directionsController.text.isEmpty ? null : directionsController.text,
               notes: notesController.text.trim().isEmpty ? null : notesController.text.trim(),
               sources: sourcesController.text.trim().isEmpty ? null : sourcesController.text.trim(),
+              utensils: utensilsController.text.trim().isEmpty ? null : utensilsController.text.trim(),
+              public: isPublic,
             ),
           );
     }
@@ -163,6 +200,9 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
     directionsController.dispose();
     notesController.dispose();
     sourcesController.dispose();
+    for (var controller in ingredientsControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -221,11 +261,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                   children: [
                     Text(
                       'Create Recipe',
-                      style: TextStyle(
-                        color: const Color.fromARGB(255, 54, 54, 54),
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                     SizedBox(height: 20),
                     buildImageField(),
@@ -270,11 +306,14 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                       maxLines: 2,
                     ),
                     SizedBox(height: 20),
+                    buildEditableIngredientsList(),
+                    SizedBox(height: 20),
                     buildTextField(
                       'Notes',
                       hintText: 'Add tips or tricks for this recipe',
                       notesController,
                     ),
+                    SizedBox(height: 20),
                     SizedBox(height: 20),
                     buildTextField(
                       'Sources',
@@ -282,6 +321,98 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                       sourcesController,
                       validator: DomainValidator.validate,
                     ),
+                    SizedBox(height: 20),
+                    buildTextField(
+                      'Utensils',
+                      hintText: 'Utensils',
+                      utensilsController,
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Sharing Option',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          ListTile(
+                            contentPadding: EdgeInsetsDirectional.zero,
+                            title: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Public',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold, // Bold text for "Private"
+                                      color: Colors.black87, // Black color text
+                                      fontSize: 16, // Size of the text
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' - Visible to everyone',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      color: Color.fromARGB(255, 64, 64, 64),
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            leading: Radio<bool>(
+                              value: true,
+                              groupValue: isPublic,
+                              activeColor: Color.fromARGB(255, 221, 56, 32),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isPublic = value!;
+                                });
+                              },
+                            ),
+                          ),
+                          ListTile(
+                            contentPadding: EdgeInsetsDirectional.zero,
+                            title: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Private',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold, // Bold text for "Private"
+                                      color: Colors.black87, // Black color text
+                                      fontSize: 16, // Size of the text
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' - Not visible to others',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      color: Color.fromARGB(255, 64, 64, 64),
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            leading: Radio<bool>(
+                              value: false,
+                              groupValue: isPublic,
+                              activeColor: Color.fromARGB(255, 221, 56, 32),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isPublic = value!;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -289,6 +420,66 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
           );
         },
       ),
+    );
+  }
+
+  Widget buildEditableIngredientsList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Ingredients',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: ingredientsControllers.map((controller) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: controller,
+                        decoration: InputDecoration(
+                          hintText: 'Ingredient',
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.remove_circle),
+                      onPressed: () => removeIngredientField(ingredientsControllers.indexOf(controller)),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+        TextButton.icon(
+          onPressed: addIngredientField,
+          icon: Icon(
+            Icons.add,
+            color: Color.fromARGB(255, 221, 56, 32),
+          ),
+          label: Text(
+            "Add Ingredient",
+            style: TextStyle(
+              color: Color.fromARGB(255, 221, 56, 32),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

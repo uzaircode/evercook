@@ -15,6 +15,8 @@ final class RecipeUpload extends RecipeEvent {
   final File? image;
   final String? sources;
   final String? notes;
+  final String? utensils;
+  final bool? public;
 
   RecipeUpload({
     this.name,
@@ -28,6 +30,8 @@ final class RecipeUpload extends RecipeEvent {
     this.image,
     this.sources,
     this.notes,
+    this.utensils,
+    this.public,
   });
 }
 

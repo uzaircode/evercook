@@ -26,6 +26,8 @@ class RecipeRepositoryImpl implements RecipeRepository {
     String? directions,
     String? notes,
     String? sources,
+    String? utensils,
+    bool? public,
     File? image,
   }) async {
     try {
@@ -42,6 +44,8 @@ class RecipeRepositoryImpl implements RecipeRepository {
         notes: notes,
         sources: sources,
         imageUrl: '',
+        utensils: utensils,
+        public: public,
         updatedAt: DateTime.now(),
       );
 

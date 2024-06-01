@@ -150,6 +150,7 @@ class _GroceryPageState extends State<GroceryPage> {
                                   // Optionally, navigate or perform another action
                                 },
                                 child: Card(
+                                  color: Theme.of(context).colorScheme.primaryContainer,
                                   margin: const EdgeInsets.all(8),
                                   elevation: 2,
                                   child: SizedBox(
@@ -174,11 +175,12 @@ class _GroceryPageState extends State<GroceryPage> {
                                                 top: 4,
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: Colors.grey[100],
-                                                    borderRadius: BorderRadius.circular(40),
+                                                    color: Colors.grey[200],
+                                                    borderRadius: BorderRadius.circular(30),
                                                   ),
                                                   child: IconButton(
-                                                    icon: const Icon(Icons.close, color: Colors.red),
+                                                    icon:
+                                                        const Icon(Icons.close, color: Color.fromRGBO(221, 56, 32, 1)),
                                                     onPressed: () {
                                                       _deleteRecipe(entry.key, context);
                                                     },
@@ -189,14 +191,14 @@ class _GroceryPageState extends State<GroceryPage> {
                                           ),
                                         ),
                                         Container(
+                                          color: Theme.of(context).colorScheme.primaryContainer,
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
                                               entry.value['name'],
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                    color: Theme.of(context).colorScheme.onBackground,
+                                                  ),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -221,26 +223,51 @@ class _GroceryPageState extends State<GroceryPage> {
                           itemCount: ingredients.length,
                           itemBuilder: (context, index) {
                             var item = ingredients[index];
-                            return ListTile(
-                              title: Text(
-                                item['ingredient'],
-                                style: TextStyle(
-                                  decoration: item['purchased'] ? TextDecoration.lineThrough : null,
-                                  color: item['purchased'] ? Colors.grey : null,
-                                  decorationColor: item['purchased'] ? Colors.grey : null,
-                                  fontWeight: FontWeight.w500,
+                            String name = item['ingredient'];
+                            List<InlineSpan> spans = [];
+                            RegExp exp = RegExp(r'(\d*\.?\d+\s*/\s*\d+|\d+\s*¼|\d+\s*½|\d+\s*¾|\d+)|(\D+)');
+                            exp.allMatches(name).forEach((match) {
+                              if (match.group(1) != null) {
+                                spans.add(TextSpan(
+                                  text: match.group(1),
+                                  style: TextStyle(
+                                    color: item['purchased']
+                                        ? Colors.grey
+                                        : const Color.fromARGB(255, 221, 56, 32), // Grey if purchased, red otherwise
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ));
+                              }
+                              if (match.group(2) != null) {
+                                spans.add(TextSpan(
+                                  text: match.group(2),
+                                  style: TextStyle(
+                                    color: item['purchased'] ? Colors.grey : Theme.of(context).colorScheme.onBackground,
+                                    decoration: item['purchased'] ? TextDecoration.lineThrough : null,
+                                  ),
+                                ));
+                              }
+                            });
+
+                            return CheckboxListTile(
+                              title: RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 16.0, // Specify a font size
+                                  ),
+                                  children: spans,
                                 ),
                               ),
-                              trailing: Checkbox(
-                                value: item['purchased'] as bool?,
-                                onChanged: (bool? newValue) {
-                                  if (newValue == null) return;
-                                  _updateItem(index, newValue);
-                                },
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10), // Adjust the value as needed
-                                ),
+                              value: item['purchased'] as bool?,
+                              onChanged: (bool? newValue) {
+                                if (newValue == null) return;
+                                _updateItem(index, newValue);
+                              },
+                              activeColor: Color.fromARGB(255, 221, 56, 32),
+                              checkboxShape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
+                              controlAffinity: ListTileControlAffinity.leading,
                             );
                           },
                         ),

@@ -43,11 +43,9 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
                 children: [
                   Text(
                     'Groceries',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
+                  SizedBox(height: 10),
                   Expanded(
                     child: ListView.separated(
                       itemCount: widget.recipe.ingredients.length,
@@ -96,7 +94,6 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
                             (route) => false,
                           );
                         } else {
-                          // Handle the case when no ingredient is selected
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Please select at least one ingredient.'),

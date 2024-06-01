@@ -19,6 +19,8 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => supabase.client);
 
   serviceLocator.registerLazySingleton(() => AppUserCubit());
+
+  serviceLocator.registerLazySingleton(() => ThemeTestBloc());
 }
 
 void _initAuth() {

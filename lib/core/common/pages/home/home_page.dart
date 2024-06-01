@@ -3,6 +3,7 @@ import 'package:evercook/core/common/widgets/empty_value.dart';
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/common/widgets/skeleton/skeleton_homepage.dart';
 import 'package:evercook/core/constant/db_constants.dart';
+import 'package:evercook/core/cubit/app_user.dart';
 // import 'package:evercook/core/cubit/app_user.dart';
 // import 'package:evercook/core/theme/theme_services.dart';
 import 'package:evercook/core/utils/extract_domain.dart';
@@ -47,13 +48,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // final userId = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
+    final userId = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
+    final avatar = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.avatar;
+
+    // LoggerService.logger.d('The avatar is : $avatar');
 
     return Scaffold(
       floatingActionButton: Container(
         width: 50.0,
         height: 50.0,
         child: FloatingActionButton(
+          heroTag: '',
           shape: const CircleBorder(),
           onPressed: () {
             AddRecipeBottomSheet(context);
@@ -69,8 +74,7 @@ class _HomePageState extends State<HomePage> {
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             CupertinoSliverNavigationBar(
-              // backgroundColor: CupertinoColors.systemBackground,
-              heroTag: Null,
+              heroTag: 'trans',
               alwaysShowMiddle: false,
               largeTitle: Text(
                 'Directory',
@@ -78,18 +82,8 @@ class _HomePageState extends State<HomePage> {
               ),
               middle: Text(
                 'Directory',
-                style: TextStyle(
-                  fontFamily: GoogleFonts.notoSerif().fontFamily,
-                  color: Color.fromARGB(255, 64, 64, 64),
-                  fontWeight: FontWeight.w700,
-                ),
+                style: Theme.of(context).textTheme.titleSmall,
               ),
-              // leading: GestureDetector(
-              //   onTap: () {
-              //     ThemeService().switchTheme();
-              //   },
-              //   child: Icon(Icons.cloud),
-              // ),
               leading: GestureDetector(
                 onTap: () {
                   // Navigator.push(context, ProfilePage.route());
@@ -99,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Color.fromARGB(255, 233, 232, 240),
+                      color: Theme.of(context).splashColor,
                       width: 2.0,
                     ),
                   ),
@@ -108,7 +102,9 @@ class _HomePageState extends State<HomePage> {
                     child: ClipOval(
                       child: Image.network(
                         'https://lh3.googleusercontent.com/a/ACg8ocK6xCHK3meZn4GXuEROw3GwSrcaPQ3EI-8qmq0Bqg3ROirau1pk=s96-c',
-                        fit: BoxFit.cover, // Ensures the image covers the whole area
+                        // 'https://robohash.org/$userId',
+                        // avatar,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -207,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                             child: Padding(
                               padding: const EdgeInsets.only(
                                 left: 18,
-                                right: 42,
+                                right: 38,
                                 top: 16,
                                 bottom: 8,
                               ),
@@ -215,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Hero(
-                                    tag: 'transition_${recipe.id}',
+                                    tag: 'recipe_image_${recipe.id}', // Use recipe.id directly
                                     child: Container(
                                       width: 100,
                                       height: 110,
@@ -235,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                   const SizedBox(width: 14),
-                                  Flexible(
+                                  Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
@@ -269,6 +265,7 @@ class _HomePageState extends State<HomePage> {
                                           overflow: TextOverflow.ellipsis,
                                           style: Theme.of(context).textTheme.bodySmall,
                                         ),
+                                        Divider(),
                                       ],
                                     ),
                                   ),
@@ -303,7 +300,7 @@ class _HomePageState extends State<HomePage> {
                   height: 5,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(3),
-                    color: Colors.grey[300],
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ),
               ),

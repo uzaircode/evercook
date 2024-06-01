@@ -48,6 +48,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               'id',
               currentUserSession!.user.id,
             );
+        LoggerService.logger.d(userData);
+
         return UserModel.fromJson(userData.first).copyWith(
           email: currentUserSession!.user.email,
         );

@@ -1,5 +1,6 @@
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
+import 'package:evercook/features/auth/data/models/user_model.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart' as auth_bloc;
 import 'package:evercook/features/auth/presentation/pages/auth_pages/recover_page.dart';
 import 'package:evercook/features/auth/presentation/pages/auth_pages/signup_page.dart';
@@ -201,11 +202,16 @@ class _LoginPageState extends State<LoginPage> {
                               if (idToken == null) {
                                 throw 'No ID Token found.';
                               }
+
                               await Supabase.instance.client.auth.signInWithIdToken(
                                 provider: OAuthProvider.google,
                                 idToken: idToken,
                                 accessToken: accessToken,
                               );
+
+                              // final googleProfile = googleUser;
+                              // final avatarUrl = googleProfile.photoUrl;
+
                               if (Supabase.instance.client.auth.currentUser == null) {
                                 throw 'Failed to sign in with Google.';
                               } else {

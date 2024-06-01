@@ -2,6 +2,7 @@ import 'package:evercook/core/constant/db_constants.dart';
 import 'package:evercook/features/recipe/presentation/pages/community_pages/user_recipe_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/core/utils/logger.dart';
 
@@ -29,7 +30,17 @@ class ProfileUserPageState extends State<ProfileUserPage> {
 
   //todo separate to business logic
   Future<List<Map<String, dynamic>>> fetchRecipesByUserId(String userId) async {
-    final response = await Supabase.instance.client.from(DBConstants.recipesTable).select().eq('user_id', userId);
+    final response = await Supabase.instance.client
+        .from(DBConstants.recipesTable)
+        .select()
+        .eq(
+          'user_id',
+          userId,
+        )
+        .eq(
+          'public',
+          true,
+        );
     LoggerService.logger.i('data of recipes of this particular user: $response');
     return List<Map<String, dynamic>>.from(response);
   }
@@ -38,18 +49,36 @@ class ProfileUserPageState extends State<ProfileUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          IconButton(
-            icon: const FaIcon(Icons.report_outlined),
-            onPressed: () {
-              // Add action for reporting profile
-            },
+        leading: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            shape: BoxShape.circle,
           ),
-        ],
+          margin: const EdgeInsets.all(8),
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back),
+            color: const Color.fromARGB(255, 96, 94, 94),
+          ),
+        ),
+        title: Text(
+          widget.profileData['name'],
+          style: TextStyle(
+            fontSize: 18,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
+        ),
+        centerTitle: true,
+        // actions: [
+        //   IconButton(
+        //     icon: const FaIcon(Icons.report_outlined),
+        //     onPressed: () {
+        //       // Add action for reporting profile
+        //     },
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -61,10 +90,10 @@ class ProfileUserPageState extends State<ProfileUserPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    radius: 50,
+                    radius: 40,
                     backgroundColor: const Color.fromARGB(255, 238, 198, 202),
                     backgroundImage: NetworkImage(
-                        widget.profileData['imageUrl'] ?? 'https://robohash.org/${widget.profileData['id']}'),
+                        widget.profileData['avatar_url'] ?? 'https://robohash.org/${widget.profileData['id']}'),
                   ),
                   const SizedBox(width: 20),
                   Expanded(
@@ -73,15 +102,14 @@ class ProfileUserPageState extends State<ProfileUserPage> {
                       children: [
                         Text(
                           widget.profileData['name'] ?? 'Unknown User',
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontSize: 20,
+                              ),
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          widget.profileData['bio'] ?? 'No bio available.',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
+                          widget.profileData['bio'] ?? '',
+                          style: Theme.of(context).textTheme.titleSmall,
                         ),
                       ],
                     ),
@@ -89,7 +117,7 @@ class ProfileUserPageState extends State<ProfileUserPage> {
                 ],
               ),
             ),
-            const Divider(),
+            Divider(),
             FutureBuilder<List<Map<String, dynamic>>>(
               future: _recipesFuture,
               builder: (context, snapshot) {
@@ -143,10 +171,7 @@ class ProfileUserPageState extends State<ProfileUserPage> {
                                 padding: const EdgeInsets.only(top: 16.0),
                                 child: Text(
                                   recipe['name'] ?? 'Unnamed Recipe',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  style: Theme.of(context).textTheme.titleSmall,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),

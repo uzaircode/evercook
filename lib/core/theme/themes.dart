@@ -33,9 +33,9 @@ class Themes {
 
   static final light = ThemeData(
     colorScheme: ColorScheme.light(
-      primary: LightPallete.gradient1,
+      primary: LightPallete.whiteColor,
       onPrimary: LightPallete.whiteColor,
-      primaryContainer: LightPallete.backgroundColor,
+      primaryContainer: LightPallete.borderColor,
       onPrimaryContainer: LightPallete.borderColor,
       secondary: LightPallete.greyColor,
       error: LightPallete.errorColor,
@@ -59,12 +59,6 @@ class Themes {
         fontWeight: FontWeight.w600,
         fontSize: 20,
       ),
-      // titleSmall: TextStyle(
-      //   color: Color.fromARGB(255, 63, 63, 63),
-      //   fontWeight: FontWeight.bold,
-      //   fontSize: 16,
-      //   height: 1.5,
-      // ),
       titleSmall: GoogleFonts.inter(
         textStyle: TextStyle(
           color: Color.fromARGB(255, 63, 63, 63),
@@ -137,11 +131,12 @@ class Themes {
         fontSize: 32,
         fontWeight: FontWeight.bold,
       ),
-      titleSmall: TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-        height: 1.5,
+      titleSmall: GoogleFonts.inter(
+        textStyle: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        ),
       ),
       bodySmall: TextStyle(
         color: Color.fromARGB(255, 113, 113, 115),

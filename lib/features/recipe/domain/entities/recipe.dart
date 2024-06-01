@@ -12,6 +12,8 @@ class Recipe {
   final String? directions;
   final String? notes;
   final String? sources;
+  final String? utensils;
+  final bool? public;
   final String? userName;
 
   Recipe({
@@ -28,6 +30,8 @@ class Recipe {
     this.directions,
     this.notes,
     this.sources,
+    this.utensils,
+    this.public,
     this.userName,
   });
 }

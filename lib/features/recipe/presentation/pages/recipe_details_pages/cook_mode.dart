@@ -31,7 +31,8 @@ class _CookModePageState extends State<CookModePage> {
           ),
           margin: const EdgeInsets.all(8),
           child: IconButton(
-            onPressed: () {
+            onPressed: () async {
+              await Wakelock.disable();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.arrow_back),
@@ -69,11 +70,11 @@ class _CookModePageState extends State<CookModePage> {
                     children: [
                       Text(
                         directions,
-                        style: TextStyle(
-                          fontSize: _fontSize,
-                          color: Color.fromARGB(255, 69, 67, 67),
-                          fontWeight: FontWeight.w600,
-                        ),
+                        // style: TextStyle(),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontSize: _fontSize,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ],
                   ),
@@ -100,14 +101,15 @@ class _CookModePageState extends State<CookModePage> {
                             ));
                           }
                           if (match.group(2) != null) {
-                            spans.add(TextSpan(
-                              text: match.group(2),
-                              style: TextStyle(
-                                fontSize: _fontSize,
-                                color: Color.fromARGB(255, 69, 67, 67),
-                                fontWeight: FontWeight.w600,
-                              ), // Style for the rest of the text
-                            ));
+                            spans.add(
+                              TextSpan(
+                                text: match.group(2),
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontSize: _fontSize,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                            );
                           }
                         });
 

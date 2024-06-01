@@ -13,7 +13,7 @@ class NewRecipeUrlPage extends StatelessWidget {
 
   //todo separate to business logic
   Future<Map<String, dynamic>?> fetchRecipe(String recipeUrl) async {
-    var url = Uri.parse('https://de4c-2001-e68-7000-0-c8a-d0a5-1e18-d93b.ngrok-free.app//recipe?url=$recipeUrl');
+    var url = Uri.parse('https://6488-2001-f40-94e-2131-d436-b8d0-a008-1c88.ngrok-free.app//recipe?url=$recipeUrl');
     try {
       var response = await http.get(url);
 
@@ -69,7 +69,6 @@ class NewRecipeUrlPage extends StatelessWidget {
                       cookTime: jsonResponse['cookTime'] ?? '',
                       ingredients: List<String>.from(jsonResponse['ingredients']),
                       directions: (jsonResponse['directions'] as List<dynamic>).join('\n\n'),
-                      // directions: (jsonResponse['directions']),
                       notes: jsonResponse['notes'] ?? '',
                       sources: jsonResponse['sources'] ?? '',
                     ),
@@ -103,7 +102,6 @@ class NewRecipeUrlPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 64, 64, 64),
               ),
             ),
             SizedBox(height: 16),

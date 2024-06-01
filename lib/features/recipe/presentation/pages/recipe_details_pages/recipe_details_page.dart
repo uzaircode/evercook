@@ -34,7 +34,9 @@ class RecipeDetailsPage extends StatelessWidget {
               margin: const EdgeInsets.all(8),
               child: IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Future.delayed(Duration.zero, () {
+                    Navigator.pop(context);
+                  });
                 },
                 icon: const Icon(Icons.arrow_back),
                 color: const Color.fromARGB(255, 96, 94, 94),
@@ -76,7 +78,12 @@ class RecipeDetailsPage extends StatelessWidget {
             pinned: true,
             expandedHeight: 500,
             flexibleSpace: FlexibleSpaceBar(
-              background: _buildHeaderImage(recipe.imageUrl ?? ''),
+              background: Hero(
+                tag: 'recipe_image_${recipe.id}',
+                child: _buildHeaderImage(
+                  recipe.imageUrl ?? '',
+                ),
+              ),
             ),
           ),
           BlocConsumer<RecipeBloc, RecipeState>(
@@ -113,6 +120,7 @@ class RecipeDetailsPage extends StatelessWidget {
                             recipe.prepTime ?? '',
                             recipe.cookTime ?? '',
                             recipe.servings ?? '',
+                            context,
                           ),
                           const SizedBox(height: 16),
                           Container(
@@ -159,14 +167,14 @@ class RecipeDetailsPage extends StatelessWidget {
                           const SizedBox(height: 16),
                           Text(
                             recipe.description ?? '',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Theme.of(context).brightness == Brightness.light
+                                      ? Color(0xFF3F3F3F) // Light Theme specific color
+                                      : Colors.white,
+                                ),
                           ),
                           const SizedBox(height: 16),
-                          Divider(color: Colors.grey.shade300),
+                          Divider(),
                           _buildSectionWithContent(
                             context,
                             'Ingredients',
@@ -216,22 +224,30 @@ class RecipeDetailsPage extends StatelessWidget {
                                 icon: const Icon(
                                   Icons.local_grocery_store_outlined,
                                 ),
+                                color: const Color.fromARGB(255, 96, 94, 94),
                               ),
                             ),
                           ),
                           const SizedBox(height: 16),
-                          Divider(color: Colors.grey.shade300),
+                          Divider(),
                           _buildSectionWithContent(
                             context,
                             'Directions',
                             recipe.directions,
                           ),
                           const SizedBox(height: 16),
-                          Divider(color: Colors.grey.shade300),
+                          recipe.notes != null ? Divider() : SizedBox.shrink(),
                           _buildSectionWithContent(
                             context,
                             'Notes',
                             recipe.notes,
+                          ),
+                          const SizedBox(height: 16),
+                          recipe.notes != null ? Divider() : SizedBox.shrink(),
+                          _buildSectionWithContent(
+                            context,
+                            'Utensils',
+                            recipe.utensils,
                           ),
                           const SizedBox(height: 16),
                         ],
@@ -260,18 +276,16 @@ class RecipeDetailsPage extends StatelessWidget {
 
   //todo move this widget to widget page
   Widget _buildHeaderImage(String imageUrl) {
-    return Hero(
-      tag: 'transition_${recipe.id}',
-      child: SizedBox(
-        height: 250,
-        width: double.infinity,
-        child: Image.network(imageUrl, fit: BoxFit.cover),
-      ),
+    LoggerService.logger.d('recipe details: transition_${recipe.id}');
+    return SizedBox(
+      height: 250,
+      width: double.infinity,
+      child: Image.network(imageUrl, fit: BoxFit.cover),
     );
   }
 
   //todo move this widget to widget page
-  Widget _buildDetailsRow(String prepTime, String cookTime, String servings) {
+  Widget _buildDetailsRow(String prepTime, String cookTime, String servings, BuildContext context) {
     return IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -279,6 +293,7 @@ class RecipeDetailsPage extends StatelessWidget {
           _buildDetailColumn(
             'Prep',
             prepTime,
+            context,
             icon: Icon(
               Icons.access_time_rounded,
               size: 22,
@@ -291,6 +306,7 @@ class RecipeDetailsPage extends StatelessWidget {
           _buildDetailColumn(
             'Cook',
             cookTime,
+            context,
             divider: VerticalDivider(
               color: Color.fromARGB(255, 233, 234, 234),
               thickness: 1.2,
@@ -299,6 +315,7 @@ class RecipeDetailsPage extends StatelessWidget {
           _buildDetailColumn(
             'Servings',
             servings,
+            context,
             divider: VerticalDivider(
               color: Color.fromARGB(255, 233, 234, 234),
               thickness: 1.2,
@@ -310,7 +327,7 @@ class RecipeDetailsPage extends StatelessWidget {
   }
 
   //todo move this widget to widget page
-  Widget _buildDetailColumn(String title, String value, {Widget? icon, Widget? divider}) {
+  Widget _buildDetailColumn(String title, String value, BuildContext context, {Widget? icon, Widget? divider}) {
     return Padding(
       padding: const EdgeInsets.only(right: 5.0),
       child: Row(
@@ -323,24 +340,23 @@ class RecipeDetailsPage extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                  color: Colors.grey[800],
-                ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
               const SizedBox(height: 1),
               Text(
                 value,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[500],
-                  fontWeight: FontWeight.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                softWrap: false,
                 maxLines: 1,
+                overflow: TextOverflow.clip,
               ),
             ],
           ),
@@ -382,7 +398,10 @@ class RecipeDetailsPage extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
               content,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
           ),
         ],

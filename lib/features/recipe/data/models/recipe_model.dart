@@ -15,6 +15,8 @@ class RecipeModel extends Recipe {
     required super.directions,
     required super.notes,
     required super.sources,
+    required super.utensils,
+    required super.public,
     super.userName,
   });
 
@@ -32,6 +34,8 @@ class RecipeModel extends Recipe {
     String? directions,
     String? notes,
     String? sources,
+    String? utensils,
+    bool? public,
     String? userName,
   }) {
     return RecipeModel(
@@ -47,6 +51,8 @@ class RecipeModel extends Recipe {
       directions: directions ?? this.directions,
       notes: notes ?? this.notes,
       sources: sources ?? this.sources,
+      utensils: utensils ?? this.utensils,
+      public: public ?? this.public,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
@@ -65,6 +71,8 @@ class RecipeModel extends Recipe {
       'directions': directions,
       'notes': notes,
       'sources': sources,
+      'utensils': utensils,
+      'public': public,
       'updated_at': updatedAt.toIso8601String(),
     };
   }
@@ -83,6 +91,8 @@ class RecipeModel extends Recipe {
       directions: map['directions'] as String?,
       notes: map['notes'] as String?,
       sources: map['sources'] as String?,
+      utensils: map['utensils'] as String?,
+      public: map['public'] as bool?,
       updatedAt: map['updated_at'] == null ? DateTime.now() : DateTime.parse(map['updated_at'] as String),
     );
   }
@@ -99,6 +109,6 @@ class RecipeModel extends Recipe {
 
   @override
   String toString() {
-    return 'Recipe(id: $id, name: $name, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, ingredients: $ingredients, image_url: $imageUrl, directions: $directions, notes: $notes, sources: $sources, updated_at: $updatedAt), username: $userName';
+    return 'Recipe(id: $id, name: $name, user_id: $userId, description: $description, prep_time: $prepTime, cook_time: $cookTime, servings: $servings, ingredients: $ingredients, image_url: $imageUrl, directions: $directions, notes: $notes, sources: $sources, utensils: $utensils, public: $public, updated_at: $updatedAt), username: $userName';
   }
 }

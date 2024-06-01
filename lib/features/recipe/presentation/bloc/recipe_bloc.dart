@@ -47,6 +47,8 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       imageUrl: event.image,
       notes: event.notes,
       sources: event.sources,
+      utensils: event.utensils,
+      public: event.public,
     ));
 
     res.fold(

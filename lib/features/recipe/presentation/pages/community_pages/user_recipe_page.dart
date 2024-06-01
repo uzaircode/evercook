@@ -1,3 +1,4 @@
+import 'package:evercook/core/utils/logger.dart';
 import 'package:flutter/material.dart';
 
 class UserRecipePage extends StatelessWidget {
@@ -11,6 +12,7 @@ class UserRecipePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LoggerService.logger.d(recipe.toString());
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: CustomScrollView(
@@ -40,7 +42,7 @@ class UserRecipePage extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                _buildRecipeDetails(),
+                _buildRecipeDetails(context),
               ],
             ),
           ),
@@ -64,34 +66,27 @@ class UserRecipePage extends StatelessWidget {
   }
 
   //todo move this widget to widget page
-  Widget _buildRecipeDetails() {
+  Widget _buildRecipeDetails(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            recipe['title'] ?? 'Title',
+            recipe['name'] ?? '(No name)',
             softWrap: true,
-            style: const TextStyle(
-              fontSize: 35,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-            ),
+            style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
           _buildDetailsRow(
             recipe['prep_time'] ?? '',
             recipe['cook_time'] ?? '',
-            recipe['servings']?.toString() ?? '',
+            recipe['servings'] ?? '',
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Text(
-            recipe['description'] ?? 'Description',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            recipe['description'] ?? '',
+            style: Theme.of(context).textTheme.titleSmall,
           ),
           const SizedBox(height: 16),
           Divider(color: Colors.grey.shade300),
@@ -100,7 +95,13 @@ class UserRecipePage extends StatelessWidget {
           const SizedBox(height: 16),
           Divider(color: Colors.grey.shade300),
           _buildSectionTitle('Directions'),
-          // Add directions here if available
+          Text(
+            recipe['directions'] ?? '',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -108,47 +109,79 @@ class UserRecipePage extends StatelessWidget {
 
   //todo move this widget to widget page
   Widget _buildDetailsRow(String prepTime, String cookTime, String servings) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildDetailColumn('Prep Time', prepTime),
-        _buildDetailColumn('Cook Time', cookTime),
-        _buildDetailColumn('Servings', servings),
-      ],
+    return IntrinsicHeight(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          _buildDetailColumn(
+            'Prep',
+            prepTime,
+            icon: Icon(
+              Icons.access_time_rounded,
+              size: 22,
+            ),
+            divider: VerticalDivider(
+              color: Color.fromARGB(255, 233, 234, 234),
+              thickness: 1.2,
+            ),
+          ),
+          _buildDetailColumn(
+            'Cook',
+            cookTime,
+            divider: VerticalDivider(
+              color: Color.fromARGB(255, 233, 234, 234),
+              thickness: 1.2,
+            ),
+          ),
+          _buildDetailColumn(
+            'Servings',
+            servings,
+            divider: VerticalDivider(
+              color: Color.fromARGB(255, 233, 234, 234),
+              thickness: 1.2,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   //todo move this widget to widget page
-  Widget _buildDetailColumn(String title, String value) {
+  Widget _buildDetailColumn(String title, String value, {Widget? icon, Widget? divider}) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8), // Rounded corners
-          border: Border.all(
-            color: Colors.grey[300]!, // Border color
+      padding: const EdgeInsets.only(right: 5.0),
+      child: Row(
+        children: [
+          if (icon != null) icon,
+          if (divider != null) divider,
+          SizedBox(width: 5),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  color: Colors.grey[800],
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              const SizedBox(height: 1),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[500],
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ],
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: TextStyle(
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -176,7 +209,11 @@ class UserRecipePage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         title,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        style: const TextStyle(
+          color: Color.fromARGB(255, 96, 94, 94),
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
       ),
     );
   }

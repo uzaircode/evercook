@@ -17,7 +17,6 @@ class _DashboardState extends State<Dashboard> {
 
   late final List<Widget> _screens = <Widget>[
     const HomePage(),
-    // const SearchPage(),
     const GroceryPage(),
     const ViewMealPlan(),
     // _buildNavigator(const HomePage(), 'Home'),
@@ -53,7 +52,9 @@ class _DashboardState extends State<Dashboard> {
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: Color.fromARGB(255, 226, 227, 227),
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Color.fromARGB(255, 226, 227, 227)
+                  : Color(0xFF3F3F3F),
             ),
           ),
         ),
