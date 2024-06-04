@@ -169,16 +169,18 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
       }
       LoggerService.logger.d(isPublic);
 
+      final ingredients = ingredientsControllers.map((controller) => controller.text).toList();
+      LoggerService.logger.i('image file is null? : ${imageFile}');
+
       context.read<RecipeBloc>().add(
             RecipeUpload(
               userId: userId,
               name: nameController.text.trim().isEmpty ? null : nameController.text.trim(),
               description: descriptionController.text.trim().isEmpty ? null : descriptionController.text.trim(),
               servings: servingsController.text.trim().isEmpty ? null : servingsController.text.trim(),
-              image: imageFile,
               prepTime: prepTimeController.text.trim().isEmpty ? null : prepTimeController.text.trim(),
               cookTime: cookTimeController.text.trim().isEmpty ? null : cookTimeController.text.trim(),
-              ingredients: widget.ingredients,
+              ingredients: ingredients.isEmpty ? widget.ingredients : ingredients,
               directions: directionsController.text.isEmpty ? null : directionsController.text,
               notes: notesController.text.trim().isEmpty ? null : notesController.text.trim(),
               sources: sourcesController.text.trim().isEmpty ? null : sourcesController.text.trim(),
@@ -191,6 +193,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
 
   @override
   void dispose() {
+    super.dispose();
     nameController.dispose();
     descriptionController.dispose();
     prepTimeController.dispose();
@@ -203,7 +206,6 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
     for (var controller in ingredientsControllers) {
       controller.dispose();
     }
-    super.dispose();
   }
 
   @override
@@ -269,13 +271,15 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                     buildTextField(
                       'Name',
                       hintText: 'Type your recipe name here',
+                      context,
                       nameController,
                     ),
                     SizedBox(height: 20),
                     buildTextField(
                       'Description',
-                      descriptionController,
                       hintText: "What’s special about your recipe?",
+                      context,
+                      descriptionController,
                       isExpanded: true,
                       maxLines: 2,
                     ),
@@ -283,25 +287,29 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                     buildTextField(
                       'Prep Time',
                       hintText: '12 minutes',
+                      context,
                       prepTimeController,
                     ),
                     SizedBox(height: 20),
                     buildTextField(
                       'Cook Time',
                       hintText: '50 minutes',
+                      context,
                       cookTimeController,
                     ),
                     SizedBox(height: 20),
                     buildTextField(
                       'Servings',
                       hintText: '4 servings',
+                      context,
                       servingsController,
                     ),
                     SizedBox(height: 20),
                     buildTextField(
                       'Directions',
-                      directionsController,
                       hintText: 'Add one or multiple steps (e.g. "transfer to a small bowl")',
+                      context,
+                      directionsController,
                       isExpanded: true,
                       maxLines: 2,
                     ),
@@ -311,6 +319,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                     buildTextField(
                       'Notes',
                       hintText: 'Add tips or tricks for this recipe',
+                      context,
                       notesController,
                     ),
                     SizedBox(height: 20),
@@ -318,6 +327,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                     buildTextField(
                       'Sources',
                       hintText: 'URL source',
+                      context,
                       sourcesController,
                       validator: DomainValidator.validate,
                     ),
@@ -325,6 +335,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                     buildTextField(
                       'Utensils',
                       hintText: 'Utensils',
+                      context,
                       utensilsController,
                     ),
                     SizedBox(height: 20),
@@ -448,7 +459,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                         decoration: InputDecoration(
                           hintText: 'Ingredient',
                           filled: true,
-                          fillColor: Colors.grey[200],
+                          fillColor: Theme.of(context).inputDecorationTheme.fillColor,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide.none,

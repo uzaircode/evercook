@@ -1,8 +1,6 @@
 import 'package:evercook/core/constant/db_constants.dart';
 import 'package:evercook/features/recipe/presentation/pages/community_pages/user_recipe_page.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/core/utils/logger.dart';
 

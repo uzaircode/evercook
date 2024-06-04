@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 Widget buildTextField(
   String title,
+  BuildContext context,
   TextEditingController controller, {
   String? Function(String?)? validator,
   int? maxLines,
@@ -25,12 +26,13 @@ Widget buildTextField(
         decoration: InputDecoration(
           hintText: hintText,
           filled: true,
-          fillColor: Colors.grey[200],
+          fillColor: Theme.of(context).inputDecorationTheme.fillColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,
           ),
         ),
+        style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
         validator: validator,
         maxLines: isExpanded ? null : maxLines,
         minLines: isExpanded ? (maxLines ?? 3) : null,

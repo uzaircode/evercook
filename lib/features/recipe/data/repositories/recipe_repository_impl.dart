@@ -49,12 +49,18 @@ class RecipeRepositoryImpl implements RecipeRepository {
         updatedAt: DateTime.now(),
       );
 
-      final imageUrl = await recipeRemoteDataSource.uploadRecipeImage(
-        image: image!,
-        recipe: recipeModel,
-      );
+      // final imageUrl = await recipeRemoteDataSource.uploadRecipeImage(
+      //   image: image!,
+      //   recipe: recipeModel,
+      // );
 
-      recipeModel = recipeModel.copyWith(imageUrl: imageUrl);
+      if (image != null) {
+        final imageUrl = await recipeRemoteDataSource.uploadRecipeImage(
+          image: image,
+          recipe: recipeModel,
+        );
+        recipeModel = recipeModel.copyWith(imageUrl: imageUrl);
+      }
 
       final uploadedRecipe = await recipeRemoteDataSource.uploadRecipe(recipeModel);
 

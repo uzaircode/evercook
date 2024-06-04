@@ -34,7 +34,10 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
 
   //todo separate to business logic
   void fetchMealPlans() async {
-    final response = await Supabase.instance.client.from(DBConstants.mealPlan).select('*, recipes(name)');
+    final response = await Supabase.instance.client.from(DBConstants.mealPlan).select('*, recipes(name)').eq(
+          'user_id',
+          Supabase.instance.client.auth.currentSession!.user.id,
+        );
     final List<Map<String, dynamic>> mealPlans = response;
     for (var day in weekDays) {
       mealPlansByDay[day] =

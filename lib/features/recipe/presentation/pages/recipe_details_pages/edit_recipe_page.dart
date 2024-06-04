@@ -23,17 +23,34 @@ class EditRecipePage extends StatefulWidget {
 }
 
 class _EditRecipePageState extends State<EditRecipePage> {
-  late final TextEditingController imageUrlController = TextEditingController(text: widget.recipe.imageUrl ?? '');
-  late final TextEditingController nameController = TextEditingController(text: widget.recipe.name ?? '');
-  late final TextEditingController descriptionController = TextEditingController(text: widget.recipe.description ?? '');
-  late final TextEditingController prepTimeController = TextEditingController(text: widget.recipe.prepTime ?? '');
-  late final TextEditingController cookTimeController = TextEditingController(text: widget.recipe.cookTime ?? '');
-  late final TextEditingController servingsController = TextEditingController(text: widget.recipe.servings ?? '');
-  late final TextEditingController directionsController = TextEditingController(text: widget.recipe.directions ?? '');
-  late final TextEditingController notesController = TextEditingController(text: widget.recipe.notes ?? '');
-  late final TextEditingController sourcesController = TextEditingController(text: widget.recipe.sources ?? '');
+  late TextEditingController imageUrlController;
+  late TextEditingController nameController;
+  late TextEditingController descriptionController;
+  late TextEditingController prepTimeController;
+  late TextEditingController cookTimeController;
+  late TextEditingController servingsController;
+  late TextEditingController directionsController;
+  late TextEditingController notesController;
+  late TextEditingController sourcesController;
+  late List<TextEditingController> ingredientsControllers;
   File? image;
   bool isInit = true;
+
+  @override
+  void initState() {
+    super.initState();
+    imageUrlController = TextEditingController(text: widget.recipe.imageUrl ?? '');
+    nameController = TextEditingController(text: widget.recipe.name ?? '');
+    descriptionController = TextEditingController(text: widget.recipe.description ?? '');
+    prepTimeController = TextEditingController(text: widget.recipe.prepTime ?? '');
+    cookTimeController = TextEditingController(text: widget.recipe.cookTime ?? '');
+    servingsController = TextEditingController(text: widget.recipe.servings ?? '');
+    directionsController = TextEditingController(text: widget.recipe.directions ?? '');
+    notesController = TextEditingController(text: widget.recipe.notes ?? '');
+    sourcesController = TextEditingController(text: widget.recipe.sources ?? '');
+    ingredientsControllers =
+        widget.recipe.ingredients.map((ingredient) => TextEditingController(text: ingredient)).toList();
+  }
 
   void selectImage() async {
     final pickedImage = await pickImage();
@@ -44,8 +61,38 @@ class _EditRecipePageState extends State<EditRecipePage> {
     }
   }
 
+  void addIngredientField() {
+    setState(() {
+      ingredientsControllers.add(TextEditingController());
+    });
+  }
+
+  void removeIngredientField(int index) {
+    setState(() {
+      if (ingredientsControllers.length > 1) {
+        ingredientsControllers.removeAt(index);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    imageUrlController.dispose();
+    nameController.dispose();
+    descriptionController.dispose();
+    prepTimeController.dispose();
+    cookTimeController.dispose();
+    servingsController.dispose();
+    directionsController.dispose();
+    notesController.dispose();
+    sourcesController.dispose();
+    ingredientsControllers.forEach((controller) => controller.dispose());
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    LoggerService.logger.d('Ingredients data is: $ingredientsControllers');
     return Scaffold(
       appBar: AppBar(
         leading: Container(
@@ -56,9 +103,12 @@ class _EditRecipePageState extends State<EditRecipePage> {
           margin: const EdgeInsets.all(8),
           child: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Future.delayed(Duration.zero, () {
+                Navigator.pop(context);
+              });
             },
             icon: const Icon(Icons.arrow_back),
+            color: const Color.fromARGB(255, 96, 94, 94),
           ),
         ),
         actions: [
@@ -73,7 +123,10 @@ class _EditRecipePageState extends State<EditRecipePage> {
                 LoggerService.logger.i('button clicked');
                 await updateRecipe();
               },
-              icon: const Icon(Icons.done_rounded),
+              icon: const Icon(
+                Icons.done_rounded,
+                color: const Color.fromARGB(255, 96, 94, 94),
+              ),
             ),
           ),
         ],
@@ -133,6 +186,8 @@ class _EditRecipePageState extends State<EditRecipePage> {
               isExpanded: true,
               maxLines: 2,
             ),
+            SizedBox(height: 20),
+            buildEditableIngredientsList(),
             const SizedBox(height: 20),
             buildTextField(
               'Notes',
@@ -148,6 +203,69 @@ class _EditRecipePageState extends State<EditRecipePage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildEditableIngredientsList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Ingredients',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: ingredientsControllers.map((controller) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: controller,
+                        decoration: InputDecoration(
+                          hintText: 'Ingredient',
+                          filled: true,
+                          fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.remove_circle),
+                      onPressed: () => removeIngredientField(ingredientsControllers.indexOf(controller)),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+        TextButton.icon(
+          onPressed: addIngredientField,
+          icon: Icon(
+            Icons.add,
+            color: Color.fromARGB(255, 221, 56, 32),
+          ),
+          label: Text(
+            "Add Ingredient",
+            style: TextStyle(
+              color: Color.fromARGB(255, 221, 56, 32),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -175,11 +293,14 @@ class _EditRecipePageState extends State<EditRecipePage> {
           decoration: InputDecoration(
             hintText: hintText,
             filled: true,
-            fillColor: Colors.grey[200],
+            fillColor: Theme.of(context).inputDecorationTheme.fillColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
             ),
+          ),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onBackground,
           ),
           maxLines: isExpanded ? null : maxLines,
           minLines: isExpanded ? maxLines : null,
@@ -271,6 +392,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
             'image_url': imageUrlController.text.trim(),
             'directions': directionsController.text.trim(),
             'notes': notesController.text.trim(),
+            'ingredients': ingredientsControllers.map((controller) => controller.text.trim()).toList(),
           })
           .eq('id', widget.recipe.id)
           .select();

@@ -13,7 +13,7 @@ class NewRecipeUrlPage extends StatelessWidget {
 
   //todo separate to business logic
   Future<Map<String, dynamic>?> fetchRecipe(String recipeUrl) async {
-    var url = Uri.parse('https://6488-2001-f40-94e-2131-d436-b8d0-a008-1c88.ngrok-free.app//recipe?url=$recipeUrl');
+    var url = Uri.parse('https://e394-2001-f40-94e-2131-f109-8d58-75fb-10ed.ngrok-free.app//recipe?url=$recipeUrl');
     try {
       var response = await http.get(url);
 
@@ -102,6 +102,7 @@ class NewRecipeUrlPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onBackground,
               ),
             ),
             SizedBox(height: 16),
@@ -111,11 +112,14 @@ class NewRecipeUrlPage extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Recipe URL',
                   filled: true,
-                  fillColor: Colors.grey[200],
+                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
                   ),
+                ),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
                 maxLines: null,
                 onTapOutside: (event) {

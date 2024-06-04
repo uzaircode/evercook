@@ -1,16 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LightPallete {
+  static const primaryColor = Color.fromARGB(255, 221, 56, 32);
   static const whiteColor = Color(0xFFFFFFFF);
   static const borderColor = Color(0xFFE0E0E0);
   static const greyColor = Color(0xFF9E9E9E);
   static const errorColor = Color(0xFFB00020);
-  static const backgroundColor = Color(0xFFF5F5F5);
+  static const backgroundColor = Color.fromARGB(255, 255, 255, 255);
 }
 
 class DarkPallete {
+  static const primaryColor = Color.fromARGB(255, 221, 56, 32);
   static const gradient1 = Color(0xFF1A237E);
   static const whiteColor = Color(0xFFFFFFFF);
   static const backgroundColor = Color.fromARGB(255, 28, 28, 30);
@@ -50,12 +51,12 @@ const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
   primary: LightPallete.whiteColor,
   onPrimary: LightPallete.whiteColor,
-  primaryContainer: LightPallete.borderColor,
-  onPrimaryContainer: LightPallete.borderColor,
-  secondary: LightPallete.greyColor,
-  onSecondary: Colors.white,
-  secondaryContainer: LightPallete.greyColor,
-  onSecondaryContainer: LightPallete.greyColor,
+  secondary: Color.fromARGB(255, 166, 166, 166),
+  onSecondary: Color.fromARGB(255, 166, 166, 166),
+  primaryContainer: Color.fromARGB(255, 224, 224, 224),
+  onPrimaryContainer: Color.fromARGB(255, 224, 224, 224),
+  secondaryContainer: Color.fromARGB(255, 224, 224, 224),
+  onSecondaryContainer: Color.fromARGB(255, 224, 224, 224),
   tertiary: LightPallete.greyColor,
   onTertiary: Colors.white,
   error: LightPallete.errorColor,
@@ -80,12 +81,12 @@ const darkColorScheme = ColorScheme(
   brightness: Brightness.dark,
   primary: DarkPallete.gradient1,
   onPrimary: DarkPallete.whiteColor,
-  primaryContainer: Color.fromARGB(255, 38, 38, 40),
-  onPrimaryContainer: DarkPallete.gradient1,
-  secondary: DarkPallete.whiteColor,
-  onSecondary: DarkPallete.whiteColor,
-  secondaryContainer: DarkPallete.whiteColor,
-  onSecondaryContainer: DarkPallete.whiteColor,
+  primaryContainer: Color.fromARGB(255, 81, 81, 83),
+  onPrimaryContainer: Color.fromARGB(255, 81, 81, 83),
+  secondary: Color.fromARGB(255, 166, 166, 166),
+  onSecondary: Color.fromARGB(255, 166, 166, 166),
+  secondaryContainer: Color.fromARGB(255, 38, 38, 40),
+  onSecondaryContainer: Color.fromARGB(255, 38, 38, 40),
   tertiary: DarkPallete.greyColor,
   onTertiary: Colors.white,
   error: DarkPallete.errorColor,
@@ -197,7 +198,7 @@ final darkBottomNavigationBarTheme = BottomNavigationBarThemeData(
   selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
   unselectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
   selectedItemColor: Color.fromARGB(255, 221, 56, 32),
-  unselectedItemColor: Color(0xFFA7A7A7),
+  unselectedItemColor: Color.fromARGB(255, 167, 167, 167),
 );
 
 final lightAppBarTheme = AppBarTheme(
@@ -224,14 +225,17 @@ final darkChipTheme = ChipThemeData(
 
 final lightInputDecorationTheme = InputDecorationTheme(
   contentPadding: EdgeInsets.all(16),
-  hintStyle: TextStyle(fontSize: 16, color: Colors.grey[500]),
+  hintStyle: TextStyle(
+    fontSize: 16,
+    color: Colors.grey[500],
+  ),
   errorBorder: OutlineInputBorder(
     borderSide: BorderSide(color: LightPallete.errorColor),
   ),
 );
 
 final darkInputDecorationTheme = InputDecorationTheme(
-  fillColor: Colors.red,
+  fillColor: Color.fromARGB(255, 49, 49, 53),
   contentPadding: EdgeInsets.all(16),
   hintStyle: TextStyle(fontSize: 16, color: Colors.grey[500]),
   errorBorder: OutlineInputBorder(
@@ -248,7 +252,7 @@ final darkTextSelectionTheme = TextSelectionThemeData(
 );
 
 final lightFloatingActionButtonTheme = FloatingActionButtonThemeData(
-  backgroundColor: Color(0xFFDD3820),
+  backgroundColor: Color.fromRGBO(221, 56, 32, 1),
   elevation: 0,
 );
 

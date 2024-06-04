@@ -28,7 +28,24 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            shape: BoxShape.circle,
+          ),
+          margin: const EdgeInsets.all(8),
+          child: IconButton(
+            onPressed: () {
+              Future.delayed(Duration.zero, () {
+                Navigator.pop(context);
+              });
+            },
+            icon: const Icon(Icons.arrow_back),
+            color: const Color.fromARGB(255, 96, 94, 94),
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 46),
         child: widget.recipe.ingredients.isEmpty
@@ -57,10 +74,7 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
                         return CheckboxListTile(
                           title: Text(
                             ingredient,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 17,
-                            ),
+                            style: Theme.of(context).textTheme.titleSmall,
                           ),
                           value: _selectedIngredients.contains(ingredient),
                           onChanged: (bool? value) {
@@ -136,10 +150,12 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
 
   //todo separate to business logic
   Future<void> _addSelectedIngredientsToShoppingList(List<String> selectedIngredients) async {
+    final userId = Supabase.instance.client.auth.currentSession!.user.id;
     try {
-      LoggerService.logger.i('Recipe ID: ${widget.recipe.id}, Ingredients: $selectedIngredients');
+      LoggerService.logger.i('Recipe ID: ${widget.recipe.id}, Ingredients: $selectedIngredients, UserId: $userId');
       for (String ingredient in selectedIngredients) {
         await Supabase.instance.client.rpc('add_to_shopping_lists', params: {
+          'user_id': userId,
           'recipe_id': widget.recipe.id,
           'ingredient': ingredient,
         });

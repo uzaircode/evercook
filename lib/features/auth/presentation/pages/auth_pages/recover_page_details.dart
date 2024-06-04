@@ -38,6 +38,9 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
                   border: OutlineInputBorder(),
                   labelText: 'Reset Token',
                 ),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
                 validator: (value) {
                   if (value!.isEmpty || value.length < 6) {
                     return 'Invalid token!';
@@ -54,6 +57,9 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Email',
+                ),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
                 ),
                 validator: (value) {
                   // Basic email validation
@@ -92,6 +98,9 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
                 onTapOutside: (event) {
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
               ),
               const SizedBox(height: 16),
               ElevatedButton(

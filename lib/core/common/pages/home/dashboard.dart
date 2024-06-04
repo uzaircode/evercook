@@ -1,3 +1,4 @@
+import 'package:evercook/features/cookbook/presentation/pages/cookbook_page.dart';
 import 'package:evercook/features/meal_plan/presentation/pages/view_meal_plan.dart';
 import 'package:evercook/core/common/pages/home/home_page.dart';
 import 'package:evercook/features/grocery/presentation/pages/grocery_page.dart';
@@ -17,6 +18,7 @@ class _DashboardState extends State<Dashboard> {
 
   late final List<Widget> _screens = <Widget>[
     const HomePage(),
+    CookbookPage(),
     const GroceryPage(),
     const ViewMealPlan(),
     // _buildNavigator(const HomePage(), 'Home'),
@@ -75,6 +77,10 @@ class _DashboardState extends State<Dashboard> {
               BottomNavigationBarItem(
                 icon: FaIcon(Icons.book_outlined),
                 label: 'Recipes',
+              ),
+              BottomNavigationBarItem(
+                icon: FaIcon(Icons.collections_bookmark_outlined),
+                label: 'Cookbook',
               ),
               BottomNavigationBarItem(
                 icon: FaIcon(Icons.shopping_bag_outlined),

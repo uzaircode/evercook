@@ -11,13 +11,18 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 
-class RecipeDetailsPage extends StatelessWidget {
+class RecipeDetailsPage extends StatefulWidget {
   static route(Recipe recipe) => MaterialPageRoute(builder: (context) => RecipeDetailsPage(recipe: recipe));
 
   final Recipe recipe;
 
   const RecipeDetailsPage({Key? key, required this.recipe}) : super(key: key);
 
+  @override
+  State<RecipeDetailsPage> createState() => _RecipeDetailsPageState();
+}
+
+class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +56,7 @@ class RecipeDetailsPage extends StatelessWidget {
                 margin: const EdgeInsets.all(8),
                 child: IconButton(
                   onPressed: () {
-                    Navigator.push(context, EditRecipePage.route(recipe));
+                    Navigator.push(context, EditRecipePage.route(widget.recipe));
                   },
                   icon: const Icon(Icons.edit),
                   color: const Color.fromARGB(255, 96, 94, 94),
@@ -76,12 +81,12 @@ class RecipeDetailsPage extends StatelessWidget {
             ],
             stretch: true,
             pinned: true,
-            expandedHeight: 500,
+            expandedHeight: widget.recipe.imageUrl == null || widget.recipe.imageUrl!.isEmpty ? null : 500,
             flexibleSpace: FlexibleSpaceBar(
               background: Hero(
-                tag: 'recipe_image_${recipe.id}',
+                tag: 'recipe_image_${widget.recipe.id}',
                 child: _buildHeaderImage(
-                  recipe.imageUrl ?? '',
+                  widget.recipe.imageUrl ?? '',
                 ),
               ),
             ),
@@ -108,7 +113,7 @@ class RecipeDetailsPage extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: Text(
-                                  recipe.name ?? '(No Title)',
+                                  widget.recipe.name ?? '(No Title)',
                                   softWrap: true,
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),
@@ -117,9 +122,9 @@ class RecipeDetailsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           _buildDetailsRow(
-                            recipe.prepTime ?? '',
-                            recipe.cookTime ?? '',
-                            recipe.servings ?? '',
+                            widget.recipe.prepTime ?? '',
+                            widget.recipe.cookTime ?? '',
+                            widget.recipe.servings ?? '',
                             context,
                           ),
                           const SizedBox(height: 16),
@@ -132,7 +137,7 @@ class RecipeDetailsPage extends StatelessWidget {
                                   context,
                                   animationDownToUp(
                                     CookModePage(
-                                      recipe: recipe,
+                                      recipe: widget.recipe,
                                     ),
                                   ),
                                 );
@@ -166,7 +171,7 @@ class RecipeDetailsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            recipe.description ?? '',
+                            widget.recipe.description ?? '',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   color: Theme.of(context).brightness == Brightness.light
                                       ? Color(0xFF3F3F3F) // Light Theme specific color
@@ -178,7 +183,7 @@ class RecipeDetailsPage extends StatelessWidget {
                           _buildSectionWithContent(
                             context,
                             'Ingredients',
-                            recipe.ingredients.join('\n'),
+                            widget.recipe.ingredients.join('\n'),
                             iconData: Container(
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
@@ -211,7 +216,7 @@ class RecipeDetailsPage extends StatelessWidget {
                                       context,
                                       animationDownToUp(
                                         ConfirmIngredientsPage(
-                                          recipe: recipe,
+                                          recipe: widget.recipe,
                                         ),
                                       ),
                                     );
@@ -233,21 +238,21 @@ class RecipeDetailsPage extends StatelessWidget {
                           _buildSectionWithContent(
                             context,
                             'Directions',
-                            recipe.directions,
+                            widget.recipe.directions,
                           ),
                           const SizedBox(height: 16),
-                          recipe.notes != null ? Divider() : SizedBox.shrink(),
+                          widget.recipe.notes != null ? Divider() : SizedBox.shrink(),
                           _buildSectionWithContent(
                             context,
                             'Notes',
-                            recipe.notes,
+                            widget.recipe.notes,
                           ),
                           const SizedBox(height: 16),
-                          recipe.notes != null ? Divider() : SizedBox.shrink(),
+                          widget.recipe.notes != null ? Divider() : SizedBox.shrink(),
                           _buildSectionWithContent(
                             context,
                             'Utensils',
-                            recipe.utensils,
+                            widget.recipe.utensils,
                           ),
                           const SizedBox(height: 16),
                         ],
@@ -267,7 +272,7 @@ class RecipeDetailsPage extends StatelessWidget {
   Future<void> _addMealPlan() async {
     await Supabase.instance.client.from(DBConstants.mealPlan).insert([
       {
-        'recipe_id': recipe.id,
+        'recipe_id': widget.recipe.id,
         'user_id': Supabase.instance.client.auth.currentUser!.id,
         'date': DateTime.now().toIso8601String(),
       }
@@ -275,24 +280,36 @@ class RecipeDetailsPage extends StatelessWidget {
   }
 
   //todo move this widget to widget page
-  Widget _buildHeaderImage(String imageUrl) {
-    LoggerService.logger.d('recipe details: transition_${recipe.id}');
+  Widget _buildHeaderImage(String? imageUrl) {
+    LoggerService.logger.d('recipe details: transition_${widget.recipe.id}');
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return SizedBox.shrink();
+    }
     return SizedBox(
       height: 250,
       width: double.infinity,
-      child: Image.network(imageUrl, fit: BoxFit.cover),
+      child: Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+      ),
     );
   }
 
   //todo move this widget to widget page
-  Widget _buildDetailsRow(String prepTime, String cookTime, String servings, BuildContext context) {
+  Widget _buildDetailsRow(String? prepTime, String? cookTime, String? servings, BuildContext context) {
+    if ((prepTime == null || prepTime.isEmpty) &&
+        (cookTime == null || cookTime.isEmpty) &&
+        (servings == null || servings.isEmpty)) {
+      return SizedBox.shrink();
+    }
+
     return IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           _buildDetailColumn(
             'Prep',
-            prepTime,
+            prepTime ?? '',
             context,
             icon: Icon(
               Icons.access_time_rounded,
@@ -305,7 +322,7 @@ class RecipeDetailsPage extends StatelessWidget {
           ),
           _buildDetailColumn(
             'Cook',
-            cookTime,
+            cookTime ?? '',
             context,
             divider: VerticalDivider(
               color: Color.fromARGB(255, 233, 234, 234),
@@ -314,7 +331,7 @@ class RecipeDetailsPage extends StatelessWidget {
           ),
           _buildDetailColumn(
             'Servings',
-            servings,
+            servings ?? '',
             context,
             divider: VerticalDivider(
               color: Color.fromARGB(255, 233, 234, 234),
@@ -424,7 +441,7 @@ class RecipeDetailsPage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                context.read<RecipeBloc>().add(RecipeDelete(id: recipe.id));
+                context.read<RecipeBloc>().add(RecipeDelete(id: widget.recipe.id));
                 Navigator.of(context).pop();
               },
               child: const Text("Delete", style: TextStyle(color: Colors.red)),

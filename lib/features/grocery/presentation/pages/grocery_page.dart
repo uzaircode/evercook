@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/core/utils/logger.dart';
-import 'package:evercook/core/common/pages/home/dashboard.dart';
 
 class GroceryPage extends StatefulWidget {
   const GroceryPage({Key? key}) : super(key: key);
@@ -33,6 +32,7 @@ class _GroceryPageState extends State<GroceryPage> {
       final res = await Supabase.instance.client
           .from(DBConstants.shoppingListTable)
           .select('*, recipes:recipe_id (name, image_url)')
+          .eq('user_id', Supabase.instance.client.auth.currentSession!.user.id)
           .order('list_id', ascending: true);
 
       Map<String, dynamic> tempRecipes = {};
@@ -65,14 +65,28 @@ class _GroceryPageState extends State<GroceryPage> {
   //todo separate to business logic
   void _deleteRecipe(String recipeId, BuildContext context) async {
     try {
-      await Supabase.instance.client.from(DBConstants.shoppingListTable).delete().eq('recipe_id', recipeId);
+      await Supabase.instance.client
+          .from(DBConstants.shoppingListTable)
+          .delete()
+          .eq('recipe_id', recipeId)
+          .eq('user_id', Supabase.instance.client.auth.currentSession!.user.id);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Recipe deleted successfully')),
       );
-      Navigator.pushAndRemoveUntil(
-        context,
-        Dashboard.route(),
-        (route) => false,
+      // Navigator.pushAndRemoveUntil(
+      //   context,
+      //   Dashboard.route(),
+      //   (route) => false,
+      // );
+
+      setState(() {
+        recipes.remove(recipeId);
+
+        ingredients.removeWhere((item) => item['recipe_id'] == recipeId);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Recipe deleted successfully')),
       );
     } catch (e) {
       print('Error deleting recipe: $e');
@@ -94,7 +108,7 @@ class _GroceryPageState extends State<GroceryPage> {
         'recipe_id': item['recipe_id'],
         'ingredient': item['ingredient'],
         'purchased': newValue,
-      });
+      }).eq('user_id', Supabase.instance.client.auth.currentSession!.user.id);
       LoggerService.logger.i('Purchased: $newValue');
     } catch (e) {
       LoggerService.logger.e('Error updating item: $e');

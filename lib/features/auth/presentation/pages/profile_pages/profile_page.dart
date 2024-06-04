@@ -47,8 +47,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.id;
-
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -63,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 'Profile',
                 style: TextStyle(
                   fontFamily: GoogleFonts.notoSerif().fontFamily,
-                  color: Color.fromARGB(255, 64, 64, 64),
+                  color: Theme.of(context).colorScheme.onBackground,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -79,38 +77,38 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color.fromARGB(255, 223, 223, 235),
+                    color: Colors.grey[300],
                   ),
                   child: Icon(
                     Icons.close_rounded,
-                    color: Color.fromARGB(255, 113, 113, 137),
+                    color: const Color.fromARGB(255, 96, 94, 94),
                     size: 22,
                   ),
                 ),
               ),
-              // trailing: GestureDetector(
-              //   onTap: () {
-              //     _showModalBottomSheet(context, userId);
-              //   },
-              //   child: Container(
-              //     padding: EdgeInsets.all(8),
-              //     decoration: BoxDecoration(
-              //       shape: BoxShape.circle,
-              //       color: Color.fromARGB(255, 223, 223, 235),
-              //     ),
-              //     child: Icon(
-              //       Icons.more_vert_outlined,
-              //       color: Color.fromARGB(255, 113, 113, 137),
-              //       size: 22,
-              //     ),
-              //   ),
-              // ),
-              trailing: Switch(
-                value: context.read<ThemeTestBloc>().state == ThemeMode.dark,
-                onChanged: (value) {
-                  context.read<ThemeTestBloc>().add(ThemeChanged(value));
+              trailing: GestureDetector(
+                onTap: () {
+                  _showModalBottomSheet(context, Supabase.instance.client.auth.currentSession!.user.id);
                 },
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey[300],
+                  ),
+                  child: Icon(
+                    Icons.more_vert_outlined,
+                    color: const Color.fromARGB(255, 96, 94, 94),
+                    size: 22,
+                  ),
+                ),
               ),
+              // trailing: Switch(
+              //   value: context.read<ThemeTestBloc>().state == ThemeMode.dark,
+              //   onChanged: (value) {
+              //     context.read<ThemeTestBloc>().add(ThemeChanged(value));
+              //   },
+              // ),
             ),
           ];
         },
@@ -133,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     // Personal Info Container
                     DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 240, 239, 245),
+                        color: Theme.of(context).colorScheme.onSecondaryContainer,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Padding(
@@ -152,9 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Text('Personal Info', style: Theme.of(context).textTheme.titleMedium),
                                       Text(
                                         'Update your photo and personal details here',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
+                                        style: Theme.of(context).textTheme.bodySmall,
                                       ),
                                     ],
                                   ),
@@ -174,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Text(
                               'Full Name',
                               style: TextStyle(
-                                color: Color.fromARGB(255, 38, 37, 59), // Change label text color
+                                color: Theme.of(context).colorScheme.onBackground,
                               ),
                             ),
                             SizedBox(height: 5),
@@ -182,25 +178,16 @@ class _ProfilePageState extends State<ProfilePage> {
                               controller: _nameController,
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: Color.fromARGB(255, 228, 228, 238),
+                                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
                                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 215, 214, 228),
-                                  ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 215, 214, 228),
-                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 215, 214, 228),
-                                  ),
                                 ),
                               ),
                             ),
@@ -208,32 +195,23 @@ class _ProfilePageState extends State<ProfilePage> {
                             Text(
                               'Password',
                               style: TextStyle(
-                                color: Color.fromARGB(255, 38, 37, 59),
+                                color: Theme.of(context).colorScheme.onBackground,
                               ),
                             ),
                             SizedBox(height: 5),
                             TextField(
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: Color.fromARGB(255, 228, 228, 238),
+                                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
                                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 215, 214, 228),
-                                  ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 215, 214, 228),
-                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 215, 214, 228),
-                                  ),
                                 ),
                               ),
                               obscureText: true,
@@ -242,7 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Text(
                               'Primary Email',
                               style: TextStyle(
-                                color: Color.fromARGB(255, 38, 37, 59),
+                                color: Theme.of(context).colorScheme.onBackground,
                               ),
                             ),
                             SizedBox(height: 5),
@@ -251,25 +229,16 @@ class _ProfilePageState extends State<ProfilePage> {
                               enabled: false,
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: Color.fromARGB(255, 228, 228, 238),
+                                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
                                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 215, 214, 228),
-                                  ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 215, 214, 228),
-                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 215, 214, 228),
-                                  ),
                                 ),
                               ),
                             ),
@@ -283,7 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: double.infinity,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 240, 239, 245),
+                          color: Theme.of(context).colorScheme.onSecondaryContainer,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
@@ -295,66 +264,75 @@ class _ProfilePageState extends State<ProfilePage> {
                               SizedBox(height: 3),
                               Text(
                                 'Customize your app interface',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
-                              SizedBox(height: 20),
+                              SizedBox(height: 5),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Active Theme',
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 39, 37, 59),
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.symmetric(horizontal: 12),
-                                    decoration: BoxDecoration(
-                                      color: Color.fromARGB(255, 228, 228, 238),
-                                      border: Border.all(
-                                        color: Color.fromARGB(255, 215, 214, 228),
+                                  // Text(
+                                  //   'Active Theme',
+                                  //   style: TextStyle(
+                                  //     color: Theme.of(context).colorScheme.onBackground,
+                                  //   ),
+                                  // ),
+                                  // SizedBox(height: 5),
+                                  // Container(
+                                  //   width: double.infinity,
+                                  //   padding: EdgeInsets.symmetric(horizontal: 12),
+                                  //   decoration: BoxDecoration(
+                                  //     color: Theme.of(context).inputDecorationTheme.fillColor,
+                                  //     borderRadius: BorderRadius.circular(8),
+                                  //   ),
+                                  //   child: DropdownButtonHideUnderline(
+                                  //     child: DropdownButton<String>(
+                                  //       isExpanded: true,
+                                  //       value: selectedTheme,
+                                  //       items: <String>['System', 'Light', 'Dark'].map((String value) {
+                                  //         return DropdownMenuItem<String>(
+                                  //           value: value,
+                                  //           // Apply style to the text inside the dropdown
+                                  //           child: Text(
+                                  //             value,
+                                  //             style: TextStyle(
+                                  //               fontSize: 14,
+                                  //               fontWeight: FontWeight.w600,
+                                  //               color: Theme.of(context).colorScheme.onBackground,
+                                  //             ),
+                                  //           ), // Smaller text size
+                                  //         );
+                                  //       }).toList(),
+                                  //       onChanged: (String? newValue) {
+                                  //         if (newValue != null) {
+                                  //           setState(() {
+                                  //             selectedTheme = newValue;
+                                  //             ThemeService().switchTheme(newValue);
+                                  //           });
+                                  //         }
+                                  //       },
+                                  //       dropdownColor: Theme.of(context).colorScheme.onBackground,
+                                  //       underline: Container(
+                                  //         height: 0,
+                                  //       ),
+                                  //       style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Background Color',
+                                        // style: Theme.of(context).c,
                                       ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        isExpanded: true,
-                                        value: selectedTheme,
-                                        items: <String>['System', 'Light', 'Dark'].map((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            // Apply style to the text inside the dropdown
-                                            child: Text(
-                                              value,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ), // Smaller text size
-                                          );
-                                        }).toList(),
-                                        onChanged: (String? newValue) {
-                                          if (newValue != null) {
-                                            setState(() {
-                                              selectedTheme = newValue;
-                                              ThemeService().switchTheme(newValue);
-                                            });
-                                          }
+                                      Switch(
+                                        value: context.read<ThemeTestBloc>().state == ThemeMode.dark,
+                                        onChanged: (value) {
+                                          context.read<ThemeTestBloc>().add(ThemeChanged(value));
                                         },
-                                        dropdownColor: Color.fromARGB(
-                                            255, 228, 228, 238), // Matched the container's background color
-                                        // Additional styling for when the dropdown is clicked
-                                        underline: Container(
-                                          height: 0, // Removes the underline
-                                        ),
-                                        style: TextStyle(color: Colors.black), // Default text color for all items
                                       ),
-                                    ),
-                                  ),
+                                    ],
+                                  )
                                 ],
                               ),
                             ],
@@ -366,7 +344,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     // App Info Container
                     DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 240, 239, 245),
+                        color: Theme.of(context).colorScheme.onSecondaryContainer,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Padding(
@@ -379,10 +357,13 @@ class _ProfilePageState extends State<ProfilePage> {
                               style: TextStyle(
                                 fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
                                 fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(255, 38, 37, 59),
+                                color: Theme.of(context).colorScheme.onBackground,
                               ),
                             ),
-                            Text('Version 1.0.0'),
+                            Text(
+                              'Version 1.0.0',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                             SizedBox(height: 20),
                             ListView(
                               padding: EdgeInsetsDirectional.zero,
@@ -391,39 +372,12 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 ListTile(
                                   contentPadding: EdgeInsetsDirectional.zero,
-                                  leading: Icon(Icons.info_outline),
-                                  title: Text(
-                                    'About',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    // Navigate to about page or show dialog
-                                  },
-                                ),
-                                Divider(color: Color.fromARGB(255, 215, 214, 228)),
-                                ListTile(
-                                  contentPadding: EdgeInsetsDirectional.zero,
-                                  leading: Icon(Icons.lock_outline),
-                                  title: Text(
-                                    'Privacy Policy',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    // Navigate to privacy policy page
-                                  },
-                                ),
-                                Divider(color: Color.fromARGB(255, 215, 214, 228)),
-                                ListTile(
-                                  contentPadding: EdgeInsetsDirectional.zero,
                                   leading: Icon(Icons.feedback_outlined),
                                   title: Text(
                                     'Send Feedback',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
+                                      color: Theme.of(context).colorScheme.onBackground,
                                     ),
                                   ),
                                   onTap: () async {
@@ -475,7 +429,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 title: Text(
                   'Sign out',
                   style: TextStyle(
-                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ),
                 contentPadding: EdgeInsets.symmetric(vertical: 2),

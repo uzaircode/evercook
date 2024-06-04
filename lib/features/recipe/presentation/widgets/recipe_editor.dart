@@ -22,6 +22,9 @@ class RecipeEditor extends StatelessWidget {
       onTapOutside: (event) {
         FocusManager.instance.primaryFocus?.unfocus();
       },
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onBackground,
+      ),
     );
   }
 }
