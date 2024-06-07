@@ -21,4 +21,8 @@ final class AuthFailure extends AuthState {
 
 final class AuthRecoverPasswordSuccess extends AuthState {}
 
-final class AuthUpdateUserSuccess extends AuthState {}
+class AuthUpdateUserSuccess extends AuthState {
+  final User updatedUser;
+
+  AuthUpdateUserSuccess(this.updatedUser);
+}

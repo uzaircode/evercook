@@ -1,7 +1,7 @@
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
-import 'package:evercook/features/auth/data/models/user_model.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart' as auth_bloc;
+import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/auth_pages/recover_page.dart';
 import 'package:evercook/features/auth/presentation/pages/auth_pages/signup_page.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_button.dart';
@@ -9,8 +9,6 @@ import 'package:evercook/features/auth/presentation/widgets/auth_field.dart';
 import 'package:evercook/core/common/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (context) => const LoginPage());
@@ -180,47 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                           height: 65,
                           child: ElevatedButton(
                             onPressed: () async {
-                              //todo separate to business logic
-                              // ! hide this id
-                              const webClientId =
-                                  '908468362758-rdalsblfhdl2nbnh9bui78ubgmhdboi3.apps.googleusercontent.com';
-                              const iosClientId =
-                                  '908468362758-m5a317hnbtj1ji5mqrrj30ehr34k9bs4.apps.googleusercontent.com';
-
-                              final GoogleSignIn googleSignIn = GoogleSignIn(
-                                clientId: iosClientId,
-                                serverClientId: webClientId,
-                              );
-                              final googleUser = await googleSignIn.signIn();
-                              final googleAuth = await googleUser!.authentication;
-                              final accessToken = googleAuth.accessToken;
-                              final idToken = googleAuth.idToken;
-
-                              if (accessToken == null) {
-                                throw 'No Access Token found.';
-                              }
-                              if (idToken == null) {
-                                throw 'No ID Token found.';
-                              }
-
-                              await Supabase.instance.client.auth.signInWithIdToken(
-                                provider: OAuthProvider.google,
-                                idToken: idToken,
-                                accessToken: accessToken,
-                              );
-
-                              // final googleProfile = googleUser;
-                              // final avatarUrl = googleProfile.photoUrl;
-
-                              if (Supabase.instance.client.auth.currentUser == null) {
-                                throw 'Failed to sign in with Google.';
-                              } else {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  Dashboard.route(),
-                                  (route) => false,
-                                );
-                              }
+                              BlocProvider.of<AuthBloc>(context).add(AuthUserSignInWithGoogle());
                             },
                             style: ElevatedButton.styleFrom(
                               elevation: 1,

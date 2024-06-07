@@ -10,6 +10,7 @@ import 'package:evercook/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/update_user_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/user_login_usecase.dart';
 import 'package:evercook/features/auth/domain/usecases/user_sign_up_usecase.dart';
+import 'package:evercook/features/auth/domain/usecases/user_signin_google_usecase.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/recipe/data/datasources/recipe_remote_data_source.dart';
 import 'package:evercook/features/recipe/data/repositories/recipe_repository_impl.dart';

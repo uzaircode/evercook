@@ -70,14 +70,6 @@ class _GroceryPageState extends State<GroceryPage> {
           .delete()
           .eq('recipe_id', recipeId)
           .eq('user_id', Supabase.instance.client.auth.currentSession!.user.id);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Recipe deleted successfully')),
-      );
-      // Navigator.pushAndRemoveUntil(
-      //   context,
-      //   Dashboard.route(),
-      //   (route) => false,
-      // );
 
       setState(() {
         recipes.remove(recipeId);
@@ -92,6 +84,33 @@ class _GroceryPageState extends State<GroceryPage> {
       print('Error deleting recipe: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error when attempting to delete recipe')),
+      );
+    }
+  }
+
+  // Implementing delete all recipes based on recipe IDs
+  void _deleteAllRecipe(List<String> recipeIds, BuildContext context) async {
+    try {
+      await Supabase.instance.client
+          .from(DBConstants.shoppingListTable)
+          .delete()
+          .inFilter('recipe_id', recipeIds)
+          .eq('user_id', Supabase.instance.client.auth.currentSession!.user.id);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All recipes deleted successfully')),
+      );
+
+      setState(() {
+        for (var recipeId in recipeIds) {
+          recipes.remove(recipeId);
+        }
+        ingredients.removeWhere((item) => recipeIds.contains(item['recipe_id']));
+      });
+    } catch (e) {
+      LoggerService.logger.e('Error deleting all recipes: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error when attempting to delete all recipes')),
       );
     }
   }
@@ -137,6 +156,13 @@ class _GroceryPageState extends State<GroceryPage> {
                   color: Color.fromARGB(255, 64, 64, 64),
                   fontWeight: FontWeight.w700,
                 ),
+              ),
+              trailing: IconButton(
+                onPressed: () {
+                  List<String> recipeIds = recipes.keys.toList();
+                  _deleteAllRecipe(recipeIds, context);
+                },
+                icon: Icon(Icons.delete_outlined),
               ),
             ),
           ],

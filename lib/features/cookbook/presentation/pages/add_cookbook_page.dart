@@ -11,14 +11,17 @@ class AddCookbookPage extends StatefulWidget {
 
 class _AddCookbookPageState extends State<AddCookbookPage> {
   final TextEditingController titleController = TextEditingController();
-  bool? isPublic = true;
+  bool? public = true;
 
   void navigateToAddRecipes() {
     if (titleController.text.isNotEmpty) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => AddMultipleRecipePage(title: titleController.text),
+          builder: (context) => AddMultipleRecipePage(
+            title: titleController.text,
+            public: public!,
+          ),
         ),
       );
     } else {
@@ -136,11 +139,11 @@ class _AddCookbookPageState extends State<AddCookbookPage> {
                     ),
                     leading: Radio<bool>(
                       value: true,
-                      groupValue: isPublic,
+                      groupValue: public,
                       activeColor: Color.fromARGB(255, 221, 56, 32),
                       onChanged: (bool? value) {
                         setState(() {
-                          isPublic = value!;
+                          public = value!;
                         });
                       },
                     ),
@@ -171,11 +174,11 @@ class _AddCookbookPageState extends State<AddCookbookPage> {
                     ),
                     leading: Radio<bool>(
                       value: false,
-                      groupValue: isPublic,
+                      groupValue: public,
                       activeColor: Color.fromARGB(255, 221, 56, 32),
                       onChanged: (bool? value) {
                         setState(() {
-                          isPublic = value!;
+                          public = value!;
                         });
                       },
                     ),

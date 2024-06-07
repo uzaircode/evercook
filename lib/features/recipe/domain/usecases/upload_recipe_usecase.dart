@@ -6,7 +6,6 @@ import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/domain/repositories/recipe_repository.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:logger/logger.dart';
 
 class UploadRecipeUseCase implements UseCase<Recipe, UploadRecipeParams> {
   final RecipeRepository recipeRepository;

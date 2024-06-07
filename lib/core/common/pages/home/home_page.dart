@@ -2,6 +2,7 @@ import 'package:evercook/core/common/widgets/empty_value.dart';
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/common/widgets/skeleton/skeleton_homepage.dart';
 import 'package:evercook/core/constant/db_constants.dart';
+import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/utils/extract_domain.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/utils/show_snackbar.dart';
@@ -41,14 +42,9 @@ class _HomePageState extends State<HomePage> {
     context.read<AuthBloc>().stream.listen((authState) {
       if (authState is AuthIsUserLoggedIn) {
         context.read<RecipeBloc>().add(RecipeFetchAllRecipes());
+        context.read<AuthBloc>().add(AuthIsUserLoggedIn());
       }
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // No need to fetch recipes here again
   }
 
   void updateList(String value) {
@@ -108,25 +104,38 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.push(context, _createRoute(ProfilePage()));
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Theme.of(context).splashColor,
-                      width: 2.0,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: ClipOval(
-                      child: Image.network(
-                        'https://lh3.googleusercontent.com/a/ACg8ocK6xCHK3meZn4GXuEROw3GwSrcaPQ3EI-8qmq0Bqg3ROirau1pk=s96-c',
-                        // 'https://robohash.org/$userId',
-                        // avatar,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+                child: BlocBuilder<AppUserCubit, AppUserState>(
+                  builder: (context, state) {
+                    final image = (context.read<AppUserCubit>().state as AppUserLoggedIn).user.avatar;
+
+                    if (state is AppUserLoggedIn) {
+                      LoggerService.logger.d('THE USER STATE IS : $state');
+
+                      LoggerService.logger.i('the image is : $image');
+                      return Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Theme.of(context).splashColor,
+                            width: 2.0,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: ClipOval(
+                            child: Image.network(
+                              // 'https://robohash.org/$userId',
+                              image,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      LoggerService.logger.d('THE USER STATE IS : $state');
+                      return Container();
+                    }
+                  },
                 ),
               ),
               trailing: TextButton(
@@ -285,8 +294,8 @@ class _HomePageState extends State<HomePage> {
                                               width: 100,
                                               height: 110,
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(8.0),
                                                 color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                                borderRadius: BorderRadius.circular(8.0),
                                                 image: recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty
                                                     ? DecorationImage(
                                                         image: NetworkImage(
@@ -525,7 +534,7 @@ class CustomSearch extends SearchDelegate<String> {
             return ListTile(
               leading: CircleAvatar(
                 backgroundColor: const Color.fromARGB(255, 238, 198, 202),
-                backgroundImage: NetworkImage(profile['image_url'] ?? 'https://robohash.org/${profile['id']}'),
+                backgroundImage: NetworkImage(profile['avatar_url'] ?? 'https://robohash.org/${profile['id']}'),
               ),
               title: Text(
                 profile['name'],
@@ -567,7 +576,7 @@ class CustomSearch extends SearchDelegate<String> {
               leading: CircleAvatar(
                 backgroundColor: const Color.fromARGB(255, 238, 198, 202),
                 backgroundImage: NetworkImage(
-                  profile['image_url'] ?? 'https://robohash.org/${profile['id']}',
+                  profile['avatar_url'] ?? 'https://robohash.org/${profile['id']}',
                 ),
               ),
               title: Text(

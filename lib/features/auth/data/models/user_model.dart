@@ -34,4 +34,19 @@ class UserModel extends User {
       email: email ?? this.email,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'bio': bio,
+      'avatar_url': avatar,
+      'email': email,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'UserModel{id: $id, name: $name, bio: $bio, avatar: $avatar, email: $email}';
+  }
 }

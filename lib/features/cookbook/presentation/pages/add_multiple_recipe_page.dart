@@ -10,10 +10,24 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddMultipleRecipePage extends StatefulWidget {
   final String title;
+  final bool public;
 
-  static route({required String title}) => MaterialPageRoute(builder: (context) => AddMultipleRecipePage(title: title));
+  static route({
+    required String title,
+    required bool public,
+  }) =>
+      MaterialPageRoute(
+        builder: (context) => AddMultipleRecipePage(
+          title: title,
+          public: public,
+        ),
+      );
 
-  const AddMultipleRecipePage({Key? key, required this.title}) : super(key: key);
+  const AddMultipleRecipePage({
+    Key? key,
+    required this.title,
+    required this.public,
+  }) : super(key: key);
 
   @override
   _AddMultipleRecipePageState createState() => _AddMultipleRecipePageState();
@@ -56,6 +70,7 @@ class _AddMultipleRecipePageState extends State<AddMultipleRecipePage> {
       // Insert cookbook and wait for completion
       final cookbookResponse = await Supabase.instance.client.from('cookbooks').insert({
         'title': widget.title,
+        'public': widget.public,
       }).select('*');
 
       LoggerService.logger.i(cookbookResponse);
@@ -89,6 +104,7 @@ class _AddMultipleRecipePageState extends State<AddMultipleRecipePage> {
   @override
   Widget build(BuildContext context) {
     LoggerService.logger.i('The title of the cookbook is: ${widget.title}');
+    LoggerService.logger.i('The bool public of the cookbook is: ${widget.public}');
     return Scaffold(
       appBar: AppBar(
         leading: Container(
@@ -218,13 +234,13 @@ class _AddMultipleRecipePageState extends State<AddMultipleRecipePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  recipe.name!,
+                                  recipe.name ?? '',
                                   softWrap: true,
                                   style: Theme.of(context).textTheme.titleSmall,
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  recipe.description!,
+                                  recipe.description ?? '',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context).textTheme.bodySmall,

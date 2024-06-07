@@ -70,6 +70,11 @@ void _initAuth() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => SignInWithGoogleUseCase(
+        serviceLocator(),
+      ),
+    )
 
     //Bloc
     ..registerLazySingleton(
@@ -81,6 +86,7 @@ void _initAuth() {
         signOut: serviceLocator(),
         recoverPassword: serviceLocator(),
         updateUser: serviceLocator(),
+        signInWithGoogle: serviceLocator(),
       ),
     );
 }

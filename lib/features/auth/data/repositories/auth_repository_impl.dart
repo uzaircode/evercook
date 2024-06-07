@@ -1,20 +1,24 @@
+import 'dart:io';
+
 import 'package:evercook/core/common/entities/user.dart';
 import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/error/failures.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:evercook/features/auth/data/models/user_model.dart';
 import 'package:evercook/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:uuid/uuid.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDataSource remoteDataSource;
+  final AuthRemoteDataSource authRemoteDataSource;
 
-  const AuthRepositoryImpl(this.remoteDataSource);
+  const AuthRepositoryImpl(this.authRemoteDataSource);
 
   @override
   Future<Either<Failure, User>> currentUser() async {
     try {
-      final user = await remoteDataSource.getCurrentUserData();
+      final user = await authRemoteDataSource.getCurrentUserData();
 
       if (user == null) {
         return left(Failure('User is not logged in.'));
@@ -33,7 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      final user = await remoteDataSource.signUpWithEmailPassword(
+      final user = await authRemoteDataSource.signUpWithEmailPassword(
         name: name,
         email: email,
         password: password,
@@ -51,12 +55,17 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      final user = await remoteDataSource.signInWithEmailPassword(
+      await authRemoteDataSource.signInWithEmailPassword(
         email: email,
         password: password,
       );
 
-      return right(user);
+      return _getUser(
+        () async => await authRemoteDataSource.signInWithEmailPassword(
+          email: email,
+          password: password,
+        ),
+      );
     } on ServerException catch (e) {
       return left(
         Failure(e.message),
@@ -65,13 +74,41 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, User>> signInWithGoogle() async {
+    try {
+      await authRemoteDataSource
+          .signInWithGoogle(); // Assuming this method is just for the sign-in process and does not return user data.
+      final user = await authRemoteDataSource.getCurrentUserData(); // This should fetch and return a User object.
+
+      if (user != null) {
+        return Right(user);
+      } else {
+        throw ServerException('User data is null');
+      }
+    } on ServerException catch (e) {
+      return Left(Failure(e.message));
+    }
+  }
+
+  Future<Either<Failure, User>> _getUser(
+    Future<User> Function() fn,
+  ) async {
+    try {
+      final user = await fn();
+
+      return right(user);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> signOut() async {
     try {
-      final response = await remoteDataSource.signOut();
+      final response = await authRemoteDataSource.signOut();
 
-      final user = await remoteDataSource.getCurrentUserData();
+      final user = await authRemoteDataSource.getCurrentUserData();
       LoggerService.logger.i('User: $user');
-
       return right(response);
     } on ServerException catch (e) {
       return left(
@@ -85,7 +122,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
   }) async {
     try {
-      final response = await remoteDataSource.recoverPassword(email: email);
+      final response = await authRemoteDataSource.recoverPassword(email: email);
 
       LoggerService.logger.i('Executing for auth repository implementation....');
 
@@ -97,25 +134,40 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, void>> updateUser({
+  Future<Either<Failure, User>> updateUser({
     required String name,
     required String bio,
+    required File image,
   }) async {
     try {
-      final response = await remoteDataSource.updateUser(
+      LoggerService.logger.i('Updating user...');
+
+      // First, update the user's name and bio
+      var user = await authRemoteDataSource.updateUser(
         name: name,
         bio: bio,
+        avatarUrl: '',
       );
 
-      LoggerService.logger.i('Executing for auth repository implementation....');
-      return right(response);
-    } on ServerException catch (e) {
-      LoggerService.logger.i('name: $name, bio: $bio');
-      LoggerService.logger.e('Error in implementation');
-      return left(
-        Failure(e.message),
+      // Upload the new profile picture and get the URL
+      final imageUrl = await authRemoteDataSource.uploadProfileUserImage(image: image);
+      LoggerService.logger.i('Image URL: $imageUrl');
+
+      // Update the user with the new avatar URL
+      user = await authRemoteDataSource.updateUser(
+        name: name,
+        bio: bio,
+        avatarUrl: imageUrl,
       );
+
+      LoggerService.logger.i('User updated with new image: $user');
+      return right(user);
+    } on ServerException catch (e) {
+      LoggerService.logger.e('Error updating user: ${e.toString()}');
+      return left(Failure("Server error occurred"));
+    } catch (e) {
+      LoggerService.logger.e('Unexpected error updating user: ${e.toString()}');
+      return left(Failure("Unexpected error occurred"));
     }
   }
 }

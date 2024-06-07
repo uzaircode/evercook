@@ -1,3 +1,4 @@
+import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/presentation/pages/auth_pages/login_page.dart';
 import 'package:flutter/material.dart';
@@ -109,8 +110,7 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
                     isLoading = true;
                     showGeneralDialog(
                       context: context,
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          const Center(child: CircularProgressIndicator()),
+                      pageBuilder: (context, animation, secondaryAnimation) => const Center(child: Loader()),
                     );
                     try {
                       //todo separate to business logic
