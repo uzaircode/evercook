@@ -5,18 +5,41 @@ import 'package:fpdart/fpdart.dart';
 
 abstract interface class RecipeRepository {
   Future<Either<Failure, Recipe>> uploadRecipe({
-    required String title,
+    String? name,
     required String userId,
-    required String description,
-    required String prepTime,
-    required String cookTime,
-    required int servings,
-    required File image,
+    String? description,
+    String? prepTime,
+    String? cookTime,
+    String? servings,
+    List<String>? ingredients,
+    File? image,
+    String? directions,
+    String? notes,
+    String? sources,
+    String? utensils,
+    bool? public,
   });
 
   Future<Either<Failure, List<Recipe>>> getAllRecipes();
 
   Future<Either<Failure, Recipe>> deleteRecipe({
     required String id,
+  });
+
+  Future<Either<Failure, Recipe>> editRecipe({
+    required String id,
+    required String userId,
+    String? name,
+    String? description,
+    String? prepTime,
+    String? cookTime,
+    String? servings,
+    List<String>? ingredients,
+    File? image,
+    String? directions,
+    String? notes,
+    String? sources,
+    String? utensils,
+    bool? public,
   });
 }

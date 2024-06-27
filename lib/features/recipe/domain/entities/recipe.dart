@@ -1,28 +1,37 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Recipe {
   final String id;
-  final String title;
+  final String? name;
   final String userId;
-  final String description;
-  final String prepTime;
-  final String cookTime;
-  final int servings;
-  final List<Map<String, dynamic>> ingredients;
-  final String imageUrl;
+  final String? description;
+  final String? prepTime;
+  final String? cookTime;
+  final String? servings;
+  final List<String> ingredients;
+  final String? imageUrl;
   final DateTime updatedAt;
-  final String? username;
+  final String? directions;
+  final String? notes;
+  final String? sources;
+  final String? utensils;
+  final bool? public;
+  final String? userName;
 
   Recipe({
     required this.id,
-    required this.title,
+    this.name,
     required this.userId,
-    required this.description,
-    required this.prepTime,
-    required this.cookTime,
-    required this.servings,
+    this.description,
+    this.prepTime,
+    this.cookTime,
+    this.servings,
     required this.ingredients,
-    required this.imageUrl,
+    this.imageUrl,
     required this.updatedAt,
-    this.username,
+    this.directions,
+    this.notes,
+    this.sources,
+    this.utensils,
+    this.public,
+    this.userName,
   });
 }

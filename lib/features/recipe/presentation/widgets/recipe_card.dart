@@ -1,5 +1,4 @@
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
-import 'package:evercook/features/recipe/presentation/pages/recipe_details_page.dart';
 import 'package:flutter/material.dart';
 
 class RecipeCard extends StatelessWidget {
@@ -10,7 +9,7 @@ class RecipeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, RecipeDetailsPage.route(recipe));
+        // Navigator.push(context, RecipeDetailsPage. route());
       },
       child: Container(
         height: 80,

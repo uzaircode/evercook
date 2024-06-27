@@ -27,3 +27,13 @@ final class AuthRecoverPassword extends AuthEvent {
 
   AuthRecoverPassword({required this.email});
 }
+
+final class AuthUpdateUser extends AuthEvent {
+  final String name;
+  final String bio;
+  final File? image;
+
+  AuthUpdateUser({required this.name, required this.bio, this.image});
+}
+
+final class AuthUserSignInWithGoogle extends AuthEvent {}

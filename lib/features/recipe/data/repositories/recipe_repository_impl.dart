@@ -17,33 +17,45 @@ class RecipeRepositoryImpl implements RecipeRepository {
   @override
   Future<Either<Failure, Recipe>> uploadRecipe({
     required String userId,
-    required String title,
-    required String description,
-    required String prepTime,
-    required String cookTime,
-    required int servings,
-    required File image,
+    String? name,
+    String? description,
+    String? prepTime,
+    String? cookTime,
+    String? servings,
+    List<String>? ingredients,
+    String? directions,
+    String? notes,
+    String? sources,
+    String? utensils,
+    bool? public,
+    File? image,
   }) async {
     try {
       RecipeModel recipeModel = RecipeModel(
         id: const Uuid().v1(),
-        title: title,
+        name: name,
         userId: userId,
         description: description,
         prepTime: prepTime,
         cookTime: cookTime,
         servings: servings,
-        ingredients: [],
+        ingredients: ingredients ?? [],
+        directions: directions,
+        notes: notes,
+        sources: sources,
         imageUrl: '',
+        utensils: utensils,
+        public: public,
         updatedAt: DateTime.now(),
       );
 
-      final imageUrl = await recipeRemoteDataSource.uploadRecipeImage(
-        image: image,
-        recipe: recipeModel,
-      );
-
-      recipeModel = recipeModel.copyWith(imageUrl: imageUrl);
+      if (image != null) {
+        final imageUrl = await recipeRemoteDataSource.uploadRecipeImage(
+          image: image,
+          recipe: recipeModel,
+        );
+        recipeModel = recipeModel.copyWith(imageUrl: imageUrl);
+      }
 
       final uploadedRecipe = await recipeRemoteDataSource.uploadRecipe(recipeModel);
 
@@ -75,6 +87,60 @@ class RecipeRepositoryImpl implements RecipeRepository {
       final deletedRecipe = await recipeRemoteDataSource.deleteRecipe(id);
 
       return right(deletedRecipe);
+    } on ServerException catch (e) {
+      return left(
+        Failure(e.message),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Recipe>> editRecipe({
+    required String id,
+    required String userId,
+    String? name,
+    String? description,
+    String? prepTime,
+    String? cookTime,
+    String? servings,
+    List<String>? ingredients,
+    String? directions,
+    String? notes,
+    String? sources,
+    String? utensils,
+    bool? public,
+    File? image,
+  }) async {
+    try {
+      RecipeModel recipeModel = RecipeModel(
+        id: id,
+        userId: userId,
+        name: name ?? '',
+        description: description ?? '',
+        prepTime: prepTime ?? '',
+        cookTime: cookTime ?? '',
+        servings: servings ?? '',
+        ingredients: ingredients ?? [],
+        directions: directions ?? '',
+        notes: notes ?? '',
+        sources: sources ?? '',
+        imageUrl: '',
+        utensils: utensils ?? '',
+        public: public ?? true,
+        updatedAt: DateTime.now(),
+      );
+
+      if (image != null) {
+        final imageUrl = await recipeRemoteDataSource.uploadUpdatedRecipeImage(
+          image: image,
+          recipe: recipeModel,
+        );
+        recipeModel = recipeModel.copyWith(imageUrl: imageUrl);
+      }
+
+      final editedRecipe = await recipeRemoteDataSource.editRecipe(userId, recipeModel);
+
+      return right(editedRecipe);
     } on ServerException catch (e) {
       return left(
         Failure(e.message),

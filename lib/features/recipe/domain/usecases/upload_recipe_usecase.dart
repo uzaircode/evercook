@@ -15,32 +15,50 @@ class UploadRecipeUseCase implements UseCase<Recipe, UploadRecipeParams> {
   Future<Either<Failure, Recipe>> call(params) async {
     return await recipeRepository.uploadRecipe(
       userId: params.userId,
-      title: params.title,
+      name: params.name,
       description: params.description,
       prepTime: params.prepTime,
       cookTime: params.cookTime,
       servings: params.servings,
       image: params.imageUrl,
+      ingredients: params.ingredients,
+      directions: params.directions,
+      notes: params.notes,
+      sources: params.sources,
+      utensils: params.utensils,
+      public: params.public,
     );
   }
 }
 
 class UploadRecipeParams {
   final String userId;
-  final String title;
-  final String description;
-  final String prepTime;
-  final String cookTime;
-  final int servings;
-  final File imageUrl;
+  final String? name;
+  final String? description;
+  final String? prepTime;
+  final String? cookTime;
+  final String? servings;
+  final String? directions;
+  final List<String>? ingredients;
+  final String? notes;
+  final String? sources;
+  final File? imageUrl;
+  final String? utensils;
+  final bool? public;
 
   UploadRecipeParams({
     required this.userId,
-    required this.title,
-    required this.description,
-    required this.prepTime,
-    required this.cookTime,
-    required this.servings,
-    required this.imageUrl,
+    this.name,
+    this.description,
+    this.prepTime,
+    this.cookTime,
+    this.servings,
+    this.ingredients,
+    this.directions,
+    this.notes,
+    this.sources,
+    this.imageUrl,
+    this.utensils,
+    this.public,
   });
 }

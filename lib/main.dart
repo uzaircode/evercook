@@ -1,17 +1,31 @@
+import 'package:evercook/core/common/pages/splash_screen.dart';
 import 'package:evercook/core/cubit/app_user.dart';
-import 'package:evercook/core/theme/theme.dart';
+import 'package:evercook/core/observer/bloc_observer.dart';
+import 'package:evercook/core/theme_test/bloc/theme_test_bloc.dart';
+import 'package:evercook/core/theme_test/themes.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:evercook/features/auth/presentation/pages/login_page.dart';
-import 'package:evercook/features/ingredient_wiki/presentation/bloc/ingredient_wiki_bloc.dart';
+import 'package:evercook/features/auth/presentation/pages/auth_pages/login_page.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:evercook/init_dependencies.dart';
-import 'package:evercook/pages/home/dashboard.dart';
+import 'package:evercook/core/common/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_storage/get_storage.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
   await initDependencies();
+
+  Bloc.observer = MyBlocObserver();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.portraitUp,
+  ]);
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -25,8 +39,8 @@ void main() async {
           create: (_) => serviceLocator<RecipeBloc>(),
         ),
         BlocProvider(
-          create: (_) => serviceLocator<IngredientWikiBloc>(),
-        ),
+          create: (_) => serviceLocator<ThemeTestBloc>(),
+        )
       ],
       child: const MyApp(),
     ),
@@ -41,30 +55,46 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
     context.read<AuthBloc>().add(AuthIsUserLoggedIn());
+    Future.delayed(Duration(milliseconds: 1500), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Evercook',
-      theme: AppTheme.themeData,
-      home: BlocSelector<AppUserCubit, AppUserState, bool>(
-        selector: (state) {
-          return state is AppUserLoggedIn;
-        },
-        builder: (context, isLoggedIn) {
-          if (isLoggedIn) {
-            return const Dashboard();
-          } else {
-            return const LoginPage();
-          }
-        },
-      ),
+    return BlocBuilder<ThemeTestBloc, ThemeMode>(
+      builder: (context, state) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Evercook',
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: state,
+          home: _isLoading
+              ? SplashScreen()
+              : BlocSelector<AppUserCubit, AppUserState, bool>(
+                  selector: (state) {
+                    return state is AppUserLoggedIn;
+                  },
+                  builder: (context, isLoggedIn) {
+                    return isLoggedIn ? const Dashboard() : const LoginPage();
+                  },
+                ),
+        );
+      },
     );
   }
 }

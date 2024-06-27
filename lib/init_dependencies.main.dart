@@ -5,7 +5,6 @@ final serviceLocator = GetIt.instance;
 Future<void> initDependencies() async {
   _initAuth();
   _initRecipe();
-  _initIngredientWiki();
 
   final supabase = await Supabase.initialize(
     url: AppSecrets.supabaseUrl,
@@ -20,6 +19,8 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => supabase.client);
 
   serviceLocator.registerLazySingleton(() => AppUserCubit());
+
+  serviceLocator.registerLazySingleton(() => ThemeTestBloc());
 }
 
 void _initAuth() {
@@ -64,6 +65,16 @@ void _initAuth() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => UpdateUserUseCase(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => SignInWithGoogleUseCase(
+        serviceLocator(),
+      ),
+    )
 
     //Bloc
     ..registerLazySingleton(
@@ -74,6 +85,8 @@ void _initAuth() {
         appUserCubit: serviceLocator(),
         signOut: serviceLocator(),
         recoverPassword: serviceLocator(),
+        updateUser: serviceLocator(),
+        signInWithGoogle: serviceLocator(),
       ),
     );
 }
@@ -110,6 +123,11 @@ void _initRecipe() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => EditRecipeUseCase(
+        serviceLocator(),
+      ),
+    )
 
     //Bloc
     ..registerLazySingleton(
@@ -117,34 +135,7 @@ void _initRecipe() {
         uploadRecipe: serviceLocator(),
         getAllRecipes: serviceLocator(),
         deleteRecipe: serviceLocator(),
-      ),
-    );
-}
-
-void _initIngredientWiki() {
-  // Datasource
-  serviceLocator
-    ..registerFactory<IngredientWikiRemoteDataSource>(
-      () => IngredientWikiRemoteDataSourceImpl(
-        serviceLocator(),
-      ),
-    )
-    // Repository
-    ..registerFactory<IngredientWikiRepository>(
-      () => IngredientWikiRepositoryImpl(
-        serviceLocator(),
-      ),
-    )
-    // Usecases
-    ..registerFactory(
-      () => GetAllIngredientWikiUseCase(
-        serviceLocator(),
-      ),
-    )
-    // Bloc
-    ..registerLazySingleton(
-      () => IngredientWikiBloc(
-        getAllIngredientsWiki: serviceLocator(),
+        editRecipe: serviceLocator(),
       ),
     );
 }

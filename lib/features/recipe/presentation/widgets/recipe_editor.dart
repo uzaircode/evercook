@@ -19,6 +19,12 @@ class RecipeEditor extends StatelessWidget {
         }
         return null;
       },
+      onTapOutside: (event) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onBackground,
+      ),
     );
   }
 }

@@ -1,4 +1,3 @@
-import 'package:evercook/core/theme/app_pallete.dart';
 import 'package:flutter/material.dart';
 
 class AuthButton extends StatelessWidget {
@@ -11,14 +10,23 @@ class AuthButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        fixedSize: const Size(395, 55),
-        backgroundColor: AppPallete.transparentColor,
-        shadowColor: AppPallete.transparentColor,
+        elevation: 0,
+        backgroundColor: Color.fromARGB(255, 221, 56, 32),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
       child: Text(
         buttonText,
-        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+        style: const TextStyle(
+          fontSize: 18,
+          color: Colors.white,
+        ),
       ),
+      // child: Text(
+      //   buttonText,
+      //   style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+      // ),
     );
   }
 }
