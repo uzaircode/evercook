@@ -42,7 +42,7 @@ class CustomListTile extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 18),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start, // Align row children at the start
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Bone(
             width: leadingWidth,

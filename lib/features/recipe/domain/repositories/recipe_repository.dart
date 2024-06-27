@@ -25,4 +25,21 @@ abstract interface class RecipeRepository {
   Future<Either<Failure, Recipe>> deleteRecipe({
     required String id,
   });
+
+  Future<Either<Failure, Recipe>> editRecipe({
+    required String id,
+    required String userId,
+    String? name,
+    String? description,
+    String? prepTime,
+    String? cookTime,
+    String? servings,
+    List<String>? ingredients,
+    File? image,
+    String? directions,
+    String? notes,
+    String? sources,
+    String? utensils,
+    bool? public,
+  });
 }

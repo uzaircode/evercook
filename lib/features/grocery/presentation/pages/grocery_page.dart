@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evercook/core/common/widgets/empty_value.dart';
+import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/constant/db_constants.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_fail_snackbar.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/core/utils/logger.dart';
 
@@ -16,8 +19,10 @@ class GroceryPage extends StatefulWidget {
 
 class _GroceryPageState extends State<GroceryPage> {
   late Map<String, dynamic> recipes = {};
-  late List<Map<String, dynamic>> ingredients = [];
+  late List<Map<String, dynamic>> unpurchasedIngredients = [];
+  late List<Map<String, dynamic>> purchasedIngredients = [];
   bool isLoading = true;
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
   @override
   void initState() {
@@ -25,18 +30,17 @@ class _GroceryPageState extends State<GroceryPage> {
     fetchShoppingListItems();
   }
 
-  //todo separate to business logic
   Future<void> fetchShoppingListItems() async {
     setState(() => isLoading = true);
     try {
       final res = await Supabase.instance.client
           .from(DBConstants.shoppingListTable)
           .select('*, recipes:recipe_id (name, image_url)')
-          .eq('user_id', Supabase.instance.client.auth.currentSession!.user.id)
-          .order('list_id', ascending: true);
+          .eq('user_id', Supabase.instance.client.auth.currentSession!.user.id);
 
       Map<String, dynamic> tempRecipes = {};
-      List<Map<String, dynamic>> tempIngredients = [];
+      List<Map<String, dynamic>> tempUnpurchasedIngredients = [];
+      List<Map<String, dynamic>> tempPurchasedIngredients = [];
 
       for (var item in res as List) {
         String recipeId = item['recipe_id'];
@@ -48,12 +52,17 @@ class _GroceryPageState extends State<GroceryPage> {
           };
         }
         tempRecipes[recipeId]['ingredients'].add(item);
-        tempIngredients.add(item);
+        if (item['purchased'] == true) {
+          tempPurchasedIngredients.add(item);
+        } else {
+          tempUnpurchasedIngredients.add(item);
+        }
       }
 
       setState(() {
         recipes = tempRecipes;
-        ingredients = tempIngredients;
+        unpurchasedIngredients = tempUnpurchasedIngredients;
+        purchasedIngredients = tempPurchasedIngredients;
         isLoading = false;
       });
     } catch (error) {
@@ -62,7 +71,6 @@ class _GroceryPageState extends State<GroceryPage> {
     }
   }
 
-  //todo separate to business logic
   void _deleteRecipe(String recipeId, BuildContext context) async {
     try {
       await Supabase.instance.client
@@ -73,22 +81,33 @@ class _GroceryPageState extends State<GroceryPage> {
 
       setState(() {
         recipes.remove(recipeId);
-
-        ingredients.removeWhere((item) => item['recipe_id'] == recipeId);
+        int removeIndex = unpurchasedIngredients.indexWhere((item) => item['recipe_id'] == recipeId);
+        while (removeIndex != -1) {
+          final removedItem = unpurchasedIngredients.removeAt(removeIndex);
+          _listKey.currentState?.removeItem(
+            removeIndex,
+            (context, animation) => _buildIngredientItem(context, removeIndex, animation, removedItem),
+          );
+          removeIndex = unpurchasedIngredients.indexWhere((item) => item['recipe_id'] == recipeId);
+        }
+        removeIndex = purchasedIngredients.indexWhere((item) => item['recipe_id'] == recipeId);
+        while (removeIndex != -1) {
+          final removedItem = purchasedIngredients.removeAt(removeIndex);
+          _listKey.currentState?.removeItem(
+            removeIndex + unpurchasedIngredients.length,
+            (context, animation) =>
+                _buildIngredientItem(context, removeIndex + unpurchasedIngredients.length, animation, removedItem),
+          );
+          removeIndex = purchasedIngredients.indexWhere((item) => item['recipe_id'] == recipeId);
+        }
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Recipe deleted successfully')),
-      );
+      showSuccessSnackBar(context, "Recipe deleted successfully");
     } catch (e) {
       print('Error deleting recipe: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error when attempting to delete recipe')),
-      );
+      showFailSnackbar(context, "Error when attempting to delete recipe");
     }
   }
 
-  // Implementing delete all recipes based on recipe IDs
   void _deleteAllRecipe(List<String> recipeIds, BuildContext context) async {
     try {
       await Supabase.instance.client
@@ -96,45 +115,162 @@ class _GroceryPageState extends State<GroceryPage> {
           .delete()
           .inFilter('recipe_id', recipeIds)
           .eq('user_id', Supabase.instance.client.auth.currentSession!.user.id);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('All recipes deleted successfully')),
-      );
+      showSuccessSnackBar(context, "All recipes Items deleted successfully");
 
       setState(() {
         for (var recipeId in recipeIds) {
           recipes.remove(recipeId);
+          int removeIndex = unpurchasedIngredients.indexWhere((item) => item['recipe_id'] == recipeId);
+          while (removeIndex != -1) {
+            final removedItem = unpurchasedIngredients.removeAt(removeIndex);
+            _listKey.currentState?.removeItem(
+              removeIndex,
+              (context, animation) => _buildIngredientItem(context, removeIndex, animation, removedItem),
+            );
+            removeIndex = unpurchasedIngredients.indexWhere((item) => item['recipe_id'] == recipeId);
+          }
+          removeIndex = purchasedIngredients.indexWhere((item) => item['recipe_id'] == recipeId);
+          while (removeIndex != -1) {
+            final removedItem = purchasedIngredients.removeAt(removeIndex);
+            _listKey.currentState?.removeItem(
+              removeIndex + unpurchasedIngredients.length,
+              (context, animation) =>
+                  _buildIngredientItem(context, removeIndex + unpurchasedIngredients.length, animation, removedItem),
+            );
+            removeIndex = purchasedIngredients.indexWhere((item) => item['recipe_id'] == recipeId);
+          }
         }
-        ingredients.removeWhere((item) => recipeIds.contains(item['recipe_id']));
       });
     } catch (e) {
       LoggerService.logger.e('Error deleting all recipes: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error when attempting to delete all recipes')),
-      );
+      showFailSnackbar(context, "Error when attempting to delete all recipes");
     }
   }
 
-  //todo separate to business logic
   Future<void> _updateItem(int index, bool newValue) async {
-    var item = ingredients[index];
+    if (index < 0 || index >= unpurchasedIngredients.length + purchasedIngredients.length) return;
+
+    var item;
+    bool isPurchased;
+    if (index < unpurchasedIngredients.length) {
+      item = unpurchasedIngredients[index];
+      isPurchased = false;
+    } else {
+      item = purchasedIngredients[index - unpurchasedIngredients.length];
+      isPurchased = true;
+    }
+
     try {
       setState(() {
-        ingredients[index]['purchased'] = newValue;
+        if (isPurchased) {
+          purchasedIngredients.removeAt(index - unpurchasedIngredients.length);
+          if (!newValue) {
+            unpurchasedIngredients.insert(0, item);
+          }
+        } else {
+          unpurchasedIngredients.removeAt(index);
+          if (newValue) {
+            purchasedIngredients.add(item);
+          } else {
+            unpurchasedIngredients.insert(0, item);
+          }
+        }
+
+        item['purchased'] = newValue;
+        _listKey.currentState?.removeItem(
+          index,
+          (context, animation) => _buildIngredientItem(context, index, animation, item),
+        );
+        _listKey.currentState?.insertItem(
+          newValue ? purchasedIngredients.length + unpurchasedIngredients.length - 1 : 0,
+          duration: Duration(milliseconds: 300),
+        );
       });
+
       await Supabase.instance.client.from(DBConstants.shoppingListTable).upsert({
         'list_id': item['list_id'],
         'recipe_id': item['recipe_id'],
         'ingredient': item['ingredient'],
         'purchased': newValue,
       }).eq('user_id', Supabase.instance.client.auth.currentSession!.user.id);
+
       LoggerService.logger.i('Purchased: $newValue');
     } catch (e) {
       LoggerService.logger.e('Error updating item: $e');
       setState(() {
-        ingredients[index]['purchased'] = !newValue;
+        item['purchased'] = !newValue;
       });
     }
+  }
+
+  Future<void> addNewGroceryItem(Map<String, dynamic> newItem) async {
+    try {
+      setState(() {
+        // Insert the new item before the first purchased item or at the end if all items are unpurchased
+        unpurchasedIngredients.insert(0, newItem);
+        _listKey.currentState?.insertItem(0);
+      });
+
+      await Supabase.instance.client
+          .from(DBConstants.shoppingListTable)
+          .upsert(newItem)
+          .eq('user_id', Supabase.instance.client.auth.currentSession!.user.id);
+
+      LoggerService.logger.i('Added new grocery item');
+    } catch (e) {
+      LoggerService.logger.e('Error adding new grocery item: $e');
+    }
+  }
+
+  Widget _buildIngredientItem(BuildContext context, int index, Animation<double> animation, Map<String, dynamic> item) {
+    String name = item['ingredient'];
+    List<InlineSpan> spans = [];
+    RegExp exp = RegExp(r'(\d*\.?\d+\s*/\s*\d+|\d+\s*¼|\d+\s*½|\d+\s*¾|\d+)|(\D+)');
+    exp.allMatches(name).forEach((match) {
+      if (match.group(1) != null) {
+        spans.add(TextSpan(
+          text: match.group(1),
+          style: TextStyle(
+            color: item['purchased'] ? Colors.grey : const Color.fromARGB(255, 221, 56, 32),
+            fontWeight: FontWeight.bold,
+          ),
+        ));
+      }
+      if (match.group(2) != null) {
+        spans.add(TextSpan(
+          text: match.group(2),
+          style: TextStyle(
+            color: item['purchased'] ? Colors.grey : Theme.of(context).colorScheme.onBackground,
+            decoration: item['purchased'] ? TextDecoration.lineThrough : null,
+          ),
+        ));
+      }
+    });
+
+    return FadeTransition(
+      opacity: animation,
+      child: CheckboxListTile(
+        title: RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 16.0,
+            ),
+            children: spans,
+          ),
+        ),
+        value: item['purchased'] as bool?,
+        onChanged: (bool? newValue) {
+          if (newValue == null) return;
+          _updateItem(index, newValue);
+        },
+        activeColor: Color.fromARGB(255, 221, 56, 32),
+        checkColor: Colors.white,
+        checkboxShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        controlAffinity: ListTileControlAffinity.leading,
+      ),
+    );
   }
 
   @override
@@ -144,18 +280,16 @@ class _GroceryPageState extends State<GroceryPage> {
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             CupertinoSliverNavigationBar(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              border: Border(),
               alwaysShowMiddle: false,
               largeTitle: Text(
-                'Groceries',
+                'Shopping List',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               middle: Text(
-                'Groceries',
-                style: TextStyle(
-                  fontFamily: GoogleFonts.notoSerif().fontFamily,
-                  color: Color.fromARGB(255, 64, 64, 64),
-                  fontWeight: FontWeight.w700,
-                ),
+                'Shopping List',
+                style: Theme.of(context).textTheme.titleSmall,
               ),
               trailing: IconButton(
                 onPressed: () {
@@ -167,32 +301,33 @@ class _GroceryPageState extends State<GroceryPage> {
             ),
           ],
           body: isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(child: Loader())
               : recipes.isEmpty
                   ? EmptyValue(
                       iconData: Icons.shopping_bag_outlined,
                       description: 'No recipes in',
-                      value: 'Groceries',
+                      value: 'Shopping List',
                     )
                   : ListView(
                       padding: EdgeInsets.zero,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(8),
                           height: 240,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: recipes.length,
                             itemBuilder: (context, index) {
                               var entry = recipes.entries.elementAt(index);
-                              return GestureDetector(
-                                onTap: () {
-                                  // Optionally, navigate or perform another action
-                                },
-                                child: Card(
-                                  color: Theme.of(context).colorScheme.primaryContainer,
-                                  margin: const EdgeInsets.all(8),
-                                  elevation: 2,
+                              return Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                color: Theme.of(context).colorScheme.primaryContainer,
+                                margin: const EdgeInsets.all(8),
+                                elevation: 0,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
                                   child: SizedBox(
                                     width: 180,
                                     child: Column(
@@ -202,12 +337,9 @@ class _GroceryPageState extends State<GroceryPage> {
                                           child: Stack(
                                             children: [
                                               Positioned.fill(
-                                                child: ClipRRect(
-                                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                                                  child: Image.network(
-                                                    entry.value['image_url'],
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: entry.value['image_url'],
+                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
                                               Positioned(
@@ -215,12 +347,14 @@ class _GroceryPageState extends State<GroceryPage> {
                                                 top: 4,
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: Colors.grey[200],
+                                                    color: Theme.of(context).colorScheme.tertiary,
                                                     borderRadius: BorderRadius.circular(30),
                                                   ),
                                                   child: IconButton(
-                                                    icon:
-                                                        const Icon(Icons.close, color: Color.fromRGBO(221, 56, 32, 1)),
+                                                    icon: Icon(
+                                                      Icons.close,
+                                                      color: Color.fromARGB(255, 221, 56, 32),
+                                                    ),
                                                     onPressed: () {
                                                       _deleteRecipe(entry.key, context);
                                                     },
@@ -231,17 +365,16 @@ class _GroceryPageState extends State<GroceryPage> {
                                           ),
                                         ),
                                         Container(
-                                          color: Theme.of(context).colorScheme.primaryContainer,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              entry.value['name'],
-                                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                    color: Theme.of(context).colorScheme.onBackground,
-                                                  ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
+                                          width: double.infinity,
+                                          color: Theme.of(context).colorScheme.tertiary,
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            entry.value['name'],
+                                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                  color: Theme.of(context).colorScheme.onBackground,
+                                                ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ],
@@ -252,63 +385,18 @@ class _GroceryPageState extends State<GroceryPage> {
                             },
                           ),
                         ),
-                        Divider(
-                          color: Colors.grey.shade300,
-                          thickness: 2,
-                        ),
-                        ListView.builder(
+                        Divider(),
+                        AnimatedList(
+                          key: _listKey,
                           padding: const EdgeInsets.all(0),
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: ingredients.length,
-                          itemBuilder: (context, index) {
-                            var item = ingredients[index];
-                            String name = item['ingredient'];
-                            List<InlineSpan> spans = [];
-                            RegExp exp = RegExp(r'(\d*\.?\d+\s*/\s*\d+|\d+\s*¼|\d+\s*½|\d+\s*¾|\d+)|(\D+)');
-                            exp.allMatches(name).forEach((match) {
-                              if (match.group(1) != null) {
-                                spans.add(TextSpan(
-                                  text: match.group(1),
-                                  style: TextStyle(
-                                    color: item['purchased']
-                                        ? Colors.grey
-                                        : const Color.fromARGB(255, 221, 56, 32), // Grey if purchased, red otherwise
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ));
-                              }
-                              if (match.group(2) != null) {
-                                spans.add(TextSpan(
-                                  text: match.group(2),
-                                  style: TextStyle(
-                                    color: item['purchased'] ? Colors.grey : Theme.of(context).colorScheme.onBackground,
-                                    decoration: item['purchased'] ? TextDecoration.lineThrough : null,
-                                  ),
-                                ));
-                              }
-                            });
-
-                            return CheckboxListTile(
-                              title: RichText(
-                                text: TextSpan(
-                                  style: TextStyle(
-                                    fontSize: 16.0, // Specify a font size
-                                  ),
-                                  children: spans,
-                                ),
-                              ),
-                              value: item['purchased'] as bool?,
-                              onChanged: (bool? newValue) {
-                                if (newValue == null) return;
-                                _updateItem(index, newValue);
-                              },
-                              activeColor: Color.fromARGB(255, 221, 56, 32),
-                              checkboxShape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              controlAffinity: ListTileControlAffinity.leading,
-                            );
+                          initialItemCount: unpurchasedIngredients.length + purchasedIngredients.length,
+                          itemBuilder: (context, index, animation) {
+                            var item = index < unpurchasedIngredients.length
+                                ? unpurchasedIngredients[index]
+                                : purchasedIngredients[index - unpurchasedIngredients.length];
+                            return _buildIngredientItem(context, index, animation, item);
                           },
                         ),
                       ],

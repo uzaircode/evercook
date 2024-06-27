@@ -2,15 +2,15 @@ import 'package:evercook/core/common/pages/splash_screen.dart';
 import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/observer/bloc_observer.dart';
 import 'package:evercook/core/theme_test/bloc/theme_test_bloc.dart';
-import 'package:evercook/core/theme_test/theme_test.dart';
+import 'package:evercook/core/theme_test/themes.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/auth_pages/login_page.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:evercook/init_dependencies.dart';
 import 'package:evercook/core/common/pages/home/dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:get_storage/get_storage.dart';
 
 Future<void> main() async {
@@ -19,6 +19,12 @@ Future<void> main() async {
   await initDependencies();
 
   Bloc.observer = MyBlocObserver();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.portraitUp,
+  ]);
 
   runApp(
     MultiBlocProvider(

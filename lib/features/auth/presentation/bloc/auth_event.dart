@@ -31,9 +31,9 @@ final class AuthRecoverPassword extends AuthEvent {
 final class AuthUpdateUser extends AuthEvent {
   final String name;
   final String bio;
-  final File image;
+  final File? image;
 
-  AuthUpdateUser({required this.name, required this.bio, required this.image});
+  AuthUpdateUser({required this.name, required this.bio, this.image});
 }
 
 final class AuthUserSignInWithGoogle extends AuthEvent {}

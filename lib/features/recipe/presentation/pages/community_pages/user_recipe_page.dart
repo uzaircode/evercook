@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evercook/core/utils/logger.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserRecipePage extends StatelessWidget {
@@ -26,7 +28,7 @@ class UserRecipePage extends StatelessWidget {
             ),
             leading: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: Theme.of(context).colorScheme.tertiary,
                 shape: BoxShape.circle,
               ),
               margin: const EdgeInsets.all(8),
@@ -34,8 +36,10 @@ class UserRecipePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: const Icon(Icons.arrow_back),
-                color: const Color.fromARGB(255, 96, 94, 94),
+                icon: const Icon(
+                  CupertinoIcons.left_chevron,
+                ),
+                color: Theme.of(context).colorScheme.onTertiary,
               ),
             ),
           ),
@@ -55,10 +59,10 @@ class UserRecipePage extends StatelessWidget {
   Widget _buildHeaderImage(String imageUrl) {
     return Hero(
       tag: 'transition',
-      child: Image.network(
-        imageUrl,
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
+        errorWidget: (context, error, stackTrace) {
           return const Center(child: Text('Image not available'));
         },
       ),
@@ -82,62 +86,82 @@ class UserRecipePage extends StatelessWidget {
             recipe['prep_time'] ?? '',
             recipe['cook_time'] ?? '',
             recipe['servings'] ?? '',
+            context,
           ),
           const SizedBox(height: 24),
           Text(
             recipe['description'] ?? '',
             style: Theme.of(context).textTheme.titleSmall,
           ),
-          const SizedBox(height: 16),
-          Divider(color: Colors.grey.shade300),
-          _buildSectionTitle('Ingredients'),
-          _buildIngredientList(recipe['ingredients'] ?? []),
-          const SizedBox(height: 16),
-          Divider(color: Colors.grey.shade300),
-          _buildSectionTitle('Directions'),
-          Text(
-            recipe['directions'] ?? '',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+          const SizedBox(height: 20),
+          Divider(),
+          _buildSectionWithContent(
+            context,
+            'Ingredients',
           ),
+          _buildIngredientList(recipe['ingredients'] ?? [], context),
+          const SizedBox(height: 20),
+          Divider(),
+          _buildSectionWithContent(
+            context,
+            'Directions',
+            content: recipe['directions'],
+          ),
+          const SizedBox(height: 20),
+          Divider(),
+          _buildSectionWithContent(
+            context,
+            'Utensils',
+            content: recipe['utensils'],
+          ),
+          SizedBox(height: 20),
         ],
       ),
     );
   }
 
   //todo move this widget to widget page
-  Widget _buildDetailsRow(String prepTime, String cookTime, String servings) {
+  Widget _buildDetailsRow(
+    String? prepTime,
+    String? cookTime,
+    String? servings,
+    BuildContext context,
+  ) {
+    if ((prepTime == null || prepTime.isEmpty) &&
+        (cookTime == null || cookTime.isEmpty) &&
+        (servings == null || servings.isEmpty)) {
+      return SizedBox.shrink();
+    }
+
     return IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           _buildDetailColumn(
             'Prep',
-            prepTime,
+            context,
+            prepTime ?? '',
             icon: Icon(
               Icons.access_time_rounded,
               size: 22,
             ),
             divider: VerticalDivider(
-              color: Color.fromARGB(255, 233, 234, 234),
               thickness: 1.2,
             ),
           ),
           _buildDetailColumn(
             'Cook',
-            cookTime,
+            context,
+            cookTime ?? '',
             divider: VerticalDivider(
-              color: Color.fromARGB(255, 233, 234, 234),
               thickness: 1.2,
             ),
           ),
           _buildDetailColumn(
             'Servings',
-            servings,
+            context,
+            servings ?? '',
             divider: VerticalDivider(
-              color: Color.fromARGB(255, 233, 234, 234),
               thickness: 1.2,
             ),
           ),
@@ -147,7 +171,13 @@ class UserRecipePage extends StatelessWidget {
   }
 
   //todo move this widget to widget page
-  Widget _buildDetailColumn(String title, String value, {Widget? icon, Widget? divider}) {
+  Widget _buildDetailColumn(
+    String title,
+    BuildContext context,
+    String value, {
+    Widget? icon,
+    Widget? divider,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(right: 5.0),
       child: Row(
@@ -160,11 +190,11 @@ class UserRecipePage extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                  color: Colors.grey[800],
-                ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -187,34 +217,61 @@ class UserRecipePage extends StatelessWidget {
   }
 
   //todo move this widget to widget page
-  Widget _buildIngredientList(List<dynamic> ingredients) {
+  Widget _buildIngredientList(
+    List<dynamic> ingredients,
+    BuildContext context,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: ingredients
           .map((ingredient) => Text(
                 ingredient.toString(),
-                style: const TextStyle(
-                  fontSize: 15,
-                  height: 2,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
               ))
           .toList(),
     );
   }
 
   //todo move this widget to widget page
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Color.fromARGB(255, 96, 94, 94),
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
+  // Widget _buildSectionTitle(
+  //   String? title,
+  //   BuildContext context,
+  // ) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 8.0),
+  //     child: Text(
+  //       title,
+  //       style: Theme.of(context).textTheme.titleMedium,
+  //     ),
+  //   );
+}
+
+Widget _buildSectionWithContent(BuildContext context, String title, {String? content}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium,
         ),
-      ),
-    );
-  }
+        content != null
+            ? Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  content,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+              )
+            : SizedBox.shrink(),
+      ],
+    ),
+  );
 }

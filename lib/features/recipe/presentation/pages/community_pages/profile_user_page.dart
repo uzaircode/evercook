@@ -1,10 +1,11 @@
 import 'package:evercook/core/common/widgets/empty_value.dart';
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/constant/db_constants.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
 import 'package:evercook/features/cookbook/presentation/pages/cookbook_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/community_pages/user_recipe_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/core/utils/logger.dart';
 
@@ -29,37 +30,18 @@ class ProfileUserPageState extends State<ProfileUserPage> with TickerProviderSta
   void initState() {
     super.initState();
     _recipesFuture = fetchRecipesByUserId(widget.profileData['id']);
-    _cookbooksFuture = fetchCookbookByUserId();
+    _cookbooksFuture = fetchCookbookByUserId(widget.profileData['id']);
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // No need to fetch recipes here again
-  }
-
-  //todo separate to business logic
   Future<List<Map<String, dynamic>>> fetchRecipesByUserId(String userId) async {
-    final response = await Supabase.instance.client
-        .from(DBConstants.recipesTable)
-        .select()
-        .eq(
-          'user_id',
-          userId,
-        )
-        .eq(
-          'public',
-          true,
-        );
+    final response =
+        await Supabase.instance.client.from(DBConstants.recipesTable).select().eq('user_id', userId).eq('public', true);
     LoggerService.logger.i('data of recipes of this particular user: $response');
     return List<Map<String, dynamic>>.from(response);
   }
 
-  Future<List<Map<String, dynamic>>> fetchCookbookByUserId() async {
+  Future<List<Map<String, dynamic>>> fetchCookbookByUserId(String userId) async {
     try {
-      final userId = Supabase.instance.client.auth.currentSession!.user.id;
-
-      // Fetch cookbook_ids associated with the current user
       final cookbookIdsResponse =
           await Supabase.instance.client.from('cookbook_recipes').select('cookbook_id').eq('user_id', userId);
 
@@ -67,27 +49,16 @@ class ProfileUserPageState extends State<ProfileUserPage> with TickerProviderSta
         return [];
       }
 
-      // Extract the list of cookbook IDs
       final List<String> cookbookIds = cookbookIdsResponse.map((row) => row['cookbook_id'] as String).toList();
 
-      // Fetch cookbooks based on the fetched cookbook_ids
-      final cookbooksResponse = await Supabase.instance.client
-          .from('cookbooks')
-          .select(
-            '*',
-          )
-          .inFilter(
-            'id',
-            cookbookIds,
-          )
-          .eq('public', true);
+      final cookbooksResponse =
+          await Supabase.instance.client.from('cookbooks').select('*').inFilter('id', cookbookIds).eq('public', true);
 
       final List<Map<String, dynamic>> cookbooksWithImages = [];
 
       for (var cookbook in cookbooksResponse) {
         final cookbookId = cookbook['id'] as String;
 
-        // Fetch recipes filtered by cookbook_id and user_id
         final recipesResponse = await Supabase.instance.client
             .from('cookbook_recipes')
             .select('recipes(image_url)')
@@ -95,7 +66,6 @@ class ProfileUserPageState extends State<ProfileUserPage> with TickerProviderSta
             .eq('user_id', userId)
             .limit(3);
 
-        // Fetch the count of recipes filtered by cookbook_id and user_id
         final recipesCountResponse = await Supabase.instance.client
             .from('cookbook_recipes')
             .select('recipes(id)')
@@ -117,9 +87,9 @@ class ProfileUserPageState extends State<ProfileUserPage> with TickerProviderSta
 
         if (recipes.isNotEmpty) {
           cookbooksWithImages.add({
-            ...cookbook, // Add all cookbook data
-            'images': images, // Add recipe image URLs
-            'recipesCount': recipesCountResponse.length, // Add recipes count
+            ...cookbook,
+            'images': images,
+            'recipesCount': recipesCountResponse.length,
           });
         }
       }
@@ -132,13 +102,6 @@ class ProfileUserPageState extends State<ProfileUserPage> with TickerProviderSta
     }
   }
 
-  // Future<List<Map<String, dynamic>>> fetchCookbookByUserId(String userId) async {
-  //   final response = await Supabase.instance.client.from('cookbooks').select('*').eq('public', true);
-
-  //   LoggerService.logger.i('data of cookbooks of this particular user: $response');
-  //   return List<Map<String, dynamic>>.from(response).toList();
-  // }
-
   @override
   Widget build(BuildContext context) {
     TabController _tabController = TabController(length: 2, vsync: this);
@@ -147,7 +110,7 @@ class ProfileUserPageState extends State<ProfileUserPage> with TickerProviderSta
       appBar: AppBar(
         leading: Container(
           decoration: BoxDecoration(
-            color: Colors.grey[200],
+            color: Theme.of(context).colorScheme.tertiary,
             shape: BoxShape.circle,
           ),
           margin: const EdgeInsets.all(8),
@@ -155,232 +118,246 @@ class ProfileUserPageState extends State<ProfileUserPage> with TickerProviderSta
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: const Icon(Icons.arrow_back),
-            color: const Color.fromARGB(255, 96, 94, 94),
-          ),
-        ),
-        title: Text(
-          widget.profileData['name'],
-          style: TextStyle(
-            fontSize: 18,
-            color: Theme.of(context).colorScheme.onBackground,
+            icon: const Icon(CupertinoIcons.left_chevron),
+            color: Theme.of(context).colorScheme.onTertiary,
           ),
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const FaIcon(Icons.report_outlined),
-            onPressed: () {
-              // await Supabase.instance.client.from('reports').insert({
-              //   'user_id': '',
-              //   'type': '',
-              //   'created_at': '',
-              // });
-
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return ReportOptionsDialog(userId: widget.profileData['id']);
-                },
-              );
-            },
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.tertiary,
+              shape: BoxShape.circle,
+            ),
+            margin: const EdgeInsets.all(8),
+            child: PopupMenuButton<String>(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              ),
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                PopupMenuItem<String>(
+                  value: 'report',
+                  child: Row(
+                    children: [
+                      Icon(Icons.account_circle_outlined, color: Color.fromARGB(255, 193, 27, 27)),
+                      SizedBox(width: 8),
+                      Text('Report User', style: TextStyle(color: Color.fromARGB(255, 193, 27, 27))),
+                    ],
+                  ),
+                ),
+              ],
+              onSelected: (String value) {
+                if (value == 'report') {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return ReportOptionsDialog(userId: widget.profileData['id']);
+                    },
+                  );
+                }
+              },
+              icon: Icon(Icons.more_vert_outlined),
+            ),
           ),
         ],
       ),
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: const Color.fromARGB(255, 238, 198, 202),
-                        backgroundImage: NetworkImage(
-                          widget.profileData['avatar_url'] ?? 'https://robohash.org/${widget.profileData['id']}',
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.profileData['name'] ?? 'Unknown User',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontSize: 20,
-                                  ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              widget.profileData['bio'] ?? '',
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  child: TabBar.secondary(
-                    controller: _tabController,
-                    labelColor: Color.fromARGB(255, 221, 56, 32),
-                    unselectedLabelColor: Colors.grey,
-                    indicatorColor: Color.fromARGB(255, 221, 56, 32),
-                    tabs: [
-                      Tab(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.bookmark),
-                            const SizedBox(width: 8),
-                            Text('Recipes'),
-                          ],
-                        ),
-                      ),
-                      Tab(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.collections_bookmark_outlined),
-                            const SizedBox(width: 8),
-                            Text('Cookbooks'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SliverFillRemaining(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                FutureBuilder<List<Map<String, dynamic>>>(
-                  future: _recipesFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      final recipes = snapshot.data!;
-                      LoggerService.logger.i(recipes.toString());
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 20,
-                            mainAxisSpacing: 20,
-                            mainAxisExtent: 270,
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 55,
+                          backgroundColor: const Color.fromARGB(255, 238, 198, 202),
+                          backgroundImage: NetworkImage(
+                            widget.profileData['avatar_url'] ?? 'https://robohash.org/${widget.profileData['id']}',
                           ),
-                          itemCount: recipes.length,
-                          itemBuilder: (context, index) {
-                            final recipe = recipes[index];
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UserRecipePage(recipe: recipe),
-                                  ),
-                                );
-                              },
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    height: 200,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                                      borderRadius: BorderRadius.circular(16),
-                                      image: recipe['image_url'] != null && recipe['image_url']!.isNotEmpty
-                                          ? DecorationImage(
-                                              image: NetworkImage(
-                                                recipe['image_url'] ?? '',
-                                              ),
-                                              fit: BoxFit.cover,
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.profileData['name'] ?? 'Unknown User',
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 20),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                widget.profileData['bio'] ?? '',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: TabBar.secondary(
+                      controller: _tabController,
+                      labelColor: Color.fromARGB(255, 221, 56, 32),
+                      unselectedLabelColor: Colors.grey,
+                      indicatorColor: Color.fromARGB(255, 221, 56, 32),
+                      tabs: [
+                        Tab(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.bookmark),
+                              const SizedBox(width: 8),
+                              Text('Recipes'),
+                            ],
+                          ),
+                        ),
+                        Tab(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.collections_bookmark_outlined),
+                              const SizedBox(width: 8),
+                              Text('Cookbooks'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ];
+        },
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _recipesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: Loader());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  final recipes = snapshot.data!;
+                  LoggerService.logger.i(recipes.toString());
+                  return recipes.isEmpty
+                      ? EmptyValue(
+                          iconData: Icons.bookmark_outline,
+                          description: 'No recipes available',
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 20,
+                              mainAxisSpacing: 20,
+                              mainAxisExtent: 270,
+                            ),
+                            itemCount: recipes.length,
+                            itemBuilder: (context, index) {
+                              final recipe = recipes[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UserRecipePage(recipe: recipe),
+                                    ),
+                                  );
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 200,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                        borderRadius: BorderRadius.circular(16),
+                                        image: recipe['image_url'] != null && recipe['image_url']!.isNotEmpty
+                                            ? DecorationImage(
+                                                image: NetworkImage(
+                                                  recipe['image_url'] ?? '',
+                                                ),
+                                                fit: BoxFit.cover,
+                                              )
+                                            : null,
+                                      ),
+                                      child: recipe['image_url'] == null || recipe['image_url']!.isEmpty
+                                          ? const Icon(
+                                              Icons.image,
+                                              size: 50,
+                                              color: Colors.grey,
                                             )
                                           : null,
                                     ),
-                                    child: recipe['image_url'] == null || recipe['image_url']!.isEmpty
-                                        ? const Icon(
-                                            Icons.image,
-                                            size: 50,
-                                            color: Colors.grey,
-                                          )
-                                        : null,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 16.0),
-                                    child: Text(
-                                      recipe['name'] ?? 'Unnamed Recipe',
-                                      style: Theme.of(context).textTheme.titleSmall,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16.0),
+                                      child: Text(
+                                        recipe['name'] ?? 'Unnamed Recipe',
+                                        style: Theme.of(context).textTheme.titleSmall,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    } else {
-                      return const Text('No recipes found.');
-                    }
-                  },
-                ),
-                FutureBuilder<List<Map<String, dynamic>>>(
-                  future: _cookbooksFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      LoggerService.logger.i('EXECUTED!!!!!!!!');
-                      final cookbooks = snapshot.data!;
-                      return GridView.builder(
-                        padding: EdgeInsets.only(top: 16),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // Two items per row
-                          childAspectRatio: 0.57, // Adjust the aspect ratio as needed
-                          crossAxisSpacing: 0.0, // Spacing between items in the grid
-                          mainAxisSpacing: 1, // Vertical spacing between items
-                        ),
-                        itemCount: cookbooks.length,
-                        itemBuilder: (context, index) {
-                          final cookbook = cookbooks[index];
-                          return CookbookCard(cookbook: cookbook);
-                        },
-                      );
-                    } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-                      LoggerService.logger.i('EXECUTED!!!!! ELSEIF');
-                      return EmptyValue(
-                        iconData: Icons.collections_bookmark_outlined,
-                        description: 'No recipes in',
-                        value: 'Cookbook',
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error fetching cookbooks'));
-                    }
-                    return Center(child: Loader());
-                  },
-                ),
-              ],
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                } else {
+                  return const Center(child: Text('No recipes found.'));
+                }
+              },
             ),
-          ),
-        ],
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _cookbooksFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error fetching cookbooks'));
+                } else if (snapshot.hasData) {
+                  final cookbooks = snapshot.data!;
+                  if (cookbooks.isEmpty) {
+                    return EmptyValue(
+                      iconData: Icons.collections_bookmark_outlined,
+                      description: 'No cookbooks available',
+                    );
+                  }
+                  LoggerService.logger.i('EXECUTED!!!!!!!!');
+                  LoggerService.logger.i(cookbooks);
+                  return GridView.builder(
+                    padding: EdgeInsets.only(top: 16),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.57,
+                      crossAxisSpacing: 20.0,
+                      mainAxisSpacing: 20.0,
+                    ),
+                    itemCount: cookbooks.length,
+                    itemBuilder: (context, index) {
+                      final cookbook = cookbooks[index];
+                      return CookbookCard(cookbook: cookbook);
+                    },
+                  );
+                }
+                return const Center(child: Text('No cookbooks found.'));
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -408,6 +385,9 @@ class ReportOptionsDialog extends StatelessWidget {
       'created_at': DateTime.now().toIso8601String(),
     });
     Navigator.pop(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showSuccessSnackBar(context, "Report for '$type' has been successfully submitted.");
+    });
   }
 
   @override
@@ -418,9 +398,7 @@ class ReportOptionsDialog extends StatelessWidget {
         children: [
           Text(
             'Report',
-            style: TextStyle(
-              color: Colors.black,
-            ),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           IconButton(
             icon: Icon(Icons.close),
@@ -432,11 +410,13 @@ class ReportOptionsDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Please select the type of report',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              )),
+          Text(
+            'Please select the type of report',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+          ),
           ...reportTypes.map((type) => ListTile(
                 contentPadding: EdgeInsetsDirectional.zero,
                 title: Text(
@@ -451,7 +431,12 @@ class ReportOptionsDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          child: Text('Cancel', style: TextStyle(color: Colors.black)),
+          child: Text(
+            'Cancel',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ],

@@ -1,5 +1,7 @@
 import 'package:evercook/core/common/pages/home/dashboard.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
 import 'package:evercook/core/utils/logger.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -31,12 +33,25 @@ class _CookbookEditPageState extends State<CookbookEditPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.tertiary,
+            shape: BoxShape.circle,
+          ),
+          margin: const EdgeInsets.all(8),
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              CupertinoIcons.left_chevron,
+            ),
+            color: Theme.of(context).colorScheme.onTertiary,
+          ),
+        ),
         title: Text(
           'Edit Cookbook',
-          style: TextStyle(
-            fontSize: 16,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
         actions: [
           TextButton(
@@ -50,6 +65,7 @@ class _CookbookEditPageState extends State<CookbookEditPage> {
                 Dashboard.route(),
                 (route) => false,
               );
+              showSuccessSnackBar(context, 'Cookbook updated successfully');
             },
             child: Text(
               'Save',
@@ -67,8 +83,15 @@ class _CookbookEditPageState extends State<CookbookEditPage> {
             TextField(
               controller: nameController,
               decoration: InputDecoration(
+                floatingLabelBehavior: FloatingLabelBehavior.never,
                 labelText: 'Name',
               ),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+              onTapOutside: (event) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
             ),
             Spacer(),
             TextButton(
@@ -79,6 +102,7 @@ class _CookbookEditPageState extends State<CookbookEditPage> {
                   Dashboard.route(),
                   (route) => false,
                 );
+                showSuccessSnackBar(context, 'Cookbook deleted successfully');
               },
               child: Text(
                 'Delete Cookbook',

@@ -44,3 +44,37 @@ final class RecipeDelete extends RecipeEvent {
     required this.id,
   });
 }
+
+final class RecipeEdit extends RecipeEvent {
+  final String id;
+  final String userId;
+  final String? name;
+  final String? description;
+  final String? prepTime;
+  final String? cookTime;
+  final String? servings;
+  final List<String>? ingredients;
+  final String? directions;
+  final File? image;
+  final String? sources;
+  final String? notes;
+  final String? utensils;
+  final bool? public;
+
+  RecipeEdit({
+    required this.id,
+    required this.userId,
+    this.name,
+    this.description,
+    this.prepTime,
+    this.cookTime,
+    this.servings,
+    this.directions,
+    this.ingredients,
+    this.image,
+    this.sources,
+    this.notes,
+    this.utensils,
+    this.public,
+  });
+}

@@ -1,12 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evercook/core/constant/db_constants.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/utils/route_transitision.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_fail_snackbar.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
 import 'package:evercook/features/recipe/presentation/pages/recipe_details_pages/confirm_ingredients_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/recipe_details_pages/cook_mode.dart';
 import 'package:evercook/features/recipe/presentation/pages/recipe_details_pages/edit_recipe_page.dart';
-import 'package:evercook/core/common/pages/home/dashboard.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
@@ -33,49 +37,101 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
             elevation: 0,
             leading: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: Theme.of(context).colorScheme.tertiary,
                 shape: BoxShape.circle,
               ),
               margin: const EdgeInsets.all(8),
               child: IconButton(
                 onPressed: () {
-                  Future.delayed(Duration.zero, () {
-                    Navigator.pop(context);
-                  });
+                  Future.delayed(
+                    Duration.zero,
+                    () {
+                      Navigator.pop(context);
+                    },
+                  );
                 },
-                icon: const Icon(Icons.arrow_back),
-                color: const Color.fromARGB(255, 96, 94, 94),
+                icon: const Icon(
+                  CupertinoIcons.left_chevron,
+                ),
+                color: Theme.of(context).colorScheme.onTertiary,
               ),
             ),
             actions: [
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Theme.of(context).colorScheme.tertiary,
                   shape: BoxShape.circle,
                 ),
                 margin: const EdgeInsets.all(8),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(context, EditRecipePage.route(widget.recipe));
-                  },
-                  icon: const Icon(Icons.edit),
-                  color: const Color.fromARGB(255, 96, 94, 94),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  shape: BoxShape.circle,
-                ),
-                margin: const EdgeInsets.all(8),
-                child: IconButton(
-                  onPressed: () {
-                    _showDeleteDialog(context);
-                  },
-                  icon: const Icon(
-                    Icons.delete,
+                child: PopupMenuButton<String>(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
                   ),
-                  color: const Color.fromARGB(255, 193, 27, 27),
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    PopupMenuItem<String>(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: Theme.of(context).colorScheme.onTertiary),
+                          SizedBox(width: 8),
+                          Text('Edit', style: TextStyle(color: Theme.of(context).colorScheme.onTertiary)),
+                        ],
+                      ),
+                    ),
+                    PopupMenuDivider(),
+                    PopupMenuItem<String>(
+                      value: 'addMealPlan',
+                      child: Row(
+                        children: [
+                          Icon(Icons.calendar_month, color: Theme.of(context).colorScheme.onTertiary),
+                          SizedBox(width: 8),
+                          Text('Add to Meal Plan', style: TextStyle(color: Theme.of(context).colorScheme.onTertiary)),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<String>(
+                      value: 'addGrocery',
+                      child: Row(
+                        children: [
+                          Icon(Icons.shopping_cart_outlined, color: Theme.of(context).colorScheme.onTertiary),
+                          SizedBox(width: 8),
+                          Text('Add to Groceries', style: TextStyle(color: Theme.of(context).colorScheme.onTertiary)),
+                        ],
+                      ),
+                    ),
+                    PopupMenuDivider(),
+                    PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete_outline, color: Color.fromARGB(255, 193, 27, 27)),
+                          SizedBox(width: 8),
+                          Text('Delete', style: TextStyle(color: Color.fromARGB(255, 193, 27, 27))),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onSelected: (String value) {
+                    if (value == 'edit') {
+                      Navigator.push(context, EditRecipePage.route(widget.recipe));
+                    } else if (value == 'delete') {
+                      _showDeleteDialog(context);
+                    } else if (value == 'addMealPlan') {
+                      _addMealPlan().then((_) {
+                        showSuccessSnackBar(context, 'Meal plan added successfully');
+                      });
+                    } else if (value == 'addGrocery') {
+                      showCupertinoModalBottomSheet(
+                        context: context,
+                        builder: (context) => ConfirmIngredientsPage(
+                          recipe: widget.recipe,
+                        ),
+                      );
+                    }
+                  },
+                  icon: Icon(Icons.more_horiz_outlined),
                 ),
               ),
             ],
@@ -94,7 +150,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
           BlocConsumer<RecipeBloc, RecipeState>(
             listener: (context, state) {
               if (state is RecipeFailure) {
-                _showSnackbar(context, 'Error: ${state.error}');
+                showFailSnackbar(context, 'Error: ${state.error}');
               } else if (state is RecipeDeleteSuccess) {
                 Navigator.of(context).popUntil((route) => route.isFirst);
               }
@@ -109,7 +165,6 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Flexible(
                                 child: Text(
@@ -186,50 +241,59 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                             widget.recipe.ingredients.join('\n'),
                             iconData: Container(
                               decoration: BoxDecoration(
-                                color: Colors.grey[200],
+                                color: Theme.of(context).colorScheme.tertiary,
                                 shape: BoxShape.circle,
                               ),
                               margin: const EdgeInsets.all(8),
                               child: IconButton(
                                 onPressed: () async {
                                   await _addMealPlan();
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    Dashboard.route(),
-                                    (route) => false,
-                                  );
+                                  showSuccessSnackBar(context, 'Meal plan added successfully');
                                 },
                                 icon: const Icon(Icons.calendar_month),
-                                color: const Color.fromARGB(255, 96, 94, 94),
+                                color: Theme.of(context).colorScheme.onTertiary,
                               ),
                             ),
-                            icon: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                shape: BoxShape.circle,
-                              ),
-                              margin: const EdgeInsets.all(8),
-                              child: IconButton(
-                                onPressed: () async {
-                                  try {
-                                    Navigator.push(
-                                      context,
-                                      animationDownToUp(
-                                        ConfirmIngredientsPage(
-                                          recipe: widget.recipe,
-                                        ),
-                                      ),
-                                    );
-                                  } catch (e) {
-                                    LoggerService.logger.e(
-                                      'Error updating shopping list: $e',
-                                    );
-                                  }
-                                },
-                                icon: const Icon(
-                                  Icons.local_grocery_store_outlined,
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  animationDownToUp(
+                                    ConfirmIngredientsPage(
+                                      recipe: widget.recipe,
+                                    ),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Color.fromARGB(255, 221, 56, 32),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                color: const Color.fromARGB(255, 96, 94, 94),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.local_grocery_store_outlined,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Add to Shopping list',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -288,45 +352,102 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     return SizedBox(
       height: 250,
       width: double.infinity,
-      child: Image.network(
-        imageUrl,
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
         fit: BoxFit.cover,
       ),
     );
   }
 
   //todo move this widget to widget page
-  Widget _buildDetailsRow(String? prepTime, String? cookTime, String? servings, BuildContext context) {
+  Widget _buildDetailsRow(
+    String? prepTime,
+    String? cookTime,
+    String? servings,
+    BuildContext context,
+  ) {
     if ((prepTime == null || prepTime.isEmpty) &&
         (cookTime == null || cookTime.isEmpty) &&
         (servings == null || servings.isEmpty)) {
       return SizedBox.shrink();
     }
-
     return IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          _buildDetailColumn(
-            'Prep',
-            prepTime ?? '',
-            context,
-            icon: Icon(
-              Icons.access_time_rounded,
-              size: 22,
-            ),
-            divider: VerticalDivider(
-              color: Color.fromARGB(255, 233, 234, 234),
-              thickness: 1.2,
+          Padding(
+            padding: const EdgeInsets.only(right: 5.0),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.access_time_rounded,
+                  size: 22,
+                ),
+                SizedBox(width: 5),
+                VerticalDivider(
+                  thickness: 1.2,
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Prep',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      prepTime ?? '',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                      softWrap: false,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+                VerticalDivider(
+                  thickness: 1.2,
+                ),
+              ],
             ),
           ),
-          _buildDetailColumn(
-            'Cook',
-            cookTime ?? '',
-            context,
-            divider: VerticalDivider(
-              color: Color.fromARGB(255, 233, 234, 234),
-              thickness: 1.2,
+          Padding(
+            padding: const EdgeInsets.only(right: 5.0),
+            child: Row(
+              children: [
+                SizedBox(width: 5),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Cook',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    Text(
+                      cookTime ?? '',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                      softWrap: false,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
           _buildDetailColumn(
@@ -334,7 +455,6 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
             servings ?? '',
             context,
             divider: VerticalDivider(
-              color: Color.fromARGB(255, 233, 234, 234),
               thickness: 1.2,
             ),
           ),
@@ -345,39 +465,45 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
 
   //todo move this widget to widget page
   Widget _buildDetailColumn(String title, String value, BuildContext context, {Widget? icon, Widget? divider}) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 5.0),
-      child: Row(
-        children: [
-          if (icon != null) icon,
-          if (divider != null) divider,
-          SizedBox(width: 5),
-          Column(
-            mainAxisSize: MainAxisSize.min,
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(right: 5.0),
+        child: Expanded(
+          child: Row(
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onBackground,
+              if (icon != null) icon,
+              if (divider != null) divider,
+              SizedBox(width: 5),
+              Flexible(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.onBackground,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-              const SizedBox(height: 1),
-              Text(
-                value,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 1),
+                    Text(
+                      value,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                      softWrap: false,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                softWrap: false,
-                maxLines: 1,
-                overflow: TextOverflow.clip,
+                  ],
+                ),
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -432,28 +558,39 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Confirm"),
+          title: Text(
+            "Confirm",
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
           content: const Text("Are you sure you want to delete this recipe?"),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Cancel"),
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
                 context.read<RecipeBloc>().add(RecipeDelete(id: widget.recipe.id));
                 Navigator.of(context).pop();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showSuccessSnackBar(context, "Successfully deleted the recipe");
+                });
               },
-              child: const Text("Delete", style: TextStyle(color: Colors.red)),
+              child: const Text(
+                "Delete",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 221, 56, 32),
+                ),
+              ),
             ),
           ],
         );
       },
     );
-  }
-
-  //todo move this widget to widget page
-  void _showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 }

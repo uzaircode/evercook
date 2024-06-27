@@ -1,15 +1,18 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/utils/domain_validator.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/utils/pick_image.dart';
-import 'package:evercook/core/utils/show_snackbar.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_fail_snackbar.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:evercook/features/recipe/presentation/widgets/add_new_recipe_page_widget.dart';
 import 'package:evercook/core/common/pages/home/dashboard.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -109,7 +112,6 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
     if (widget.directions != null) directionsController.text = widget.directions!;
     if (widget.notes != null) notesController.text = widget.notes!;
     if (widget.sources != null) sourcesController.text = widget.sources!;
-    LoggerService.logger.d(widget.ingredients);
     if (widget.ingredients != null) {
       ingredientsControllers = widget.ingredients!.map((ingredient) {
         return TextEditingController(text: ingredient);
@@ -167,7 +169,6 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
           imageFile = await convertUrlToFile(imageUrlController.text.trim());
         }
       }
-      LoggerService.logger.d(isPublic);
 
       final ingredients = ingredientsControllers.map((controller) => controller.text).toList();
       LoggerService.logger.i('image file is null? : ${imageFile}');
@@ -178,6 +179,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
               name: nameController.text.trim().isEmpty ? null : nameController.text.trim(),
               description: descriptionController.text.trim().isEmpty ? null : descriptionController.text.trim(),
               servings: servingsController.text.trim().isEmpty ? null : servingsController.text.trim(),
+              image: imageFile,
               prepTime: prepTimeController.text.trim().isEmpty ? null : prepTimeController.text.trim(),
               cookTime: cookTimeController.text.trim().isEmpty ? null : cookTimeController.text.trim(),
               ingredients: ingredients.isEmpty ? widget.ingredients : ingredients,
@@ -203,9 +205,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
     directionsController.dispose();
     notesController.dispose();
     sourcesController.dispose();
-    for (var controller in ingredientsControllers) {
-      controller.dispose();
-    }
+    ingredientsControllers.forEach((controller) => controller.dispose());
   }
 
   @override
@@ -215,7 +215,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
       appBar: AppBar(
         leading: Container(
           decoration: BoxDecoration(
-            color: Colors.grey[300],
+            color: Theme.of(context).colorScheme.tertiary,
             shape: BoxShape.circle,
           ),
           margin: const EdgeInsets.all(8),
@@ -223,20 +223,25 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: const Icon(Icons.arrow_back),
-            color: const Color.fromARGB(255, 96, 94, 94),
+            icon: const Icon(
+              CupertinoIcons.left_chevron,
+            ),
+            color: Theme.of(context).colorScheme.onTertiary,
           ),
         ),
         actions: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: Theme.of(context).colorScheme.tertiary,
               shape: BoxShape.circle,
             ),
             margin: const EdgeInsets.all(8),
             child: IconButton(
               onPressed: () => uploadRecipe(),
-              icon: const Icon(Icons.done_rounded),
+              icon: Icon(
+                Icons.done_rounded,
+                color: Theme.of(context).colorScheme.onTertiary,
+              ),
             ),
           ),
         ],
@@ -244,9 +249,12 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
       body: BlocConsumer<RecipeBloc, RecipeState>(
         listener: (context, state) {
           if (state is RecipeFailure) {
-            showSnackBar(context, state.error);
+            showFailSnackbar(context, state.error);
           } else if (state is RecipeUploadSuccess) {
             Navigator.pushAndRemoveUntil(context, Dashboard.route(), (route) => false);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showSuccessSnackBar(context, "Successfully added the recipe");
+            });
           }
         },
         builder: (context, state) {
@@ -314,7 +322,7 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                       maxLines: 2,
                     ),
                     SizedBox(height: 20),
-                    buildEditableIngredientsList(),
+                    buildEditableIngredientsList(context),
                     SizedBox(height: 20),
                     buildTextField(
                       'Notes',
@@ -358,16 +366,16 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                                   TextSpan(
                                     text: 'Public',
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold, // Bold text for "Private"
-                                      color: Colors.black87, // Black color text
-                                      fontSize: 16, // Size of the text
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).colorScheme.onPrimary,
+                                      fontSize: 16,
                                     ),
                                   ),
                                   TextSpan(
                                     text: ' - Visible to everyone',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w400,
-                                      color: Color.fromARGB(255, 64, 64, 64),
+                                      color: Theme.of(context).colorScheme.onSecondary,
                                       fontSize: 16,
                                     ),
                                   ),
@@ -393,16 +401,16 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                                   TextSpan(
                                     text: 'Private',
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold, // Bold text for "Private"
-                                      color: Colors.black87, // Black color text
-                                      fontSize: 16, // Size of the text
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).colorScheme.onPrimary,
+                                      fontSize: 16,
                                     ),
                                   ),
                                   TextSpan(
                                     text: ' - Not visible to others',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w400,
-                                      color: Color.fromARGB(255, 64, 64, 64),
+                                      color: Theme.of(context).colorScheme.onSecondary,
                                       fontSize: 16,
                                     ),
                                   ),
@@ -434,16 +442,13 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
     );
   }
 
-  Widget buildEditableIngredientsList() {
+  Widget buildEditableIngredientsList(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Ingredients',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).textTheme.titleSmall,
         ),
         SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -458,12 +463,9 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                         controller: controller,
                         decoration: InputDecoration(
                           hintText: 'Ingredient',
-                          filled: true,
-                          fillColor: Theme.of(context).inputDecorationTheme.fillColor,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
+                        ).applyDefaults(Theme.of(context).inputDecorationTheme),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onBackground,
                         ),
                       ),
                     ),
@@ -513,8 +515,8 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
           : imageUrlController.text.isNotEmpty
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    imageUrlController.text,
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrlController.text,
                     height: 180,
                     width: double.infinity,
                     fit: BoxFit.cover,

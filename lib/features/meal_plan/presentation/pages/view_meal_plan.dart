@@ -1,6 +1,5 @@
 import 'package:evercook/core/common/widgets/skeleton/meal_plan_skeleton.dart';
 import 'package:evercook/core/constant/db_constants.dart';
-import 'package:evercook/features/auth/presentation/pages/profile_pages/profile_page.dart';
 import 'package:evercook/features/meal_plan/presentation/pages/add_meal_plan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -72,6 +71,8 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             CupertinoSliverNavigationBar(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              border: Border(),
               heroTag: Null,
               alwaysShowMiddle: false,
               largeTitle: Text(
@@ -134,7 +135,7 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                               decoration: BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
-                                    color: Color.fromARGB(255, 226, 227, 227),
+                                    color: Theme.of(context).dividerTheme.color!,
                                     width: 1.0,
                                   ),
                                 ),
@@ -164,10 +165,7 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                                           ),
                                           Text(
                                             DateFormat.MMMM().format(date), // Month
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                            style: Theme.of(context).textTheme.bodySmall,
                                           ),
                                         ],
                                       ),
@@ -195,12 +193,12 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                               return LongPressDraggable<Map<String, dynamic>>(
                                 data: meal,
                                 feedback: Material(
-                                  color: Colors.transparent,
                                   child: Container(
                                     width: MediaQuery.of(context).size.width * 0.8,
                                     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
+                                      // color: Theme.of(context).colorScheme.onSecondaryContainer,
                                       color: Colors.white,
                                       boxShadow: [
                                         BoxShadow(
@@ -220,13 +218,12 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                                         ),
                                         SizedBox(width: 5),
                                         Flexible(
-                                          child: Text(
-                                            '${meal['recipes']['name']}',
-                                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                                  color: Colors.grey,
-                                                ),
-                                          ),
-                                        ),
+                                            child: Text(
+                                          meal.isNotEmpty ? '${meal['recipes']['name']}' : '(No title)',
+                                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                                color: Colors.grey,
+                                              ),
+                                        )),
                                       ],
                                     ),
                                   ),
@@ -244,7 +241,7 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                                       SizedBox(width: 5),
                                       Flexible(
                                         child: Text(
-                                          '${meal['recipes']['name']}',
+                                          meal.isNotEmpty ? '${meal['recipes']['name']}' : '(No title)',
                                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                                 color: Colors.grey,
                                               ),
@@ -260,10 +257,11 @@ class _ViewMealPlanState extends State<ViewMealPlan> {
                                       motion: const ScrollMotion(),
                                       children: [
                                         SlidableAction(
+                                          borderRadius: BorderRadius.circular(8),
                                           onPressed: (context) => deleteMealPlan(meal['id']),
-                                          backgroundColor: const Color(0xFFFF0000),
+                                          backgroundColor: Color.fromARGB(255, 255, 69, 58),
                                           foregroundColor: Colors.white,
-                                          icon: Icons.delete,
+                                          icon: Icons.delete_outline,
                                         ),
                                       ],
                                     ),

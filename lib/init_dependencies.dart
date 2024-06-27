@@ -16,6 +16,7 @@ import 'package:evercook/features/recipe/data/datasources/recipe_remote_data_sou
 import 'package:evercook/features/recipe/data/repositories/recipe_repository_impl.dart';
 import 'package:evercook/features/recipe/domain/repositories/recipe_repository.dart';
 import 'package:evercook/features/recipe/domain/usecases/delete_recipe_usecase.dart';
+import 'package:evercook/features/recipe/domain/usecases/edit_recipe_usecase.dart';
 import 'package:evercook/features/recipe/domain/usecases/get_all_recipes_usecase.dart';
 import 'package:evercook/features/recipe/domain/usecases/upload_recipe_usecase.dart';
 import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';

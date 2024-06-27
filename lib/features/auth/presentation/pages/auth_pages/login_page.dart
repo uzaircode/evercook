@@ -1,5 +1,5 @@
 import 'package:evercook/core/common/widgets/loader.dart';
-import 'package:evercook/core/utils/show_snackbar.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart' as auth_bloc;
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/auth_pages/recover_page.dart';
@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<auth_bloc.AuthBloc, auth_bloc.AuthState>(
           listener: (context, state) {
             if (state is auth_bloc.AuthFailure) {
-              showSnackBar(context, state.message);
+              showSuccessSnackBar(context, state.message);
             } else if (state is auth_bloc.AuthSuccess) {
               Navigator.pushAndRemoveUntil(
                 context,

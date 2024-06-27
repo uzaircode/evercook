@@ -16,8 +16,17 @@ abstract interface class RecipeRemoteDataSource {
     required File image,
     required RecipeModel recipe,
   });
+  Future<String> uploadUpdatedRecipeImage({
+    required File image,
+    required RecipeModel recipe,
+  });
+
   Future<List<RecipeModel>> getAllRecipes();
   Future<RecipeModel> deleteRecipe(String id);
+  Future<RecipeModel> editRecipe(
+    String userId,
+    RecipeModel recipe,
+  );
 }
 
 class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
@@ -31,7 +40,7 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
   @override
   Future<RecipeModel> uploadRecipe(RecipeModel recipe) async {
     try {
-      LoggerService.logger.i('Uploading recipe: $recipe.toJson()');
+      LoggerService.logger.i('Uploading recipe: ${recipe.toJson()}');
       final recipeData = await supabaseClient.from(DBConstants.recipesTable).insert(recipe.toJson()).select();
       LoggerService.logger.i('Recipe uploaded: ${recipeData.first}');
       return RecipeModel.fromJson(recipeData.first);
@@ -55,6 +64,42 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
             recipe.id,
           );
     } catch (e) {
+      throw ErrorHandler.handleError(e);
+    }
+  }
+
+  @override
+  Future<String> uploadUpdatedRecipeImage({
+    required File image,
+    required RecipeModel recipe,
+  }) async {
+    try {
+      final imageName = '${recipe.id}_${DateTime.now().millisecondsSinceEpoch}';
+
+      // Check if the image already exists and delete it
+      final existingImageResponse =
+          await supabaseClient.storage.from(BucketConstants.recipeImagesBucket).list(path: recipe.id);
+
+      if (existingImageResponse.isNotEmpty) {
+        for (var file in existingImageResponse) {
+          await supabaseClient.storage.from(BucketConstants.recipeImagesBucket).remove([file.name]);
+        }
+      }
+
+      // Upload the new image
+      await supabaseClient.storage.from(BucketConstants.recipeImagesBucket).upload(
+            imageName,
+            image,
+          );
+
+      // Get the public URL of the uploaded image
+      final imageUrl = supabaseClient.storage.from(BucketConstants.recipeImagesBucket).getPublicUrl(
+            imageName,
+          );
+
+      return imageUrl;
+    } catch (e) {
+      LoggerService.logger.e('Error uploading image: $e');
       throw ErrorHandler.handleError(e);
     }
   }
@@ -96,6 +141,43 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
 
       return RecipeModel.fromJson(recipe.first);
     } catch (e) {
+      throw ErrorHandler.handleError(e);
+    }
+  }
+
+  @override
+  Future<RecipeModel> editRecipe(
+    String userId,
+    RecipeModel recipe,
+  ) async {
+    try {
+      LoggerService.logger.i('Updating recipe with ID: ${recipe.id}');
+      LoggerService.logger.i('Recipe data: ${recipe.toJson()}');
+
+      final response = await supabaseClient
+          .from(DBConstants.recipesTable)
+          .update({
+            'name': recipe.name,
+            'description': recipe.description,
+            'prep_time': recipe.prepTime,
+            'cook_time': recipe.cookTime,
+            'servings': recipe.servings,
+            'directions': recipe.directions,
+            'ingredients': recipe.ingredients,
+            'image_url': recipe.imageUrl,
+            'notes': recipe.notes,
+            'sources': recipe.sources,
+            'utensils': recipe.utensils,
+            'public': recipe.public,
+          })
+          .eq('id', recipe.id)
+          .select()
+          .single();
+
+      LoggerService.logger.i('Update successful: $response');
+      return RecipeModel.fromJson(response);
+    } catch (e) {
+      LoggerService.logger.e('Exception during update: $e');
       throw ErrorHandler.handleError(e);
     }
   }

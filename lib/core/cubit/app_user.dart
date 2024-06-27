@@ -11,7 +11,6 @@ class AppUserCubit extends Cubit<AppUserState> {
   void updateUser(User? user) {
     if (user == null) {
       LoggerService.logger.i('Emitting AppUserInitial');
-
       emit(AppUserInitial());
     } else {
       LoggerService.logger.i('Emitting AppUserLoggedIn with user: $user');

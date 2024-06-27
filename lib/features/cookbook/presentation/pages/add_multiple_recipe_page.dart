@@ -1,11 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evercook/core/common/pages/home/dashboard.dart';
+import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/constant/db_constants.dart';
 import 'package:evercook/core/error/error_handler.dart';
+import 'package:evercook/core/utils/extract_domain.dart';
 import 'package:evercook/core/utils/logger.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
 import 'package:evercook/features/recipe/data/models/recipe_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddMultipleRecipePage extends StatefulWidget {
@@ -109,7 +113,7 @@ class _AddMultipleRecipePageState extends State<AddMultipleRecipePage> {
       appBar: AppBar(
         leading: Container(
           decoration: BoxDecoration(
-            color: Colors.grey[300],
+            color: Theme.of(context).colorScheme.tertiary,
             shape: BoxShape.circle,
           ),
           margin: const EdgeInsets.all(8),
@@ -117,27 +121,32 @@ class _AddMultipleRecipePageState extends State<AddMultipleRecipePage> {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: const Icon(Icons.arrow_back),
-            color: const Color.fromARGB(255, 96, 94, 94),
+            icon: const Icon(
+              CupertinoIcons.left_chevron,
+            ),
+            color: Theme.of(context).colorScheme.onTertiary,
           ),
         ),
         actions: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              shape: BoxShape.circle,
-            ),
-            margin: const EdgeInsets.all(8),
-            child: IconButton(
-              icon: Icon(Icons.save),
-              onPressed: () async {
-                await saveSelectedRecipes();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  Dashboard.route(),
-                  (route) => false,
-                );
-              },
+          TextButton(
+            onPressed: () async {
+              await saveSelectedRecipes();
+              Navigator.pushAndRemoveUntil(
+                context,
+                Dashboard.route(),
+                (route) => false,
+              );
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                showSuccessSnackBar(context, "Successfully added the cookbook");
+              });
+            },
+            child: Text(
+              'Save',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 221, 56, 32),
+              ),
             ),
           ),
         ],
@@ -157,110 +166,121 @@ class _AddMultipleRecipePageState extends State<AddMultipleRecipePage> {
               itemCount: recipes.length,
               itemBuilder: (context, index) {
                 final recipe = recipes[index];
-                return Slidable(
-                  endActionPane: ActionPane(
-                    motion: const ScrollMotion(),
-                    children: [
-                      SlidableAction(
-                        onPressed: (BuildContext context) {
-                          showCupertinoDialog(
-                            context: context,
-                            builder: (context) {
-                              return CupertinoAlertDialog(
-                                title: const Text('Confirm Delete'),
-                                content: const Text('Are you sure you want to delete this recipe?'),
-                                actions: <Widget>[
-                                  CupertinoDialogAction(
-                                    child: const Text('Cancel'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  CupertinoDialogAction(
-                                    isDestructiveAction: true,
-                                    child: const Text('Delete'),
-                                    onPressed: () {
-                                      // Add delete logic here
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        backgroundColor: const Color(0xFFFF0000),
-                        foregroundColor: Colors.white,
-                        icon: Icons.delete,
-                        label: 'Delete',
-                      ),
-                    ],
-                  ),
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: 18,
-                        right: 38,
-                        top: 16,
-                        bottom: 8,
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (selectedRecipes.contains(recipe.id)) {
+                        selectedRecipes.remove(recipe.id);
+                      } else {
+                        selectedRecipes.add(recipe.id);
+                      }
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 20, top: 16, bottom: 0),
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(0, 8, 8, 8),
+                      decoration: BoxDecoration(
+                        color: selectedRecipes.contains(recipe.id)
+                            ? (Theme.of(context).brightness == Brightness.dark
+                                ? Color.fromARGB(255, 49, 49, 53) // Dark theme color
+                                : Color.fromARGB(255, 242, 244, 245)) // Light theme color
+                            : null,
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Hero(
-                            tag: 'recipe_image_${recipe.id}',
-                            child: Container(
-                              width: 100,
-                              height: 110,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                                color: Colors.grey[300],
-                                image: recipe.imageUrl!.isNotEmpty
-                                    ? DecorationImage(
-                                        image: NetworkImage(recipe.imageUrl!),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : null,
-                              ),
-                              child: recipe.imageUrl!.isEmpty
-                                  ? const Icon(Icons.image, size: 50, color: Colors.grey)
-                                  : null,
+                          Checkbox(
+                            checkColor: Color.fromARGB(255, 221, 56, 32),
+                            value: selectedRecipes.contains(recipe.id),
+                            shape: CircleBorder(),
+                            onChanged: (bool? value) {
+                              setState(() {
+                                if (value == true) {
+                                  selectedRecipes.add(recipe.id);
+                                } else {
+                                  selectedRecipes.remove(recipe.id);
+                                }
+                              });
+                            },
+                          ),
+                          Container(
+                            width: 100,
+                            height: 110,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: recipe.imageUrl!,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Loader(),
+                                      errorWidget: (context, url, error) => Icon(
+                                        Icons.error,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.image,
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
                             ),
                           ),
-                          const SizedBox(width: 14),
+                          SizedBox(width: 14),
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  recipe.name ?? '',
-                                  softWrap: true,
-                                  style: Theme.of(context).textTheme.titleSmall,
+                            child: SizedBox(
+                              height: 110,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Theme.of(context).dividerTheme.color!,
+                                      width: 1.5,
+                                    ),
+                                  ),
                                 ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  recipe.description ?? '',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      recipe.name ?? '(No Title)',
+                                      softWrap: true,
+                                      maxLines: 2,
+                                      style: Theme.of(context).textTheme.titleSmall,
+                                    ),
+                                    recipe.sources != null
+                                        ? Row(
+                                            children: [
+                                              const FaIcon(
+                                                FontAwesomeIcons.book,
+                                                size: 12,
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Text(
+                                                extractDomain(recipe.sources!),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : const SizedBox.shrink(),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      recipe.description ?? '',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ],
                                 ),
-                                Checkbox(
-                                  checkColor: Colors.red,
-                                  value: selectedRecipes.contains(recipe.id),
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      if (value == true) {
-                                        selectedRecipes.add(recipe.id);
-                                        LoggerService.logger.d(selectedRecipes);
-                                      } else {
-                                        selectedRecipes.remove(recipe.id);
-                                      }
-                                    });
-                                  },
-                                ),
-                                Divider(),
-                              ],
+                              ),
                             ),
                           ),
                         ],

@@ -1,6 +1,7 @@
 import 'package:evercook/core/common/widgets/empty_value.dart';
 import 'package:evercook/core/utils/logger.dart';
-import 'package:evercook/core/common/pages/home/dashboard.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_warning_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -29,20 +30,20 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leadingWidth: 100,
         leading: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            shape: BoxShape.circle,
-          ),
-          margin: const EdgeInsets.all(8),
-          child: IconButton(
-            onPressed: () {
-              Future.delayed(Duration.zero, () {
-                Navigator.pop(context);
-              });
+          child: TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
             },
-            icon: const Icon(Icons.arrow_back),
-            color: const Color.fromARGB(255, 96, 94, 94),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 221, 56, 32),
+              ),
+            ),
           ),
         ),
       ),
@@ -59,16 +60,14 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Groceries',
+                    'Shopping List',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   SizedBox(height: 10),
                   Expanded(
                     child: ListView.separated(
                       itemCount: widget.recipe.ingredients.length,
-                      separatorBuilder: (context, index) => Divider(
-                        color: Color.fromARGB(255, 226, 227, 227),
-                      ),
+                      separatorBuilder: (context, index) => Divider(),
                       itemBuilder: (context, index) {
                         final ingredient = widget.recipe.ingredients[index];
                         return CheckboxListTile(
@@ -87,6 +86,7 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
                             });
                           },
                           activeColor: Color.fromARGB(255, 221, 56, 32),
+                          checkColor: Colors.white,
                           checkboxShape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -99,20 +99,15 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () async {
+                      onPressed: () {
                         if (_selectedIngredients.isNotEmpty) {
-                          await _addSelectedIngredientsToShoppingList(_selectedIngredients);
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            Dashboard.route(),
-                            (route) => false,
-                          );
+                          _addSelectedIngredientsToShoppingList(_selectedIngredients);
+                          Navigator.pop(context);
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            showSuccessSnackBar(context, "Successfully added to grocery list");
+                          });
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Please select at least one ingredient.'),
-                            ),
-                          );
+                          showWarningSnackbar(context, 'Please select at least one ingredient');
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -126,7 +121,7 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.arrow_circle_down_rounded,
+                            Icons.add,
                             color: Colors.white,
                           ),
                           SizedBox(width: 8),

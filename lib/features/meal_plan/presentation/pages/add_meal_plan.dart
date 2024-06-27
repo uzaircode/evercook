@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evercook/core/constant/db_constants.dart';
 import 'package:evercook/core/error/error_handler.dart';
+import 'package:evercook/core/utils/extract_domain.dart';
 import 'package:evercook/features/recipe/data/models/recipe_model.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -57,33 +60,20 @@ class _SelectRecipesPageState extends State<SelectRecipesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            shape: BoxShape.circle,
-          ),
-          margin: const EdgeInsets.all(8),
-          child: IconButton(
-            onPressed: () {
+        automaticallyImplyLeading: false,
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await saveSelectedRecipes();
               Navigator.pop(context);
             },
-            icon: const Icon(Icons.arrow_back),
-            color: const Color.fromARGB(255, 96, 94, 94),
-          ),
-        ),
-        actions: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              shape: BoxShape.circle,
-            ),
-            margin: const EdgeInsets.all(8),
-            child: IconButton(
-              icon: Icon(Icons.save),
-              onPressed: () async {
-                await saveSelectedRecipes();
-                Navigator.pop(context);
-              },
+            child: Text(
+              'Save',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 221, 56, 32),
+              ),
             ),
           ),
         ],
@@ -104,68 +94,127 @@ class _SelectRecipesPageState extends State<SelectRecipesPage> {
               itemBuilder: (context, index) {
                 final recipe = recipes[index];
                 return GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    setState(() {
+                      if (selectedRecipes.contains(recipe.id)) {
+                        selectedRecipes.remove(recipe.id);
+                      } else {
+                        selectedRecipes.add(recipe.id);
+                      }
+                    });
+                  },
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 18,
-                      right: 38,
-                      top: 16,
-                      bottom: 8,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 110,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                            color: Colors.grey[300],
-                            image: recipe.imageUrl!.isNotEmpty
-                                ? DecorationImage(
-                                    image: NetworkImage(recipe.imageUrl!),
-                                    fit: BoxFit.cover,
-                                  )
-                                : null,
+                    padding: const EdgeInsets.only(left: 10, right: 20, top: 16, bottom: 0),
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(0, 8, 8, 8),
+                      decoration: BoxDecoration(
+                        color: selectedRecipes.contains(recipe.id)
+                            ? (Theme.of(context).brightness == Brightness.dark
+                                ? Color.fromARGB(255, 49, 49, 53)
+                                : Color.fromARGB(255, 242, 244, 245))
+                            : null,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            activeColor: Color.fromARGB(255, 221, 56, 32),
+                            checkColor: Colors.white,
+                            value: selectedRecipes.contains(recipe.id),
+                            shape: CircleBorder(),
+                            onChanged: (bool? value) {
+                              setState(() {
+                                if (value == true) {
+                                  selectedRecipes.add(recipe.id);
+                                } else {
+                                  selectedRecipes.remove(recipe.id);
+                                }
+                              });
+                            },
                           ),
-                          child:
-                              recipe.imageUrl!.isEmpty ? const Icon(Icons.image, size: 50, color: Colors.grey) : null,
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                recipe.name ?? '',
-                                softWrap: true,
-                                style: Theme.of(context).textTheme.titleSmall,
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                recipe.description ?? '',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                              Checkbox(
-                                checkColor: Colors.red,
-                                value: selectedRecipes.contains(recipe.id),
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    if (value == true) {
-                                      selectedRecipes.add(recipe.id);
-                                    } else {
-                                      selectedRecipes.remove(recipe.id);
-                                    }
-                                  });
-                                },
-                              ),
-                              Divider(),
-                            ],
+                          Container(
+                            width: 100,
+                            height: 110,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: selectedRecipes.contains(recipe.id)
+                                  ? Colors.grey[300]
+                                  : Colors.transparent, // Change color here
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: recipe.imageUrl!,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) => Icon(
+                                        Icons.error,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.image,
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 14),
+                          Expanded(
+                            child: SizedBox(
+                              height: 110,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Theme.of(context).dividerTheme.color!,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      recipe.name ?? '(No Title)',
+                                      softWrap: true,
+                                      maxLines: 2,
+                                      style: Theme.of(context).textTheme.titleSmall,
+                                    ),
+                                    recipe.sources != null
+                                        ? Row(
+                                            children: [
+                                              const FaIcon(
+                                                FontAwesomeIcons.book,
+                                                size: 12,
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Text(
+                                                extractDomain(recipe.sources!),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : const SizedBox.shrink(),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      recipe.description ?? '',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

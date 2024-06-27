@@ -1,11 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:evercook/core/constant/db_constants.dart';
 import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/data/models/user_model.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthRemoteDataSource {
@@ -35,7 +37,7 @@ abstract interface class AuthRemoteDataSource {
   Future<UserModel> updateUser({
     required String name,
     required String bio,
-    required String? avatarUrl,
+    String? avatarUrl,
   });
 
   Future<String> uploadProfileUserImage({
@@ -78,6 +80,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
+      // Sign up the user
       final response = await supabaseClient.auth.signUp(
         email: email,
         password: password,
@@ -90,12 +93,39 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const ServerException('User is null');
       }
 
-      LoggerService.logger.i(response.user!.toJson());
-      return UserModel.fromJson(response.user!.toJson()); //i dont understand here, why fromJson -> toJson?
+      // Load the default avatar from assets
+      final ByteData imageData = await rootBundle.load('assets/images/default_avatar.png');
+      final Uint8List bytes = imageData.buffer.asUint8List();
+
+      // Define the image path
+      final userId = response.user!.id;
+      final imagePath = 'avatars/$userId/default_avatar.png';
+
+      // Upload the default avatar to storage
+      await supabaseClient.storage.from('avatars').uploadBinary(imagePath, bytes);
+
+      // Ensuring the file is available by introducing a simple delay
+      await Future.delayed(const Duration(seconds: 1)); // Example delay, adjust based on actual needs
+
+      // Get the public URL of the uploaded image
+      final avatarUrl = supabaseClient.storage.from('avatars').getPublicUrl(imagePath);
+
+      LoggerService.logger.i('Public URL obtained: $avatarUrl');
+
+      // Update the user profile with the avatar URL
+      final userUpdateResponse = await supabaseClient.from('profiles').upsert({
+        'id': userId,
+        'name': name,
+        'avatar_url': avatarUrl, // Save the public URL in the database
+      });
+
+      LoggerService.logger.i('Updated User Profile: ${response}');
+      return UserModel.fromJson(response.user!.toJson());
     } on AuthException catch (e) {
-      LoggerService.logger.e('Uknown error: $e');
+      LoggerService.logger.e('Unknown error: $e');
       throw ServerException(e.toString());
     } catch (e) {
+      LoggerService.logger.e('Unexpected error: $e');
       throw ServerException(e.toString());
     }
   }
@@ -196,6 +226,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final updateData = {
         'name': name,
         'bio': bio,
+        'updated_at': DateTime.now().toIso8601String(),
       };
 
       // Include avatarUrl in the update data if provided
@@ -209,8 +240,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .eq('id', currentUserSession!.user.id)
           .select();
 
-      LoggerService.logger.d('Update response: $response');
-      return UserModel.fromJson(response.first);
+      final userJson = response.first;
+      userJson['email'] = currentUserSession!.user.email;
+
+      LoggerService.logger.d('Update response: $userJson');
+      return UserModel.fromJson(userJson);
     } on AuthException catch (e) {
       LoggerService.logger.e(e.toString());
       throw ServerException(e.toString());
@@ -220,12 +254,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   Future<String> uploadProfileUserImage({
-    required File image,
+    File? image,
   }) async {
     try {
       final userId = currentUserSession!.user.id;
       final imagePath = '$userId/${DateTime.now().millisecondsSinceEpoch}';
-      await supabaseClient.storage.from('avatars').upload(imagePath, image);
+      await supabaseClient.storage.from('avatars').upload(imagePath, image!);
 
       // Ensuring the file is available by fetching it or a simple delay could be introduced
       await Future.delayed(const Duration(seconds: 1)); // Example delay, adjust based on actual needs

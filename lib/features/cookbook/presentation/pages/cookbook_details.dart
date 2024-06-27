@@ -1,6 +1,8 @@
+import 'package:evercook/core/common/widgets/skeleton/skeleton_homepage.dart';
 import 'package:evercook/features/cookbook/presentation/pages/edit_cookbook.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
 import 'package:evercook/features/recipe/presentation/pages/recipe_details_pages/recipe_details_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/core/utils/logger.dart';
@@ -37,7 +39,7 @@ class _CookbookDetailsState extends State<CookbookDetails> {
       return List<Map<String, dynamic>>.from(recipes.map((e) => e['recipes']));
     } catch (e) {
       print('Failed to fetch recipes: $e');
-      return [];
+      return []; // Return an empty list if there's an error
     }
   }
 
@@ -51,7 +53,7 @@ class _CookbookDetailsState extends State<CookbookDetails> {
         ),
         leading: Container(
           decoration: BoxDecoration(
-            color: Colors.grey[300],
+            color: Theme.of(context).colorScheme.tertiary,
             shape: BoxShape.circle,
           ),
           margin: const EdgeInsets.all(8),
@@ -59,8 +61,10 @@ class _CookbookDetailsState extends State<CookbookDetails> {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: const Icon(Icons.arrow_back),
-            color: const Color.fromARGB(255, 96, 94, 94),
+            icon: const Icon(
+              CupertinoIcons.left_chevron,
+            ),
+            color: Theme.of(context).colorScheme.onTertiary,
           ),
         ),
         actions: [
@@ -81,7 +85,7 @@ class _CookbookDetailsState extends State<CookbookDetails> {
         future: _recipesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return SkeletonHomepage();
           } else if (snapshot.hasError) {
             return Center(child: Text('Error fetching recipes'));
           } else {
@@ -94,7 +98,12 @@ class _CookbookDetailsState extends State<CookbookDetails> {
                 itemBuilder: (context, index) {
                   final recipe = recipes[index];
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      // Navigator.push(
+                      //   context,
+                      //   RecipeDetailsPage.route(recipe),
+                      // );
+                    },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Row(
@@ -105,7 +114,7 @@ class _CookbookDetailsState extends State<CookbookDetails> {
                             height: 110,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
-                              color: Colors.grey[300],
+                              color: Theme.of(context).colorScheme.onPrimaryContainer,
                               image: recipe['image_url'] != null
                                   ? DecorationImage(
                                       image: NetworkImage(recipe['image_url'] ?? ''),
@@ -113,7 +122,13 @@ class _CookbookDetailsState extends State<CookbookDetails> {
                                     )
                                   : null,
                             ),
-                            child: recipe['image_url'] == null ? Icon(Icons.image, size: 50, color: Colors.grey) : null,
+                            child: recipe['image_url'] == null
+                                ? Icon(
+                                    Icons.image,
+                                    size: 50,
+                                    color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                  )
+                                : null,
                           ),
                           SizedBox(width: 16),
                           Expanded(

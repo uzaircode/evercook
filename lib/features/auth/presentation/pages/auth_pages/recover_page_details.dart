@@ -1,5 +1,8 @@
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/utils/logger.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_fail_snackbar.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_warning_snackbar.dart';
 import 'package:evercook/features/auth/presentation/pages/auth_pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -130,12 +133,12 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
                         MaterialPageRoute(builder: (context) => const LoginPage()),
                         (route) => false,
                       );
-                      showSnackbar(context, 'Password Change', Colors.black);
+                      showSuccessSnackBar(context, 'Password Successfully Changed');
                     } catch (e) {
-                      showSnackbar(context, e.toString(), Colors.black);
+                      showFailSnackbar(context, e.toString());
                     }
                   } else {
-                    showSnackbar(context, 'Isi dengan Benar!', Colors.black);
+                    showWarningSnackbar(context, 'Write Properly!');
                   }
                 },
                 child: const Text('Reset Password'),
@@ -143,15 +146,6 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  void showSnackbar(BuildContext context, String message, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: color,
       ),
     );
   }

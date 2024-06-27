@@ -24,11 +24,11 @@ class UpdateUserUseCase implements UseCase<User, UpdateUserParams> {
 class UpdateUserParams {
   final String name;
   final String bio;
-  final File image;
+  final File? image;
 
   UpdateUserParams({
     required this.name,
     required this.bio,
-    required this.image,
+    this.image,
   });
 }

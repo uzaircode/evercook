@@ -15,7 +15,7 @@ class DarkPallete {
   static const gradient1 = Color(0xFF1A237E);
   static const whiteColor = Color(0xFFFFFFFF);
   static const backgroundColor = Color.fromARGB(255, 28, 28, 30);
-  static const errorColor = Color(0xFFCF6679);
+  static const errorColor = Color(0xFFB00020);
   static const greyColor = Color(0xFFB0BEC5);
 }
 
@@ -31,6 +31,12 @@ ThemeData lightTheme = ThemeData(
   textSelectionTheme: lightTextSelectionTheme,
   floatingActionButtonTheme: lightFloatingActionButtonTheme,
   dividerTheme: lightDividerTheme,
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: WidgetStateProperty.all(lightButtonBackgroundColor),
+      foregroundColor: WidgetStateProperty.all(lightButtonTextColor),
+    ),
+  ),
 );
 
 ThemeData darkTheme = ThemeData(
@@ -45,20 +51,26 @@ ThemeData darkTheme = ThemeData(
   textSelectionTheme: darkTextSelectionTheme,
   floatingActionButtonTheme: darkFloatingActionButtonTheme,
   dividerTheme: darkDividerTheme,
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: WidgetStateProperty.all(darkButtonBackgroundColor),
+      foregroundColor: WidgetStateProperty.all(darkButtonTextColor),
+    ),
+  ),
 );
 
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
   primary: LightPallete.whiteColor,
-  onPrimary: LightPallete.whiteColor,
+  onPrimary: Color.fromARGB(255, 49, 49, 53),
   secondary: Color.fromARGB(255, 166, 166, 166),
   onSecondary: Color.fromARGB(255, 166, 166, 166),
   primaryContainer: Color.fromARGB(255, 224, 224, 224),
   onPrimaryContainer: Color.fromARGB(255, 224, 224, 224),
   secondaryContainer: Color.fromARGB(255, 224, 224, 224),
   onSecondaryContainer: Color.fromARGB(255, 224, 224, 224),
-  tertiary: LightPallete.greyColor,
-  onTertiary: Colors.white,
+  tertiary: Color.fromARGB(255, 244, 244, 244), //appbar
+  onTertiary: Color.fromARGB(255, 122, 122, 122), //appbar
   error: LightPallete.errorColor,
   onError: Colors.white,
   errorContainer: LightPallete.errorColor,
@@ -66,7 +78,7 @@ const lightColorScheme = ColorScheme(
   background: LightPallete.backgroundColor,
   onBackground: Colors.black,
   surface: LightPallete.whiteColor,
-  onSurface: LightPallete.borderColor,
+  onSurface: LightPallete.whiteColor,
   surfaceVariant: LightPallete.borderColor,
   onSurfaceVariant: LightPallete.greyColor,
   outline: LightPallete.greyColor,
@@ -79,24 +91,24 @@ const lightColorScheme = ColorScheme(
 
 const darkColorScheme = ColorScheme(
   brightness: Brightness.dark,
-  primary: DarkPallete.gradient1,
-  onPrimary: DarkPallete.whiteColor,
+  primary: DarkPallete.backgroundColor,
+  onPrimary: Color.fromARGB(255, 232, 232, 233),
   primaryContainer: Color.fromARGB(255, 81, 81, 83),
   onPrimaryContainer: Color.fromARGB(255, 81, 81, 83),
   secondary: Color.fromARGB(255, 166, 166, 166),
   onSecondary: Color.fromARGB(255, 166, 166, 166),
   secondaryContainer: Color.fromARGB(255, 38, 38, 40),
   onSecondaryContainer: Color.fromARGB(255, 38, 38, 40),
-  tertiary: DarkPallete.greyColor,
-  onTertiary: Colors.white,
+  tertiary: Color.fromARGB(255, 41, 41, 43), //appbar
+  onTertiary: Color.fromARGB(255, 197, 197, 197), //appbar
   error: DarkPallete.errorColor,
   onError: DarkPallete.whiteColor,
   errorContainer: DarkPallete.errorColor,
   onErrorContainer: DarkPallete.whiteColor,
   background: DarkPallete.backgroundColor,
   onBackground: DarkPallete.whiteColor,
-  surface: DarkPallete.whiteColor,
-  onSurface: DarkPallete.greyColor,
+  surface: Color.fromARGB(255, 41, 41, 43), //sheets/cards/menus
+  onSurface: Color.fromARGB(255, 168, 168, 169), //sheets/cards/menus
   surfaceVariant: DarkPallete.greyColor,
   onSurfaceVariant: DarkPallete.greyColor,
   outline: DarkPallete.greyColor,
@@ -116,7 +128,7 @@ final lightTextTheme = TextTheme(
   ),
   titleLarge: GoogleFonts.notoSerif(
     textStyle: TextStyle(
-      color: Color(0xFF404040),
+      color: Color.fromARGB(255, 64, 64, 64),
       fontSize: 35,
       fontWeight: FontWeight.w700,
       height: 1.2,
@@ -150,17 +162,17 @@ final darkTextTheme = TextTheme(
   headlineMedium: TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.bold,
-    color: Color.fromARGB(255, 255, 255, 255),
+    color: Color.fromARGB(255, 232, 232, 233),
     overflow: TextOverflow.ellipsis,
   ),
   titleMedium: TextStyle(
-    color: Colors.white,
+    color: Color.fromARGB(255, 232, 232, 233),
     fontWeight: FontWeight.w600,
     fontSize: 20,
   ),
   titleLarge: GoogleFonts.notoSerif(
     textStyle: TextStyle(
-      color: Color.fromARGB(255, 255, 255, 255),
+      color: Color.fromARGB(255, 232, 232, 233),
       fontSize: 35,
       fontWeight: FontWeight.w700,
       height: 1.2,
@@ -168,7 +180,7 @@ final darkTextTheme = TextTheme(
   ),
   titleSmall: GoogleFonts.inter(
     textStyle: TextStyle(
-      color: Colors.white,
+      color: Color.fromARGB(255, 232, 232, 233),
       fontWeight: FontWeight.w600,
       fontSize: 16,
       height: 1.5,
@@ -197,7 +209,7 @@ final darkBottomNavigationBarTheme = BottomNavigationBarThemeData(
   backgroundColor: Color.fromARGB(255, 34, 34, 36),
   selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
   unselectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-  selectedItemColor: Color.fromARGB(255, 221, 56, 32),
+  selectedItemColor: Color.fromRGBO(221, 56, 32, 1),
   unselectedItemColor: Color.fromARGB(255, 167, 167, 167),
 );
 
@@ -224,10 +236,27 @@ final darkChipTheme = ChipThemeData(
 );
 
 final lightInputDecorationTheme = InputDecorationTheme(
+  filled: true,
+  fillColor: Color.fromARGB(255, 242, 244, 245),
   contentPadding: EdgeInsets.all(16),
   hintStyle: TextStyle(
+    fontWeight: FontWeight.w400,
     fontSize: 16,
-    color: Colors.grey[500],
+    color: Color.fromARGB(255, 132, 131, 137),
+  ),
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide.none,
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide.none,
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide(
+      color: Color.fromARGB(255, 221, 56, 32),
+    ), // Set your desired color for enabled state
   ),
   errorBorder: OutlineInputBorder(
     borderSide: BorderSide(color: LightPallete.errorColor),
@@ -235,20 +264,43 @@ final lightInputDecorationTheme = InputDecorationTheme(
 );
 
 final darkInputDecorationTheme = InputDecorationTheme(
-  fillColor: Color.fromARGB(255, 49, 49, 53),
+  filled: true,
   contentPadding: EdgeInsets.all(16),
-  hintStyle: TextStyle(fontSize: 16, color: Colors.grey[500]),
+  fillColor: Color.fromARGB(255, 49, 49, 53),
+  hintStyle: TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Colors.grey[500],
+  ),
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide.none,
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide.none,
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide(
+      color: Color.fromARGB(255, 221, 56, 32),
+    ), // Set your desired color for enabled state
+  ),
   errorBorder: OutlineInputBorder(
     borderSide: BorderSide(color: DarkPallete.errorColor),
   ),
 );
 
 final lightTextSelectionTheme = TextSelectionThemeData(
-  cursorColor: Color(0xFFDD3820),
+  cursorColor: Color.fromARGB(255, 221, 56, 32),
+  selectionColor: Color.fromARGB(255, 221, 56, 32).withOpacity(0.4),
+  selectionHandleColor: Colors.red, // Custom selection handle color
 );
 
 final darkTextSelectionTheme = TextSelectionThemeData(
-  cursorColor: Color(0xFFDD3820),
+  cursorColor: Color.fromARGB(255, 221, 56, 32),
+  selectionColor: Color.fromARGB(255, 221, 56, 32).withOpacity(0.4),
+  selectionHandleColor: Colors.red, // Custom selection handle color
 );
 
 final lightFloatingActionButtonTheme = FloatingActionButtonThemeData(
@@ -270,3 +322,59 @@ final darkDividerTheme = DividerThemeData(
   color: Color.fromARGB(255, 60, 60, 63),
   thickness: 0.8,
 );
+
+final Color lightProfilePageBackgroundColor = Color.fromARGB(255, 245, 245, 245);
+final Color darkProfilePageBackgroundColor = DarkPallete.backgroundColor;
+
+final profilePageTheme = {
+  Brightness.light: lightProfilePageBackgroundColor,
+  Brightness.dark: darkProfilePageBackgroundColor,
+};
+
+// Fill colors for InputDecoration
+final Color lightInputFillColor = Color.fromARGB(255, 245, 245, 245);
+final Color darkInputFillColor = Color.fromARGB(255, 49, 49, 53);
+
+final inputFillColorTheme = {
+  Brightness.light: lightInputFillColor,
+  Brightness.dark: darkInputFillColor,
+};
+
+// Define button colors
+final Color lightButtonBackgroundColor = DarkPallete.backgroundColor;
+final Color lightButtonTextColor = Color.fromARGB(255, 245, 245, 245);
+final Color darkButtonBackgroundColor = Colors.white; // Adjust as needed
+final Color darkButtonTextColor = Color.fromARGB(255, 49, 49, 53);
+
+// Box decoration colors
+final Color lightBoxDecorationColor = Colors.white;
+final Color darkBoxDecorationColor = Color.fromARGB(255, 38, 38, 40);
+
+final boxDecorationColorTheme = {
+  Brightness.light: lightBoxDecorationColor,
+  Brightness.dark: darkBoxDecorationColor,
+};
+
+final Color lightBackgroundIcon = Color.fromARGB(255, 224, 224, 224);
+final Color lightIconColor = Color.fromARGB(255, 122, 122, 122);
+
+final Color darkBackgroundIcon = Color.fromARGB(255, 41, 41, 43);
+final Color darkIconColor = Color.fromARGB(255, 197, 197, 197);
+
+final appBarBackgroundIconTheme = {
+  Brightness.light: lightBackgroundIcon,
+  Brightness.dark: darkBackgroundIcon,
+};
+
+final appBarIconTheme = {
+  Brightness.light: lightIconColor,
+  Brightness.dark: darkIconColor,
+};
+
+// const lightColorScheme = ColorScheme(
+//   tertiary: Color.fromARGB(255, 244, 244, 244), //appbar
+//   onTertiary: Color.fromARGB(255, 122, 122, 122), //appbar
+
+//   const darkColorScheme = ColorScheme(
+//   tertiary: Color.fromARGB(255, 41, 41, 43), //appbar
+//   onTertiary: Color.fromARGB(255, 197, 197, 197), //appbar

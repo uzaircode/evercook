@@ -5,10 +5,8 @@ import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/error/failures.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/features/auth/data/datasources/auth_remote_data_source.dart';
-import 'package:evercook/features/auth/data/models/user_model.dart';
 import 'package:evercook/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:uuid/uuid.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource authRemoteDataSource;
@@ -137,7 +135,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, User>> updateUser({
     required String name,
     required String bio,
-    required File image,
+    File? image,
   }) async {
     try {
       LoggerService.logger.i('Updating user...');
@@ -146,19 +144,23 @@ class AuthRepositoryImpl implements AuthRepository {
       var user = await authRemoteDataSource.updateUser(
         name: name,
         bio: bio,
-        avatarUrl: '',
       );
 
       // Upload the new profile picture and get the URL
-      final imageUrl = await authRemoteDataSource.uploadProfileUserImage(image: image);
-      LoggerService.logger.i('Image URL: $imageUrl');
+      String? imageUrl;
+      if (image != null) {
+        imageUrl = await authRemoteDataSource.uploadProfileUserImage(image: image);
+        LoggerService.logger.i('Image URL: $imageUrl');
+      }
 
       // Update the user with the new avatar URL
-      user = await authRemoteDataSource.updateUser(
-        name: name,
-        bio: bio,
-        avatarUrl: imageUrl,
-      );
+      if (imageUrl != null) {
+        user = await authRemoteDataSource.updateUser(
+          name: name,
+          bio: bio,
+          avatarUrl: imageUrl,
+        );
+      }
 
       LoggerService.logger.i('User updated with new image: $user');
       return right(user);

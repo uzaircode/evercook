@@ -3,6 +3,7 @@ import 'package:evercook/core/common/entities/user.dart';
 class UserModel extends User {
   UserModel({
     required super.id,
+    required super.updatedAt,
     required super.name,
     required super.bio,
     required super.avatar,
@@ -12,6 +13,7 @@ class UserModel extends User {
   factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'] ?? '',
+      updatedAt: map['updated_at'] == null ? DateTime.now() : DateTime.parse(map['updated_at'] as String),
       name: map['name'] ?? '',
       bio: map['bio'] ?? '',
       avatar: map['avatar_url'] ?? '',
@@ -21,6 +23,7 @@ class UserModel extends User {
 
   UserModel copyWith({
     String? id,
+    DateTime? updatedAt,
     String? name,
     String? bio,
     String? avatar,
@@ -28,6 +31,7 @@ class UserModel extends User {
   }) {
     return UserModel(
       id: id ?? this.id,
+      updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
       bio: bio ?? this.bio,
       avatar: avatar ?? this.avatar,
@@ -38,6 +42,7 @@ class UserModel extends User {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'updated_at': updatedAt.toIso8601String(),
       'name': name,
       'bio': bio,
       'avatar_url': avatar,
@@ -47,6 +52,6 @@ class UserModel extends User {
 
   @override
   String toString() {
-    return 'UserModel{id: $id, name: $name, bio: $bio, avatar: $avatar, email: $email}';
+    return 'UserModel{id: $id, updated_at: $updatedAt, name: $name, bio: $bio, avatar: $avatar, email: $email}';
   }
 }

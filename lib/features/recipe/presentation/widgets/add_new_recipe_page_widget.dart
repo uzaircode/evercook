@@ -14,11 +14,7 @@ Widget buildTextField(
     children: [
       Text(
         '$title (Optional)',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-          color: Color.fromARGB(255, 64, 64, 64),
-        ),
+        style: Theme.of(context).textTheme.titleSmall,
       ),
       SizedBox(height: 10),
       TextFormField(
@@ -27,10 +23,6 @@ Widget buildTextField(
           hintText: hintText,
           filled: true,
           fillColor: Theme.of(context).inputDecorationTheme.fillColor,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
         ),
         style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
         validator: validator,

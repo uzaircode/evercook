@@ -2,6 +2,8 @@ import 'package:evercook/features/cookbook/presentation/pages/cookbook_page.dart
 import 'package:evercook/features/meal_plan/presentation/pages/view_meal_plan.dart';
 import 'package:evercook/core/common/pages/home/home_page.dart';
 import 'package:evercook/features/grocery/presentation/pages/grocery_page.dart';
+import 'package:evercook/features/recipe/presentation/pages/add_recipe_pages/add_new_recipe_page.dart';
+import 'package:evercook/features/recipe/presentation/pages/add_recipe_pages/new_recipe_url_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -21,35 +23,104 @@ class _DashboardState extends State<Dashboard> {
     CookbookPage(),
     const GroceryPage(),
     const ViewMealPlan(),
-    // _buildNavigator(const HomePage(), 'Home'),
-    // _buildNavigator(const ShoppingListPage(), 'Shopping'),
-    // _buildNavigator(const ViewMealPlan(), 'Meal Plan'),
   ];
 
-  // static Widget _buildNavigator(Widget page, String routeName) {
-  //   return Navigator(
-  //     onGenerateRoute: (settings) {
-  //       return MaterialPageRoute(
-  //         builder: (context) => page,
-  //         settings: RouteSettings(name: routeName),
-  //       );
-  //     },
-  //   );
-  // }
-
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 2) {
+      // Index of the "Add" button
+      _showAddRecipeBottomSheet(context);
+    } else {
+      setState(() {
+        _selectedIndex = index > 2 ? index - 1 : index;
+      });
+    }
+  }
+
+  Future<dynamic> _showAddRecipeBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 250,
+          padding: EdgeInsets.all(16),
+          child: Wrap(
+            children: [
+              Center(
+                child: Container(
+                  width: 60,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3),
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Add New Recipe',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
+                ),
+              ),
+              SizedBox(height: 8),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.link_outlined),
+                title: Text(
+                  'Save Recipe From the Web',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 0.5),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    NewRecipeUrlPage.route(),
+                  );
+                },
+              ),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.edit_note_outlined),
+                title: Text(
+                  'Create New Recipe',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 2),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    AddNewRecipePage.route(),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           border: Border(
@@ -66,7 +137,7 @@ class _DashboardState extends State<Dashboard> {
             highlightColor: Colors.transparent,
           ),
           child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
+            currentIndex: _selectedIndex >= 2 ? _selectedIndex + 1 : _selectedIndex,
             type: BottomNavigationBarType.fixed,
             selectedFontSize: 12,
             unselectedFontSize: 12,
@@ -83,8 +154,12 @@ class _DashboardState extends State<Dashboard> {
                 label: 'Cookbook',
               ),
               BottomNavigationBarItem(
+                icon: FaIcon(FontAwesomeIcons.squarePlus),
+                label: 'Add',
+              ),
+              BottomNavigationBarItem(
                 icon: FaIcon(Icons.shopping_bag_outlined),
-                label: 'Groceries',
+                label: 'Shopping',
               ),
               BottomNavigationBarItem(
                 icon: FaIcon(Icons.calendar_month_outlined),

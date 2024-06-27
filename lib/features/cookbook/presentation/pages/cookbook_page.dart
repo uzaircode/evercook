@@ -104,6 +104,8 @@ class _CookbookPageState extends State<CookbookPage> {
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             CupertinoSliverNavigationBar(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              border: Border(),
               heroTag: 'notavailable',
               alwaysShowMiddle: false,
               largeTitle: Text(
@@ -209,7 +211,9 @@ class CookbookCard extends StatelessWidget {
                   height: 150,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: images.isNotEmpty && images[0].isNotEmpty ? Colors.transparent : Colors.grey[300],
+                    color: images.isNotEmpty && images[0].isNotEmpty
+                        ? Colors.transparent
+                        : Theme.of(context).colorScheme.onSecondaryContainer,
                     image: images.isNotEmpty && images[0].isNotEmpty
                         ? DecorationImage(
                             image: NetworkImage(images[0]),

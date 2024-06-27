@@ -1,5 +1,6 @@
 import 'package:evercook/core/common/widgets/empty_value.dart';
 import 'package:evercook/features/recipe/domain/entities/recipe.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -26,7 +27,7 @@ class _CookModePageState extends State<CookModePage> {
       appBar: AppBar(
         leading: Container(
           decoration: BoxDecoration(
-            color: Colors.grey[300],
+            color: Theme.of(context).colorScheme.tertiary,
             shape: BoxShape.circle,
           ),
           margin: const EdgeInsets.all(8),
@@ -35,14 +36,16 @@ class _CookModePageState extends State<CookModePage> {
               await Wakelock.disable();
               Navigator.pop(context);
             },
-            icon: const Icon(Icons.arrow_back),
-            color: const Color.fromARGB(255, 96, 94, 94),
+            icon: const Icon(
+              CupertinoIcons.left_chevron,
+            ),
+            color: Theme.of(context).colorScheme.onTertiary,
           ),
         ),
         actions: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: Theme.of(context).colorScheme.tertiary,
               shape: BoxShape.circle,
             ),
             margin: const EdgeInsets.all(8),
@@ -51,7 +54,7 @@ class _CookModePageState extends State<CookModePage> {
                 _showFontSizeOptions(context);
               },
               icon: const Icon(Icons.format_size_outlined),
-              color: const Color.fromARGB(255, 96, 94, 94),
+              color: Theme.of(context).colorScheme.onTertiary,
             ),
           ),
         ],
@@ -132,9 +135,11 @@ class _CookModePageState extends State<CookModePage> {
 
   void _showFontSizeOptions(BuildContext context) {
     showModalBottomSheet(
-      barrierColor: Colors.black.withOpacity(0.2),
       context: context,
-      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       builder: (BuildContext context) {
         return Container(
           padding: EdgeInsets.all(16),
@@ -146,7 +151,9 @@ class _CookModePageState extends State<CookModePage> {
                   height: 5,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(3),
-                    color: Colors.grey[300],
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Color.fromARGB(255, 226, 227, 227)
+                        : Color(0xFF3F3F3F),
                   ),
                 ),
               ),
@@ -157,7 +164,7 @@ class _CookModePageState extends State<CookModePage> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: Color.fromARGB(255, 127, 127, 127),
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ),
               ),
@@ -182,20 +189,20 @@ class _CookModePageState extends State<CookModePage> {
         style: TextStyle(
           fontSize: 18,
           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-          color: isSelected ? Colors.black : Color.fromARGB(255, 96, 94, 94),
-        ), // Customize font style
+          color: isSelected ? Theme.of(context).colorScheme.onBackground : Color.fromARGB(255, 96, 94, 94),
+        ),
       ),
       value: fontSize,
       groupValue: _fontSize,
       onChanged: (double? value) {
         setState(() {
-          _fontSize = value ?? 20; // Default to 20 if value is null
+          _fontSize = value ?? 20;
         });
         Navigator.pop(context);
       },
       activeColor: Color.fromARGB(255, 221, 56, 32),
-      controlAffinity: ListTileControlAffinity.trailing, // Move the radio button to the right
-      contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 20), // Adjust padding
+      controlAffinity: ListTileControlAffinity.trailing,
+      contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
     );
   }
 }

@@ -3,14 +3,15 @@ import 'dart:math';
 import 'package:evercook/core/common/pages/home/dashboard.dart';
 import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/theme_test/bloc/theme_test_bloc.dart';
+import 'package:evercook/core/theme_test/themes.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/utils/pick_image.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/auth_pages/login_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -60,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
           AuthUpdateUser(
             name: username,
             bio: bio,
-            image: image!,
+            image: image,
           ),
         );
   }
@@ -88,25 +89,24 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    LoggerService.logger.i(_nameController);
-
+    Brightness currentBrightness = Theme.of(context).brightness;
+    LoggerService.logger.i('avatar url is : ${_avatarController.text}');
     return Scaffold(
+      backgroundColor: profilePageTheme[currentBrightness],
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             CupertinoSliverNavigationBar(
               alwaysShowMiddle: false,
+              backgroundColor: profilePageTheme[currentBrightness],
+              border: Border(),
               largeTitle: Text(
                 'Profile',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               middle: Text(
                 'Profile',
-                style: TextStyle(
-                  fontFamily: GoogleFonts.notoSerif().fontFamily,
-                  color: Theme.of(context).colorScheme.onBackground,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: Theme.of(context).textTheme.titleSmall,
               ),
               leading: GestureDetector(
                 onTap: () {
@@ -119,11 +119,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.grey[300],
+                    color: appBarBackgroundIconTheme[currentBrightness],
                   ),
                   child: Icon(
                     Icons.close_rounded,
-                    color: const Color.fromARGB(255, 96, 94, 94),
+                    color: appBarIconTheme[currentBrightness],
                     size: 22,
                   ),
                 ),
@@ -136,11 +136,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.grey[300],
+                    color: appBarBackgroundIconTheme[currentBrightness],
                   ),
                   child: Icon(
                     Icons.more_vert_outlined,
-                    color: const Color.fromARGB(255, 96, 94, 94),
+                    color: appBarIconTheme[currentBrightness],
                     size: 22,
                   ),
                 ),
@@ -151,9 +151,10 @@ class _ProfilePageState extends State<ProfilePage> {
         body: BlocConsumer<AppUserCubit, AppUserState>(
           listener: (context, state) {
             if (state is AppUserInitial) {
-              Navigator.pushReplacement(
+              Navigator.pushAndRemoveUntil(
                 context,
                 LoginPage.route(),
+                (route) => false,
               );
             }
           },
@@ -168,22 +169,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     BlocListener<AuthBloc, auth_bloc.AuthState>(
                       listener: (context, state) {
                         if (state is AuthUpdateUserSuccess) {
-                          // Now you have access to the updated user data
                           context.read<AppUserCubit>().updateUserData(state.updatedUser);
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Profile updated successfully for ${state.updatedUser.name}'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
+                          showSuccessSnackBar(context, 'Profile updated successfully');
                           _nameController.text = state.updatedUser.name;
                           _bioController.text = state.updatedUser.bio;
+                          _emailController.text = state.updatedUser.email;
                         }
                       },
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onSecondaryContainer,
+                          color: boxDecorationColorTheme[currentBrightness],
+                          //here
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
@@ -212,8 +208,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                     onTap: selectImage,
                                     child: CircleAvatar(
                                       radius: 35,
-                                      backgroundImage: image != null ? FileImage(image!) : null,
-                                      child: image == null ? Icon(Icons.add_photo_alternate, size: 50) : null,
+                                      backgroundImage: image != null
+                                          ? FileImage(image!)
+                                          : (_avatarController.text.isNotEmpty
+                                              ? NetworkImage(_avatarController.text)
+                                              : AssetImage('assets/images/default_avatar.png')) as ImageProvider,
+                                      backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
                                     ),
                                   ),
                                 ],
@@ -230,18 +230,32 @@ class _ProfilePageState extends State<ProfilePage> {
                                 controller: _nameController,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                                  fillColor: inputFillColorTheme[currentBrightness],
                                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: Theme.of(context).colorScheme.primaryContainer,
+                                      width: 1.0,
+                                    ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onBackground,
+                                ),
+                                onTapOutside: (event) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                },
                               ),
                               SizedBox(height: 20),
                               Text(
@@ -255,18 +269,32 @@ class _ProfilePageState extends State<ProfilePage> {
                                 controller: _bioController,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                                  fillColor: inputFillColorTheme[currentBrightness],
                                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: Theme.of(context).colorScheme.primaryContainer,
+                                      width: 1.0,
+                                    ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onBackground,
+                                ),
+                                onTapOutside: (event) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                },
                               ),
                               SizedBox(height: 20),
                               Text(
@@ -281,33 +309,63 @@ class _ProfilePageState extends State<ProfilePage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                                  fillColor: inputFillColorTheme[currentBrightness],
                                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: Theme.of(context).colorScheme.primaryContainer,
+                                      width: 1.0,
+                                    ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSecondary,
+                                ),
+                                onTapOutside: (event) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                },
                               ),
                               SizedBox(height: 20),
                               SizedBox(
-                                width: double.infinity, // Full width button
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // Save profile information to the database
-                                    _saveProfile();
+                                width: double.infinity,
+                                child: BlocBuilder<AuthBloc, auth_bloc.AuthState>(
+                                  builder: (context, state) {
+                                    return ElevatedButton(
+                                      onPressed: state is AuthLoading
+                                          ? null
+                                          : () {
+                                              _saveProfile();
+                                            },
+                                      child: state is AuthLoading
+                                          ? SizedBox(
+                                              height: 13,
+                                              width: 13,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor: AlwaysStoppedAnimation<Color>(
+                                                  Theme.of(context).colorScheme.background,
+                                                ),
+                                              ),
+                                            )
+                                          : Text(
+                                              'Save',
+                                              style: TextStyle(
+                                                color: Theme.of(context).colorScheme.background,
+                                              ),
+                                            ),
+                                    );
                                   },
-                                  child: Text(
-                                    'Save',
-                                    style: TextStyle(
-                                      color: Theme.of(context).colorScheme.background,
-                                    ),
-                                  ),
                                 ),
                               ),
                             ],
@@ -322,7 +380,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: double.infinity,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onSecondaryContainer,
+                          color: boxDecorationColorTheme[currentBrightness],
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
@@ -345,7 +403,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     children: [
                                       Text(
                                         'Background Color',
-                                        // style: Theme.of(context).c,
+                                        style: Theme.of(context).textTheme.titleSmall,
                                       ),
                                       Switch(
                                         value: context.read<ThemeTestBloc>().state == ThemeMode.dark,
@@ -366,7 +424,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     // App Info Container
                     DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                        color: boxDecorationColorTheme[currentBrightness],
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Padding(
@@ -404,7 +462,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   onTap: () async {
                                     await launchUrl(
-                                      Uri.parse('mailto:nikuzairsc@gmail.com?subject=Feedback'),
+                                      Uri.parse('mailto:nikuzairsc@gmail.com?subject=Evercook Application - Feedback'),
                                     );
                                   },
                                 ),
@@ -426,12 +484,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<dynamic> _showModalBottomSheet(BuildContext context, userId) {
     return showModalBottomSheet(
-      barrierColor: Colors.black.withOpacity(0.2),
       context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       builder: (BuildContext context) {
         return Container(
-          height: 250,
-          color: Theme.of(context).colorScheme.primaryContainer,
+          height: 200,
           padding: EdgeInsets.all(16),
           child: Wrap(
             children: [
@@ -441,31 +501,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 5,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(3),
-                    color: Colors.grey[300],
+                    color: Theme.of(context).dividerTheme.color!,
                   ),
                 ),
               ),
               SizedBox(height: 16),
-              ListTile(
-                leading: Icon(Icons.edit),
-                title: Text(
-                  'Edit Profile',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                ),
-                contentPadding: EdgeInsets.symmetric(vertical: 2),
-                onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   EditProfilePage.route(
-                  //     name: _nameController.text,
-                  //     bio: 'dede',
-                  //   ),
-                  // );
-                },
-              ),
-              Divider(color: Colors.grey[300], thickness: 1),
               ListTile(
                 leading: Icon(Icons.subdirectory_arrow_right_outlined),
                 title: Text(
@@ -479,9 +519,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   context.read<AuthBloc>().add(AuthSignOut());
                 },
               ),
+              Divider(),
               ListTile(
                 leading: Icon(
-                  Icons.delete_outline,
+                  Icons.account_circle_outlined,
                   color: Colors.red,
                 ),
                 title: Text(
@@ -497,16 +538,38 @@ class _ProfilePageState extends State<ProfilePage> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text('Confirm Account Deletion'),
-                        content: Text('Are you sure you want to delete your account? This action cannot be undone.'),
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Delete Account',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.close),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ),
+                        content: Text('Are you sure you want to delete your account?'),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(false),
-                            child: Text('Cancel'),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
                           ),
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(true),
-                            child: Text('Confirm'),
+                            child: Text(
+                              'Confirm',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 221, 56, 32),
+                              ),
+                            ),
                           ),
                         ],
                       );
