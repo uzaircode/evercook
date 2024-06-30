@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:evercook/core/constant/db_constants.dart';
 import 'package:evercook/core/error/exceptions.dart';
 import 'package:evercook/core/utils/logger.dart';
@@ -213,7 +210,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       LoggerService.logger.e(e.toString());
       throw ServerException(e.toString());
     }
-    throw UnimplementedError();
   }
 
   @override

@@ -28,17 +28,14 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
         _deleteRecipe = deleteRecipe,
         _editRecipe = editRecipe,
         super(RecipeInitial()) {
-    on<RecipeEvent>((event, emit) => emit(RecipeLoading()));
     on<RecipeUpload>(_onRecipeUpload);
     on<RecipeFetchAllRecipes>(_onFetchAllRecipes);
     on<RecipeDelete>(_onDeleteRecipe);
-    on<RecipeClearState>(_onClearState);
+    on<RecipeReset>(_onResetRecipes); // Handle the reset event
     on<RecipeEdit>(_onEditRecipe);
   }
 
-  void onRecipeEdit() async {}
-
-  void _onRecipeUpload(
+  Future<void> _onRecipeUpload(
     RecipeUpload event,
     Emitter<RecipeState> emit,
   ) async {
@@ -67,10 +64,11 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     );
   }
 
-  void _onFetchAllRecipes(
+  Future<void> _onFetchAllRecipes(
     RecipeFetchAllRecipes event,
     Emitter<RecipeState> emit,
   ) async {
+    emit(RecipeLoading());
     final res = await _getAllRecipes(NoParams());
 
     res.fold(
@@ -79,7 +77,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     );
   }
 
-  void _onDeleteRecipe(
+  Future<void> _onDeleteRecipe(
     RecipeDelete event,
     Emitter<RecipeState> emit,
   ) async {
@@ -94,14 +92,14 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     );
   }
 
-  void _onClearState(
-    RecipeClearState event,
+  void _onResetRecipes(
+    RecipeReset event,
     Emitter<RecipeState> emit,
   ) {
-    emit(RecipeInitial());
+    emit(RecipeInitial()); // Reset the state to initial
   }
 
-  void _onEditRecipe(
+  Future<void> _onEditRecipe(
     RecipeEdit event,
     Emitter<RecipeState> emit,
   ) async {

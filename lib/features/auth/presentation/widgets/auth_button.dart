@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 class AuthButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onPressed;
-  const AuthButton({super.key, required this.onPressed, required this.buttonText});
+  final bool isReversed; // Add this parameter
+
+  const AuthButton({
+    super.key,
+    required this.onPressed,
+    required this.buttonText,
+    this.isReversed = false, // Default is not reversed
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,22 +18,19 @@ class AuthButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         elevation: 0,
-        backgroundColor: Color.fromARGB(255, 221, 56, 32),
+        backgroundColor: isReversed ? Colors.white : Colors.black,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(36),
+          side: isReversed ? BorderSide(color: Color.fromARGB(255, 186, 185, 185)) : BorderSide.none,
         ),
       ),
       child: Text(
         buttonText,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 18,
-          color: Colors.white,
+          color: isReversed ? Colors.black : Colors.white,
         ),
       ),
-      // child: Text(
-      //   buttonText,
-      //   style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-      // ),
     );
   }
 }

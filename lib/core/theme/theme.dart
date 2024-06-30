@@ -1,3 +1,4 @@
+import 'package:evercook/core/theme/bloc/theme_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -33,8 +34,12 @@ ThemeData lightTheme = ThemeData(
   dividerTheme: lightDividerTheme,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: WidgetStateProperty.all(lightButtonBackgroundColor),
-      foregroundColor: WidgetStateProperty.all(lightButtonTextColor),
+      backgroundColor: WidgetStateProperty.all(
+        DarkPallete.backgroundColor,
+      ),
+      foregroundColor: WidgetStateProperty.all(
+        Color.fromARGB(255, 245, 245, 245),
+      ),
     ),
   ),
 );
@@ -53,8 +58,8 @@ ThemeData darkTheme = ThemeData(
   dividerTheme: darkDividerTheme,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: WidgetStateProperty.all(darkButtonBackgroundColor),
-      foregroundColor: WidgetStateProperty.all(darkButtonTextColor),
+      backgroundColor: WidgetStateProperty.all(Colors.white),
+      foregroundColor: WidgetStateProperty.all(Color.fromARGB(255, 49, 49, 53)),
     ),
   ),
 );
@@ -327,48 +332,50 @@ final Color lightProfilePageBackgroundColor = Color.fromARGB(255, 245, 245, 245)
 final Color darkProfilePageBackgroundColor = DarkPallete.backgroundColor;
 
 final profilePageTheme = {
-  Brightness.light: lightProfilePageBackgroundColor,
-  Brightness.dark: darkProfilePageBackgroundColor,
+  CustomThemeMode.light: lightProfilePageBackgroundColor,
+  CustomThemeMode.dark: darkProfilePageBackgroundColor,
+  CustomThemeMode.pink: pinkProfilePageBackgroundColor,
 };
 
 // Fill colors for InputDecoration
-final Color lightInputFillColor = Color.fromARGB(255, 245, 245, 245);
-final Color darkInputFillColor = Color.fromARGB(255, 49, 49, 53);
-
 final inputFillColorTheme = {
-  Brightness.light: lightInputFillColor,
-  Brightness.dark: darkInputFillColor,
+  CustomThemeMode.light: Color.fromARGB(255, 245, 245, 245),
+  CustomThemeMode.dark: Color.fromARGB(255, 49, 49, 53),
+  CustomThemeMode.pink: pinkInputFillColor,
 };
 
 // Define button colors
-final Color lightButtonBackgroundColor = DarkPallete.backgroundColor;
-final Color lightButtonTextColor = Color.fromARGB(255, 245, 245, 245);
-final Color darkButtonBackgroundColor = Colors.white; // Adjust as needed
-final Color darkButtonTextColor = Color.fromARGB(255, 49, 49, 53);
+final buttonBackgroundColorTheme = {
+  CustomThemeMode.light: DarkPallete.backgroundColor,
+  CustomThemeMode.dark: Colors.white,
+  CustomThemeMode.pink: pinkButtonBackgroundColor,
+};
+
+final buttonTextColorTheme = {
+  Brightness.light: Color.fromARGB(255, 245, 245, 245),
+  Brightness.dark: Color.fromARGB(255, 49, 49, 53),
+  CustomThemeMode.pink: pinkButtonTextColor,
+};
 
 // Box decoration colors
-final Color lightBoxDecorationColor = Colors.white;
-final Color darkBoxDecorationColor = Color.fromARGB(255, 38, 38, 40);
-
 final boxDecorationColorTheme = {
-  Brightness.light: lightBoxDecorationColor,
-  Brightness.dark: darkBoxDecorationColor,
+  CustomThemeMode.light: Colors.white,
+  CustomThemeMode.dark: Color.fromARGB(255, 38, 38, 40),
+  CustomThemeMode.pink: pinkBoxDecorationColor,
 };
 
-final Color lightBackgroundIcon = Color.fromARGB(255, 224, 224, 224);
-final Color lightIconColor = Color.fromARGB(255, 122, 122, 122);
-
-final Color darkBackgroundIcon = Color.fromARGB(255, 41, 41, 43);
-final Color darkIconColor = Color.fromARGB(255, 197, 197, 197);
-
+// Background icon colors
 final appBarBackgroundIconTheme = {
-  Brightness.light: lightBackgroundIcon,
-  Brightness.dark: darkBackgroundIcon,
+  CustomThemeMode.light: Color.fromARGB(255, 224, 224, 224),
+  CustomThemeMode.dark: Color.fromARGB(255, 41, 41, 43),
+  CustomThemeMode.pink: pinkBackgroundIcon,
 };
 
+// Icon colors
 final appBarIconTheme = {
-  Brightness.light: lightIconColor,
-  Brightness.dark: darkIconColor,
+  CustomThemeMode.light: Color.fromARGB(255, 122, 122, 122),
+  CustomThemeMode.dark: Color.fromARGB(255, 197, 197, 197),
+  CustomThemeMode.pink: pinkIconColor,
 };
 
 // const lightColorScheme = ColorScheme(
@@ -378,3 +385,171 @@ final appBarIconTheme = {
 //   const darkColorScheme = ColorScheme(
 //   tertiary: Color.fromARGB(255, 41, 41, 43), //appbar
 //   onTertiary: Color.fromARGB(255, 197, 197, 197), //appbar
+
+class PinkPallete {
+  static const primaryColor = Color.fromARGB(255, 255, 77, 109);
+  static const whiteColor = Color(0xFFFFFFFF);
+  static const backgroundColor = Color(0xFFFCE4EC);
+  static const errorColor = Color(0xFFB00020);
+  static const greyColor = Color(0xFFB0BEC5);
+}
+
+final Color pinkProfilePageBackgroundColor = PinkPallete.backgroundColor;
+final Color pinkInputFillColor = Color(0xFFF8BBD0);
+final Color pinkButtonBackgroundColor = PinkPallete.primaryColor;
+final Color pinkButtonTextColor = PinkPallete.whiteColor;
+final Color pinkBoxDecorationColor = Color(0xFFF8BBD0);
+final Color pinkBackgroundIcon = Color(0xFFF8BBD0);
+final Color pinkIconColor = Color(0xFFE91E63);
+
+ThemeData pinkTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: pinkColorScheme,
+  scaffoldBackgroundColor: PinkPallete.backgroundColor,
+  textTheme: pinkTextTheme,
+  bottomNavigationBarTheme: pinkBottomNavigationBarTheme,
+  appBarTheme: pinkAppBarTheme,
+  chipTheme: pinkChipTheme,
+  inputDecorationTheme: pinkInputDecorationTheme,
+  textSelectionTheme: pinkTextSelectionTheme,
+  floatingActionButtonTheme: pinkFloatingActionButtonTheme,
+  dividerTheme: pinkDividerTheme,
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all(pinkProfilePageBackgroundColor),
+      foregroundColor: MaterialStateProperty.all(pinkProfilePageBackgroundColor),
+    ),
+  ),
+);
+
+const pinkColorScheme = ColorScheme(
+  brightness: Brightness.light,
+  primary: PinkPallete.primaryColor,
+  onPrimary: Color.fromARGB(255, 255, 255, 255),
+  secondary: Color.fromARGB(255, 255, 182, 193),
+  onSecondary: Color.fromARGB(255, 255, 182, 193),
+  primaryContainer: Color.fromARGB(255, 255, 228, 225),
+  onPrimaryContainer: Color.fromARGB(255, 255, 228, 225),
+  secondaryContainer: Color.fromARGB(255, 255, 228, 225),
+  onSecondaryContainer: Color.fromARGB(255, 255, 228, 225),
+  tertiary: Color.fromARGB(255, 255, 240, 245),
+  onTertiary: Color.fromARGB(255, 255, 105, 180),
+  error: PinkPallete.errorColor,
+  onError: Colors.white,
+  errorContainer: PinkPallete.errorColor,
+  onErrorContainer: Colors.white,
+  background: PinkPallete.backgroundColor,
+  onBackground: Colors.black,
+  surface: PinkPallete.whiteColor,
+  onSurface: PinkPallete.whiteColor,
+  surfaceVariant: PinkPallete.greyColor,
+  onSurfaceVariant: PinkPallete.greyColor,
+  outline: PinkPallete.greyColor,
+  outlineVariant: PinkPallete.greyColor,
+  shadow: Colors.black,
+  scrim: Colors.black,
+  inverseSurface: Colors.white,
+  inversePrimary: PinkPallete.primaryColor,
+);
+
+final pinkTextTheme = TextTheme(
+  headlineMedium: TextStyle(
+    fontSize: 32,
+    fontWeight: FontWeight.bold,
+    color: Color(0xFF3F3F3F),
+    overflow: TextOverflow.ellipsis,
+  ),
+  titleLarge: GoogleFonts.notoSerif(
+    textStyle: TextStyle(
+      color: Color.fromARGB(255, 64, 64, 64),
+      fontSize: 35,
+      fontWeight: FontWeight.w700,
+      height: 1.2,
+    ),
+  ),
+  titleMedium: TextStyle(
+    color: Color(0xFF404040),
+    fontWeight: FontWeight.w600,
+    fontSize: 20,
+  ),
+  titleSmall: GoogleFonts.inter(
+    textStyle: TextStyle(
+      color: Color(0xFF3F3F3F),
+      fontWeight: FontWeight.w600,
+      fontSize: 16,
+      height: 1.5,
+    ),
+  ),
+  bodyMedium: TextStyle(
+    fontSize: 16,
+    color: Color(0xFF7F7F7F),
+    fontWeight: FontWeight.w500,
+  ),
+  bodySmall: TextStyle(
+    color: Colors.grey[600],
+    fontSize: 14,
+  ),
+);
+
+final pinkBottomNavigationBarTheme = BottomNavigationBarThemeData(
+  backgroundColor: Color(0xFFFCE4EC),
+  selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+  unselectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+  selectedItemColor: Color(0xFFE91E63),
+  unselectedItemColor: Color(0xFFA7A7A7),
+);
+
+final pinkAppBarTheme = AppBarTheme(
+  backgroundColor: PinkPallete.backgroundColor,
+  scrolledUnderElevation: 0,
+  elevation: 0,
+);
+
+final pinkChipTheme = ChipThemeData(
+  backgroundColor: PinkPallete.backgroundColor,
+  side: BorderSide.none,
+);
+
+final pinkInputDecorationTheme = InputDecorationTheme(
+  filled: true,
+  fillColor: Color(0xFFF8BBD0),
+  contentPadding: EdgeInsets.all(16),
+  hintStyle: TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Color.fromARGB(255, 132, 131, 137),
+  ),
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide.none,
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide.none,
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8),
+    borderSide: BorderSide(
+      color: Color(0xFFE91E63),
+    ),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: PinkPallete.errorColor),
+  ),
+);
+
+final pinkTextSelectionTheme = TextSelectionThemeData(
+  cursorColor: Color(0xFFE91E63),
+  selectionColor: Color(0xFFE91E63).withOpacity(0.4),
+  selectionHandleColor: Colors.red,
+);
+
+final pinkFloatingActionButtonTheme = FloatingActionButtonThemeData(
+  backgroundColor: Color(0xFFE91E63),
+  elevation: 0,
+);
+
+final pinkDividerTheme = DividerThemeData(
+  color: Color.fromARGB(255, 226, 226, 227),
+  thickness: 0.8,
+);

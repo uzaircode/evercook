@@ -1,6 +1,6 @@
 import 'package:evercook/core/cubit/app_user.dart';
-import 'package:evercook/core/secrets/app_secrets.dart';
-import 'package:evercook/core/theme_test/bloc/theme_test_bloc.dart';
+import 'package:evercook/core/secrets/supabase_key.dart';
+import 'package:evercook/core/theme/bloc/theme_bloc.dart';
 import 'package:evercook/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:evercook/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:evercook/features/auth/domain/repository/auth_repository.dart';
@@ -23,6 +23,6 @@ import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'core/secrets/firebase_options.dart';
 
 part 'init_dependencies.main.dart';

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 void showFailSnackbar(BuildContext context, String content) {
+  // Extract the relevant message from the error content
+  final regex = RegExp(r'message: (.*?), statusCode');
+  final match = regex.firstMatch(content);
+  final message = match != null ? match.group(1) : content;
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
@@ -12,12 +16,12 @@ void showFailSnackbar(BuildContext context, String content) {
             SizedBox(width: 8), // Space between icon and text
             Expanded(
               child: Text(
-                content,
+                message ?? 'An unknown error occured',
                 style: TextStyle(
                   color: Colors.white,
                 ),
               ),
-            ), // To ensure text does not overflow
+            ),
           ],
         ),
         backgroundColor: Colors.red,
@@ -25,7 +29,7 @@ void showFailSnackbar(BuildContext context, String content) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0), // Rounded corners
         ),
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 2),
         elevation: 0,
       ),
     );

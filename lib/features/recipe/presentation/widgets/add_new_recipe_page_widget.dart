@@ -13,7 +13,7 @@ Widget buildTextField(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        '$title (Optional)',
+        '$title',
         style: Theme.of(context).textTheme.titleSmall,
       ),
       SizedBox(height: 10),

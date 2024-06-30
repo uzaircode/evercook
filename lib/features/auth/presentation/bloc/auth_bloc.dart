@@ -13,6 +13,7 @@ import 'package:evercook/features/auth/domain/usecases/user_signin_google_usecas
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:evercook/features/auth/domain/usecases/user_sign_up_usecase.dart';
+import 'package:evercook/features/recipe/presentation/bloc/recipe_bloc.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -26,6 +27,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RecoverPasswordUsecase _recoverPassword;
   final UpdateUserUseCase _updateUser;
   final SignInWithGoogleUseCase _signInWithGoogle;
+  final RecipeBloc _recipeBloc; // Add this
 
   AuthBloc({
     required UserSignUpUseCase userSignUp,
@@ -36,6 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required RecoverPasswordUsecase recoverPassword,
     required UpdateUserUseCase updateUser,
     required SignInWithGoogleUseCase signInWithGoogle,
+    required RecipeBloc recipeBloc, // Add this
   })  : _userSignUp = userSignUp,
         _userLogin = userLogin,
         _currentUser = currentUser,
@@ -44,6 +47,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _recoverPassword = recoverPassword,
         _updateUser = updateUser,
         _signInWithGoogle = signInWithGoogle,
+        _recipeBloc = recipeBloc, // Initialize here
         super(AuthInitial()) {
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthLogin>(_onAuthLogin);
@@ -51,10 +55,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignOut>(_onAuthSignOut);
     on<AuthRecoverPassword>(_onRecoverPassword);
     on<AuthUpdateUser>(_onUpdateUser);
-    on<AuthUserSignInWithGoogle>(_onUserSignInWithGoogle); // Correct handler registration
+    on<AuthUserSignInWithGoogle>(_onUserSignInWithGoogle);
   }
 
-  void _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
+  Future<void> _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     final res = await _userSignUp(
       UserSignUpParams(
@@ -70,10 +74,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
-  void _onAuthLogin(
-    AuthLogin event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onAuthLogin(AuthLogin event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
     final res = await _userLogin(
       UserSignInParams(
         email: event.email,
@@ -91,10 +93,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  void _onUserSignInWithGoogle(
+  Future<void> _onUserSignInWithGoogle(
     AuthUserSignInWithGoogle event,
     Emitter<AuthState> emit,
   ) async {
+    emit(AuthLoading());
     final res = await _signInWithGoogle(NoParams());
 
     res.fold(
@@ -107,7 +110,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  void _isCurrentUserLoggedIn(AuthIsUserLoggedIn event, Emitter<AuthState> emit) async {
+  Future<void> _isCurrentUserLoggedIn(AuthIsUserLoggedIn event, Emitter<AuthState> emit) async {
     final res = await _currentUser(NoParams());
     res.fold(
       (l) => emit(AuthFailure(l.message)),
@@ -125,12 +128,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthSuccess(user));
   }
 
-  void _onAuthSignOut(AuthSignOut event, Emitter<AuthState> emit) async {
+  Future<void> _onAuthSignOut(AuthSignOut event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
     final res = await _signOut(NoParams());
     res.fold(
       (l) => emit(AuthFailure(l.message)),
       (r) {
         _appUserCubit.updateUser(null);
+        _recipeBloc.add(RecipeReset()); // Dispatch the reset event
         LoggerService.logger.i('Current User Data after logout: ${r.toString()}');
         emit(AuthInitial());
         LoggerService.logger.i('User signed out successfully.');
@@ -138,7 +143,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  void _onRecoverPassword(AuthRecoverPassword event, Emitter<AuthState> emit) async {
+  Future<void> _onRecoverPassword(AuthRecoverPassword event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
     final res = await _recoverPassword(UserRecoverPasswordParams(email: event.email));
     res.fold(
       (l) => emit(AuthFailure(l.message)),
@@ -146,7 +152,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  void _onUpdateUser(AuthUpdateUser event, Emitter<AuthState> emit) async {
+  Future<void> _onUpdateUser(AuthUpdateUser event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     final res = await _updateUser(UpdateUserParams(
       name: event.name,
@@ -162,16 +168,3 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 }
-
-
-
-
-
-
-
-//call usecase in the bloc
-
-/* AuthBloc() : super(AuthInitial()) {
-    on<AuthEvent>((event, emit) {});
-  }
-*/

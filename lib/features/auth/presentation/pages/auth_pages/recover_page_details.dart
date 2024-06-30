@@ -26,6 +26,7 @@ class _RecoverPasswordDetailsPageState extends State<RecoverPasswordDetailsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Reset Password'),
       ),

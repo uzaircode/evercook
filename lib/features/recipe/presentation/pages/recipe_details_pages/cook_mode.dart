@@ -88,10 +88,10 @@ class _CookModePageState extends State<CookModePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: ingredients.map((ingredient) {
+                      children: ingredients!.map((ingredient) {
                         String name = ingredient;
                         List<InlineSpan> spans = [];
-                        RegExp exp = RegExp(r'(\d*\.?\d+(?:\s*/\s*\d+)?|\d+\s*¼|\d+\s*½|\d+\s*¾)|(\D+)');
+                        RegExp exp = RegExp(r'(\b\d*\.?\d+\s*(?:/\s*\d+)?|¼|½|¾|\d+/\d+)|(\D+)');
                         exp.allMatches(name).forEach((match) {
                           if (match.group(1) != null) {
                             spans.add(TextSpan(

@@ -23,7 +23,7 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
   void initState() {
     super.initState();
     // Initialize _selectedIngredients with all ingredients from the recipe
-    _selectedIngredients = List<String>.from(widget.recipe.ingredients);
+    _selectedIngredients = List<String>.from(widget.recipe.ingredients!);
   }
 
   @override
@@ -49,7 +49,7 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 46),
-        child: widget.recipe.ingredients.isEmpty
+        child: widget.recipe.ingredients!.isEmpty
             ? EmptyValue(
                 iconData: Icons.question_mark_outlined,
                 description: 'No ingredients in',
@@ -66,14 +66,18 @@ class _ConfirmIngredientsPageState extends State<ConfirmIngredientsPage> {
                   SizedBox(height: 10),
                   Expanded(
                     child: ListView.separated(
-                      itemCount: widget.recipe.ingredients.length,
+                      itemCount: widget.recipe.ingredients!.length,
                       separatorBuilder: (context, index) => Divider(),
                       itemBuilder: (context, index) {
-                        final ingredient = widget.recipe.ingredients[index];
+                        final ingredient = widget.recipe.ingredients![index];
                         return CheckboxListTile(
                           title: Text(
                             ingredient,
-                            style: Theme.of(context).textTheme.titleSmall,
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  color: _selectedIngredients.contains(ingredient)
+                                      ? Theme.of(context).colorScheme.onBackground
+                                      : Colors.grey,
+                                ),
                           ),
                           value: _selectedIngredients.contains(ingredient),
                           onChanged: (bool? value) {

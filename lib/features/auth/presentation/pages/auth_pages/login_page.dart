@@ -1,5 +1,5 @@
 import 'package:evercook/core/common/widgets/loader.dart';
-import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
+import 'package:evercook/core/common/widgets/snackbar/show_fail_snackbar.dart';
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart' as auth_bloc;
 import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/pages/auth_pages/recover_page.dart';
@@ -35,13 +35,14 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: AppBar(),
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
         child: BlocConsumer<auth_bloc.AuthBloc, auth_bloc.AuthState>(
           listener: (context, state) {
             if (state is auth_bloc.AuthFailure) {
-              showSuccessSnackBar(context, state.message);
+              showFailSnackbar(context, state.message);
             } else if (state is auth_bloc.AuthSuccess) {
               Navigator.pushAndRemoveUntil(
                 context,
@@ -61,82 +62,53 @@ class _LoginPageState extends State<LoginPage> {
                   Expanded(
                     flex: 10,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 60.0,
-                              height: 60.0,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(1.0),
-                                child: Image.asset(
-                                  'assets/images/ic_launcher.png',
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              'Evercook',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
                         SizedBox(height: 20),
                         Text(
-                          'Welcome back!',
+                          'Log in',
                           style: TextStyle(
+                            color: Colors.black87,
                             fontSize: 36,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Text(
-                          'Please login to continue.',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey,
-                          ),
+                        SizedBox(height: 16),
+                        AuthField(
+                          controller: _emailController,
+                          hintText: 'Email',
+                          icon: Icons.email,
                         ),
-                        AuthField(controller: _emailController, hintText: 'Email'),
                         const SizedBox(height: 15),
                         AuthField(
                           controller: _passwordController,
                           hintText: 'Password',
                           isObscureText: true,
+                          icon: Icons.lock,
                         ),
-                        const SizedBox(height: 12),
-                        const SizedBox(height: 12),
-                        GestureDetector(
-                          onTap: () {
+                        TextButton(
+                          onPressed: () {
                             Navigator.push(
                               context,
                               RecoverPasswordPage.route(),
                             );
                           },
-                          child: RichText(
-                            text: TextSpan(
-                              text: 'Forgot Password? ',
-                              style: Theme.of(context).textTheme.titleMedium,
-                              children: [
-                                TextSpan(
-                                  text: 'Recover Password',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                          child: Text(
+                            'Forgot Password?',
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  color: Colors.black87, // Customize the color if needed
+                                  fontWeight: FontWeight.bold, // Customize the font weight if needed
                                 ),
-                              ],
-                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
                           ),
                         ),
-                        const SizedBox(height: 40),
+                        Spacer(),
                         SizedBox(
                           width: double.infinity,
-                          height: 65,
+                          height: 55,
                           child: AuthButton(
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
@@ -151,70 +123,79 @@ class _LoginPageState extends State<LoginPage> {
                             buttonText: 'Login',
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Row(
                           children: <Widget>[
                             Expanded(
                               child: Divider(
-                                color: Colors.black,
-                                thickness: 1.0,
+                                color: Theme.of(context).dividerColor,
+                                thickness: 0.5,
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text("or"),
+                              child: Text(
+                                "or",
+                              ),
                             ),
                             Expanded(
                               child: Divider(
-                                color: Colors.black,
-                                thickness: 1.0,
+                                color: Theme.of(context).dividerColor,
+                                thickness: 0.5,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        Container(
+                        const SizedBox(height: 8),
+                        SizedBox(
                           width: double.infinity,
-                          height: 65,
+                          height: 55,
+                          child: AuthButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                SignUpPage.route(),
+                              );
+                            },
+                            buttonText: 'Signup',
+                            isReversed: true, // Set to true to reverse the colors
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
                           child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.white,
+                              minimumSize: Size(double.infinity, 55), // Adjust the height as needed
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(36),
+                                side: BorderSide(color: const Color.fromARGB(255, 186, 185, 185)), //
+                              ),
+                            ),
                             onPressed: () async {
                               BlocProvider.of<AuthBloc>(context).add(AuthUserSignInWithGoogle());
                             },
-                            style: ElevatedButton.styleFrom(
-                              elevation: 1,
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text('Sign in with google'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              SignUpPage.route(),
-                            );
-                          },
-                          child: RichText(
-                            text: TextSpan(
-                              text: 'Don\'t have an account? ',
-                              style: Theme.of(context).textTheme.titleMedium,
-                              children: [
-                                TextSpan(
-                                  text: 'Sign Up',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Image(
+                                  image: AssetImage("assets/images/google_icon.png"),
+                                  height: 36.0,
+                                  width: 41,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(right: 8),
+                                  child: Text(
+                                    'Continue with Google',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -222,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             );

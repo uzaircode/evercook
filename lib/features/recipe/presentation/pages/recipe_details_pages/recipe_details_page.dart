@@ -238,7 +238,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                           _buildSectionWithContent(
                             context,
                             'Ingredients',
-                            widget.recipe.ingredients.join('\n'),
+                            widget.recipe.ingredients!.join('\n'),
                             iconData: Container(
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.tertiary,

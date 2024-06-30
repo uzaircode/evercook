@@ -39,7 +39,7 @@ class RecipeRepositoryImpl implements RecipeRepository {
         prepTime: prepTime,
         cookTime: cookTime,
         servings: servings,
-        ingredients: ingredients ?? [],
+        ingredients: ingredients,
         directions: directions,
         notes: notes,
         sources: sources,
@@ -55,6 +55,8 @@ class RecipeRepositoryImpl implements RecipeRepository {
           recipe: recipeModel,
         );
         recipeModel = recipeModel.copyWith(imageUrl: imageUrl);
+      } else {
+        recipeModel = recipeModel.copyWith(imageUrl: null);
       }
 
       final uploadedRecipe = await recipeRemoteDataSource.uploadRecipe(recipeModel);
@@ -120,7 +122,7 @@ class RecipeRepositoryImpl implements RecipeRepository {
         prepTime: prepTime ?? '',
         cookTime: cookTime ?? '',
         servings: servings ?? '',
-        ingredients: ingredients ?? [],
+        ingredients: ingredients,
         directions: directions ?? '',
         notes: notes ?? '',
         sources: sources ?? '',

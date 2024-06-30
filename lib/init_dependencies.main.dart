@@ -7,8 +7,8 @@ Future<void> initDependencies() async {
   _initRecipe();
 
   final supabase = await Supabase.initialize(
-    url: AppSecrets.supabaseUrl,
-    anonKey: AppSecrets.supabaseAnonKey,
+    url: SupabaseKey.supabaseUrl,
+    anonKey: SupabaseKey.supabaseAnonKey,
   );
 
   final firebase = await Firebase.initializeApp(
@@ -18,9 +18,13 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => firebase);
   serviceLocator.registerLazySingleton(() => supabase.client);
 
-  serviceLocator.registerLazySingleton(() => AppUserCubit());
+  serviceLocator.registerLazySingleton(
+    () => AppUserCubit(
+      authRemoteDataSource: serviceLocator<AuthRemoteDataSource>(),
+    ),
+  );
 
-  serviceLocator.registerLazySingleton(() => ThemeTestBloc());
+  serviceLocator.registerLazySingleton(() => ThemeCubit());
 }
 
 void _initAuth() {
@@ -82,6 +86,7 @@ void _initAuth() {
         userSignUp: serviceLocator(),
         userLogin: serviceLocator(),
         currentUser: serviceLocator(),
+        recipeBloc: serviceLocator(),
         appUserCubit: serviceLocator(),
         signOut: serviceLocator(),
         recoverPassword: serviceLocator(),

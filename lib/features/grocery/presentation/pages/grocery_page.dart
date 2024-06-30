@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:evercook/core/common/widgets/custom_navigation_bar.dart';
 import 'package:evercook/core/common/widgets/empty_value.dart';
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/constant/db_constants.dart';
@@ -115,7 +116,6 @@ class _GroceryPageState extends State<GroceryPage> {
           .delete()
           .inFilter('recipe_id', recipeIds)
           .eq('user_id', Supabase.instance.client.auth.currentSession!.user.id);
-      showSuccessSnackBar(context, "All recipes Items deleted successfully");
 
       setState(() {
         for (var recipeId in recipeIds) {
@@ -225,7 +225,10 @@ class _GroceryPageState extends State<GroceryPage> {
   Widget _buildIngredientItem(BuildContext context, int index, Animation<double> animation, Map<String, dynamic> item) {
     String name = item['ingredient'];
     List<InlineSpan> spans = [];
-    RegExp exp = RegExp(r'(\d*\.?\d+\s*/\s*\d+|\d+\s*¼|\d+\s*½|\d+\s*¾|\d+)|(\D+)');
+
+    // Improved regular expression to capture common fractions and quantities
+    RegExp exp = RegExp(r'(\b\d*\.?\d+\s*(?:/\s*\d+)?|¼|½|¾|\d+/\d+)|(\D+)');
+
     exp.allMatches(name).forEach((match) {
       if (match.group(1) != null) {
         spans.add(TextSpan(
@@ -240,8 +243,9 @@ class _GroceryPageState extends State<GroceryPage> {
         spans.add(TextSpan(
           text: match.group(2),
           style: TextStyle(
-            color: item['purchased'] ? Colors.grey : Theme.of(context).colorScheme.onBackground,
-            decoration: item['purchased'] ? TextDecoration.lineThrough : null,
+            color: item['purchased'] ? Colors.grey : Theme.of(context).colorScheme.onTertiary,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
           ),
         ));
       }
@@ -279,18 +283,9 @@ class _GroceryPageState extends State<GroceryPage> {
       body: CupertinoPageScaffold(
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            CupertinoSliverNavigationBar(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              border: Border(),
-              alwaysShowMiddle: false,
-              largeTitle: Text(
-                'Shopping List',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              middle: Text(
-                'Shopping List',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
+            CustomNavigationBar(
+              largeTitle: 'Shopping List',
+              middleTitle: 'Shopping List',
               trailing: IconButton(
                 onPressed: () {
                   List<String> recipeIds = recipes.keys.toList();
@@ -337,10 +332,17 @@ class _GroceryPageState extends State<GroceryPage> {
                                           child: Stack(
                                             children: [
                                               Positioned.fill(
-                                                child: CachedNetworkImage(
-                                                  imageUrl: entry.value['image_url'],
-                                                  fit: BoxFit.cover,
-                                                ),
+                                                child: entry.value['image_url'] != null &&
+                                                        entry.value['image_url'].isNotEmpty
+                                                    ? CachedNetworkImage(
+                                                        imageUrl: entry.value['image_url'],
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : const Icon(
+                                                        Icons.image,
+                                                        size: 70,
+                                                        color: Colors.grey,
+                                                      ),
                                               ),
                                               Positioned(
                                                 right: 4,
@@ -369,11 +371,9 @@ class _GroceryPageState extends State<GroceryPage> {
                                           color: Theme.of(context).colorScheme.tertiary,
                                           padding: const EdgeInsets.all(8.0),
                                           child: Text(
-                                            entry.value['name'],
-                                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                  color: Theme.of(context).colorScheme.onBackground,
-                                                ),
-                                            maxLines: 2,
+                                            entry.value['name'] ?? '(No Title)',
+                                            style: Theme.of(context).textTheme.titleSmall,
+                                            maxLines: 3,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),

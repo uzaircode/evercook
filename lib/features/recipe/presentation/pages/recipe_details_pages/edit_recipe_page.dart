@@ -42,9 +42,10 @@ class _EditRecipePageState extends State<EditRecipePage> {
   late TextEditingController sourcesController;
   late TextEditingController utensilsController;
   late bool isPublic;
-  late List<TextEditingController> ingredientsControllers;
+  late List<TextEditingController> ingredientsControllers = [];
   File? image;
-  bool _isLoading = false; // Add this variable
+  bool _isLoading = false;
+  bool showForm = false;
 
   @override
   void initState() {
@@ -60,8 +61,13 @@ class _EditRecipePageState extends State<EditRecipePage> {
     sourcesController = TextEditingController(text: widget.recipe.sources ?? '');
     utensilsController = TextEditingController(text: widget.recipe.utensils ?? '');
     isPublic = widget.recipe.public ?? true;
-    ingredientsControllers =
-        widget.recipe.ingredients.map((ingredient) => TextEditingController(text: ingredient)).toList();
+    if (widget.recipe.ingredients!.isNotEmpty) {
+      showForm = true;
+      ingredientsControllers =
+          widget.recipe.ingredients!.map((ingredient) => TextEditingController(text: ingredient)).toList();
+    } else {
+      ingredientsControllers.add(TextEditingController());
+    }
   }
 
   void selectImage() async {
@@ -81,8 +87,10 @@ class _EditRecipePageState extends State<EditRecipePage> {
 
   void removeIngredientField(int index) {
     setState(() {
-      if (ingredientsControllers.length > 1) {
-        ingredientsControllers.removeAt(index);
+      ingredientsControllers[index].clear();
+      ingredientsControllers.removeAt(index);
+      if (ingredientsControllers.isEmpty) {
+        showForm = true;
       }
     });
   }
@@ -247,7 +255,6 @@ class _EditRecipePageState extends State<EditRecipePage> {
                       'Prep Time',
                       context,
                       prepTimeController,
-                      hintText: '12 minutes',
                     ),
                     const SizedBox(height: 20),
                     buildTextField(
@@ -408,52 +415,80 @@ class _EditRecipePageState extends State<EditRecipePage> {
           'Ingredients',
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: ingredientsControllers.map((controller) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: controller,
-                        decoration: InputDecoration(
-                          hintText: 'Ingredient',
-                          filled: true,
-                          fillColor: Theme.of(context).inputDecorationTheme.fillColor,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onBackground,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.remove_circle),
-                      onPressed: () => removeIngredientField(ingredientsControllers.indexOf(controller)),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-        TextButton.icon(
-          onPressed: addIngredientField,
-          icon: Icon(
-            Icons.add,
-            color: Color.fromARGB(255, 221, 56, 32),
-          ),
-          label: Text(
-            "Add Ingredient",
-            style: TextStyle(
+        Visibility(
+          visible: !showForm,
+          child: TextButton.icon(
+            onPressed: () {
+              setState(() {
+                showForm = true;
+              });
+            },
+            icon: Icon(
+              Icons.add,
               color: Color.fromARGB(255, 221, 56, 32),
             ),
+            label: Text(
+              "Add Ingredients to Recipe",
+              style: TextStyle(
+                color: Color.fromARGB(255, 221, 56, 32),
+              ),
+            ),
+          ),
+        ),
+        Visibility(
+          visible: showForm,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  children: ingredientsControllers.map((controller) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: controller,
+                              decoration: InputDecoration(
+                                hintText: 'Ingredient',
+                                filled: true,
+                                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onBackground,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.remove_circle),
+                            onPressed: () => removeIngredientField(ingredientsControllers.indexOf(controller)),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: addIngredientField,
+                icon: Icon(
+                  Icons.add,
+                  color: Color.fromARGB(255, 221, 56, 32),
+                ),
+                label: Text(
+                  "Add Ingredient",
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 221, 56, 32),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -472,7 +507,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$title (Optional)',
+          '$title',
           style: Theme.of(context).textTheme.titleSmall,
         ),
         const SizedBox(height: 10),

@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:math';
 import 'package:evercook/core/common/pages/home/dashboard.dart';
 import 'package:evercook/core/cubit/app_user.dart';
-import 'package:evercook/core/theme_test/bloc/theme_test_bloc.dart';
-import 'package:evercook/core/theme_test/themes.dart';
+import 'package:evercook/core/theme/bloc/theme_bloc.dart';
+import 'package:evercook/core/theme/theme.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/utils/pick_image.dart';
 import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';
@@ -12,6 +12,7 @@ import 'package:evercook/features/auth/presentation/pages/auth_pages/login_page.
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,6 +34,19 @@ class _ProfilePageState extends State<ProfilePage> {
   final _emailController = TextEditingController();
   final _avatarController = TextEditingController();
   File? image;
+
+  String _themeName(CustomThemeMode themeMode) {
+    switch (themeMode) {
+      case CustomThemeMode.system:
+        return 'System preference';
+      case CustomThemeMode.light:
+        return 'Light Theme';
+      case CustomThemeMode.dark:
+        return 'Dark Theme';
+      case CustomThemeMode.pink:
+        return 'Pink Theme';
+    }
+  }
 
   void selectImage() async {
     final pickedImage = await pickImage();
@@ -87,18 +101,27 @@ class _ProfilePageState extends State<ProfilePage> {
     _avatarController.dispose();
   }
 
+  CustomThemeMode _getCurrentThemeMode(Brightness brightness) {
+    var _currentTheme = context.read<ThemeCubit>().state;
+    if (_currentTheme == CustomThemeMode.system) {
+      return brightness == Brightness.dark ? CustomThemeMode.dark : CustomThemeMode.light;
+    }
+    return _currentTheme;
+  }
+
   @override
   Widget build(BuildContext context) {
-    Brightness currentBrightness = Theme.of(context).brightness;
-    LoggerService.logger.i('avatar url is : ${_avatarController.text}');
+    var _currentTheme = context.watch<ThemeCubit>().state;
+    CustomThemeMode effectiveThemeMode = _getCurrentThemeMode(MediaQuery.of(context).platformBrightness);
+
     return Scaffold(
-      backgroundColor: profilePageTheme[currentBrightness],
+      backgroundColor: profilePageTheme[effectiveThemeMode],
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             CupertinoSliverNavigationBar(
               alwaysShowMiddle: false,
-              backgroundColor: profilePageTheme[currentBrightness],
+              backgroundColor: profilePageTheme[effectiveThemeMode],
               border: Border(),
               largeTitle: Text(
                 'Profile',
@@ -119,11 +142,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: appBarBackgroundIconTheme[currentBrightness],
+                    color: appBarBackgroundIconTheme[effectiveThemeMode],
                   ),
                   child: Icon(
                     Icons.close_rounded,
-                    color: appBarIconTheme[currentBrightness],
+                    color: appBarIconTheme[effectiveThemeMode],
                     size: 22,
                   ),
                 ),
@@ -136,11 +159,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: appBarBackgroundIconTheme[currentBrightness],
+                    color: appBarBackgroundIconTheme[effectiveThemeMode],
                   ),
                   child: Icon(
                     Icons.more_vert_outlined,
-                    color: appBarIconTheme[currentBrightness],
+                    color: appBarIconTheme[effectiveThemeMode],
                     size: 22,
                   ),
                 ),
@@ -178,7 +201,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: boxDecorationColorTheme[currentBrightness],
+                          color: boxDecorationColorTheme[effectiveThemeMode],
                           //here
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -230,7 +253,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 controller: _nameController,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: inputFillColorTheme[currentBrightness],
+                                  fillColor: inputFillColorTheme[effectiveThemeMode],
                                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -269,7 +292,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 controller: _bioController,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: inputFillColorTheme[currentBrightness],
+                                  fillColor: inputFillColorTheme[effectiveThemeMode],
                                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -309,7 +332,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 enabled: false,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: inputFillColorTheme[currentBrightness],
+                                  fillColor: inputFillColorTheme[effectiveThemeMode],
                                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -373,14 +396,13 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                     ),
-
                     SizedBox(height: 32),
                     // Features Container
                     SizedBox(
                       width: double.infinity,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: boxDecorationColorTheme[currentBrightness],
+                          color: boxDecorationColorTheme[effectiveThemeMode],
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
@@ -389,31 +411,75 @@ class _ProfilePageState extends State<ProfilePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Appearance', style: Theme.of(context).textTheme.titleMedium),
-                              SizedBox(height: 3),
+                              SizedBox(height: 5.0),
                               Text(
                                 'Customize your app interface',
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
-                              SizedBox(height: 5),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                              SizedBox(height: 16.0),
+                              PopupMenuButton<CustomThemeMode>(
+                                initialValue: context.watch<ThemeCubit>().state,
+                                onSelected: (theme) {
+                                  context.read<ThemeCubit>().updateTheme(theme);
+                                  setState(() {
+                                    effectiveThemeMode = theme;
+                                  });
+                                },
+                                itemBuilder: (BuildContext context) => <PopupMenuEntry<CustomThemeMode>>[
+                                  PopupMenuItem<CustomThemeMode>(
+                                    value: CustomThemeMode.system,
+                                    child: Text(
+                                      'System preference',
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.onTertiary,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem<CustomThemeMode>(
+                                    value: CustomThemeMode.light,
+                                    child: Text(
+                                      'Light Theme',
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.onTertiary,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem<CustomThemeMode>(
+                                    value: CustomThemeMode.dark,
+                                    child: Text(
+                                      'Dark Theme',
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.onTertiary,
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem<CustomThemeMode>(
+                                    value: CustomThemeMode.pink,
+                                    child: Text(
+                                      'Pink Theme',
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.onTertiary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    border: Border.all(color: const Color.fromARGB(255, 128, 127, 127)),
+                                  ),
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        'Background Color',
-                                        style: Theme.of(context).textTheme.titleSmall,
+                                        _themeName(_currentTheme),
+                                        style: Theme.of(context).textTheme.bodyMedium,
                                       ),
-                                      Switch(
-                                        value: context.read<ThemeTestBloc>().state == ThemeMode.dark,
-                                        onChanged: (value) {
-                                          context.read<ThemeTestBloc>().add(ThemeChanged(value));
-                                        },
-                                      ),
+                                      Icon(Icons.keyboard_arrow_down),
                                     ],
-                                  )
-                                ],
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -424,7 +490,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     // App Info Container
                     DecoratedBox(
                       decoration: BoxDecoration(
-                        color: boxDecorationColorTheme[currentBrightness],
+                        color: boxDecorationColorTheme[effectiveThemeMode],
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Padding(
@@ -452,7 +518,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 ListTile(
                                   contentPadding: EdgeInsetsDirectional.zero,
-                                  leading: Icon(Icons.feedback_outlined),
+                                  leading: FaIcon(FontAwesomeIcons.paperPlane),
                                   title: Text(
                                     'Send Feedback',
                                     style: TextStyle(
@@ -592,23 +658,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-
-
-
-
-
-//todo separate to business logic
-//   child: ElevatedButton(
-//     onPressed: () async {
-//       LoggerService.logger.i('Button Clicked');
-//       await Supabase.instance.client.rpc('delete_user_account', params: {'user_id': userId});
-//       if (mounted) {
-//         context.read<AuthBloc>().add(AuthSignOut());
-//       }
-//                          context.read<AuthBloc>().add(AuthSignOut());
-// leading: GestureDetector(
-//   onTap: () {
-//     ThemeService().switchTheme();
-//   },
-//   child: Icon(Icons.cloud),
-// ),

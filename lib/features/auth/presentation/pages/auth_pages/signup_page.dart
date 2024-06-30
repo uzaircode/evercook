@@ -4,6 +4,7 @@ import 'package:evercook/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_button.dart';
 import 'package:evercook/features/auth/presentation/widgets/auth_field.dart';
 import 'package:evercook/core/common/pages/home/dashboard.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,7 +34,24 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Future.delayed(
+              Duration.zero,
+              () {
+                Navigator.pop(context);
+              },
+            );
+          },
+          icon: const Icon(
+            CupertinoIcons.left_chevron,
+          ),
+          color: Color.fromARGB(255, 41, 41, 43),
+        ),
+        title: Text('App Title'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: BlocConsumer<AuthBloc, AuthState>(
@@ -55,30 +73,41 @@ class _SignUpPageState extends State<SignUpPage> {
             return Form(
               key: formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Sign Up',
                     style: TextStyle(
-                      fontSize: 50,
+                      fontSize: 36,
                       fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 30),
-                  AuthField(controller: _nameController, hintText: 'Name'),
+                  AuthField(
+                    controller: _nameController,
+                    hintText: 'Name',
+                    icon: Icons.account_circle,
+                  ),
                   const SizedBox(height: 15),
-                  AuthField(controller: _emailController, hintText: 'Email'),
+                  AuthField(
+                    controller: _emailController,
+                    hintText: 'Email',
+                    icon: Icons.email,
+                  ),
                   const SizedBox(height: 15),
                   AuthField(
                     controller: _passwordController,
                     hintText: 'Password',
                     isObscureText: true,
+                    icon: Icons.lock,
                   ),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
                     height: 60,
                     child: AuthButton(
-                      buttonText: 'Sign Up',
+                      buttonText: 'Signup',
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
                           context.read<AuthBloc>().add(
@@ -92,24 +121,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  GestureDetector(
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Already have an account? ',
-                        style: Theme.of(context).textTheme.titleMedium,
-                        children: [
-                          TextSpan(
-                            text: 'Sign In',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
                 ],
               ),
             );

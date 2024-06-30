@@ -37,6 +37,8 @@ final class RecipeUpload extends RecipeEvent {
 
 final class RecipeFetchAllRecipes extends RecipeEvent {}
 
+class RecipeReset extends RecipeEvent {} // Add this event
+
 final class RecipeDelete extends RecipeEvent {
   final String id;
 

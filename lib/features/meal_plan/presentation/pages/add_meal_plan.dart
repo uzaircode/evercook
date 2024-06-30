@@ -137,9 +137,7 @@ class _SelectRecipesPageState extends State<SelectRecipesPage> {
                             height: 110,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
-                              color: selectedRecipes.contains(recipe.id)
-                                  ? Colors.grey[300]
-                                  : Colors.transparent, // Change color here
+                              color: Theme.of(context).colorScheme.onPrimaryContainer,
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
@@ -147,12 +145,6 @@ class _SelectRecipesPageState extends State<SelectRecipesPage> {
                                   ? CachedNetworkImage(
                                       imageUrl: recipe.imageUrl!,
                                       fit: BoxFit.cover,
-                                      placeholder: (context, url) => CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) => Icon(
-                                        Icons.error,
-                                        size: 50,
-                                        color: Colors.grey,
-                                      ),
                                     )
                                   : Icon(
                                       Icons.image,

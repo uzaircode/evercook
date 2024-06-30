@@ -25,7 +25,7 @@ void showSuccessSnackBar(BuildContext context, String content) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0), // Rounded corners
         ),
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 2),
         elevation: 0,
       ),
     );

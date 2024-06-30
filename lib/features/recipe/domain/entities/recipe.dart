@@ -6,7 +6,7 @@ class Recipe {
   final String? prepTime;
   final String? cookTime;
   final String? servings;
-  final List<String> ingredients;
+  final List<String>? ingredients;
   final String? imageUrl;
   final DateTime updatedAt;
   final String? directions;

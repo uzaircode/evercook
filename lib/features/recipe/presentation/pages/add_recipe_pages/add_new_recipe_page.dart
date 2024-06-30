@@ -116,8 +116,6 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
       ingredientsControllers = widget.ingredients!.map((ingredient) {
         return TextEditingController(text: ingredient);
       }).toList();
-    } else {
-      ingredientsControllers.add(TextEditingController());
     }
   }
 
@@ -129,8 +127,9 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
 
   void removeIngredientField(int index) {
     setState(() {
-      if (ingredientsControllers.length > 1) {
-        ingredientsControllers.removeAt(index);
+      ingredientsControllers.removeAt(index);
+      if (ingredientsControllers.isEmpty) {
+        ingredientsControllers.add(TextEditingController());
       }
     });
   }
@@ -520,6 +519,30 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
                     height: 180,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      height: 180,
+                      width: double.infinity,
+                      color: Colors.grey[300],
+                      child: Icon(
+                        FontAwesomeIcons.image,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      height: 180,
+                      width: double.infinity,
+                      color: Colors.grey[300],
+                      child: Center(
+                        child: Text(
+                          'No image found',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 )
               : DottedBorder(
