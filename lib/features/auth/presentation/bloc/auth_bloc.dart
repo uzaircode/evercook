@@ -100,12 +100,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     final res = await _signInWithGoogle(NoParams());
 
-    res.fold(
-      (l) => emit(AuthFailure(l.message)),
-      (r) {
+    await res.fold(
+      (l) async {
+        emit(AuthFailure(l.message));
+      },
+      (r) async {
         LoggerService.logger.i('Current User Data login: ${r.toString()}');
-        _emitAuthSuccess(r, emit);
-        _isCurrentUserLoggedIn(AuthIsUserLoggedIn(), emit);
+        await _emitAuthSuccess(r, emit);
+        await _isCurrentUserLoggedIn(AuthIsUserLoggedIn(), emit);
       },
     );
   }
@@ -121,7 +123,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  void _emitAuthSuccess(User user, Emitter<AuthState> emit) {
+  Future<void> _emitAuthSuccess(User user, Emitter<AuthState> emit) async {
     LoggerService.logger.i('_emitAuthSuccess raw user data: ${user.toString()}');
     _appUserCubit.updateUser(user);
     LoggerService.logger.i('_emitAuthSuccess is Executing : $user');

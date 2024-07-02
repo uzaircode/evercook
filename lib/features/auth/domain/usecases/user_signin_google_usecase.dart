@@ -4,7 +4,7 @@ import 'package:evercook/core/usecase/usecase.dart';
 import 'package:evercook/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/src/either.dart';
 
-class SignInWithGoogleUseCase implements UseCase<void, NoParams> {
+class SignInWithGoogleUseCase implements UseCase<User, NoParams> {
   final AuthRepository authRepository;
 
   SignInWithGoogleUseCase(this.authRepository);

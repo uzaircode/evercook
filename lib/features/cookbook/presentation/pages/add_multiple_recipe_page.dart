@@ -40,6 +40,7 @@ class AddMultipleRecipePage extends StatefulWidget {
 class _AddMultipleRecipePageState extends State<AddMultipleRecipePage> {
   List<String> selectedRecipes = [];
   late Future<List<RecipeModel>> futureRecipes;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -70,6 +71,9 @@ class _AddMultipleRecipePageState extends State<AddMultipleRecipePage> {
   }
 
   Future<void> saveSelectedRecipes() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       // Insert cookbook and wait for completion
       final cookbookResponse = await Supabase.instance.client.from('cookbooks').insert({
@@ -92,18 +96,7 @@ class _AddMultipleRecipePageState extends State<AddMultipleRecipePage> {
     }
   }
 
-  // void saveSelectedRecipes() async {
-  //   try {
-  //     for (String recipeId in selectedRecipes) {
-  //       await Supabase.instance.client.from('cookbook_recipes').insert({
-  //         'recipe_id': recipeId,
-  //       });
-  //     }
-  //     print('Selected recipes saved: $selectedRecipes');
-  //   } catch (e) {
-  //     print('Error saving recipes: $e');
-  //   }
-  // }
+  bool get canSave => selectedRecipes.isNotEmpty && !isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -129,25 +122,36 @@ class _AddMultipleRecipePageState extends State<AddMultipleRecipePage> {
         ),
         actions: [
           TextButton(
-            onPressed: () async {
-              await saveSelectedRecipes();
-              Navigator.pushAndRemoveUntil(
-                context,
-                Dashboard.route(),
-                (route) => false,
-              );
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                showSuccessSnackBar(context, "Successfully added the cookbook");
-              });
-            },
-            child: Text(
-              'Save',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 221, 56, 32),
-              ),
-            ),
+            onPressed: canSave
+                ? () async {
+                    await saveSelectedRecipes();
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      Dashboard.route(),
+                      (route) => false,
+                    );
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      showSuccessSnackBar(context, "Successfully added the cookbook");
+                    });
+                  }
+                : null,
+            child: isLoading
+                ? SizedBox(
+                    height: 18,
+                    width: 18,
+                    child: CircularProgressIndicator(
+                      color: Color.fromARGB(255, 221, 56, 32),
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Text(
+                    'Save',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: canSave ? Color.fromARGB(255, 221, 56, 32) : Theme.of(context).disabledColor,
+                    ),
+                  ),
           ),
         ],
       ),

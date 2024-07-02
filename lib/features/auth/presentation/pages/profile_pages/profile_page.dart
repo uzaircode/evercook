@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:evercook/core/common/pages/home/dashboard.dart';
 import 'package:evercook/core/cubit/app_user.dart';
 import 'package:evercook/core/theme/bloc/theme_bloc.dart';
-import 'package:evercook/core/theme/theme.dart';
+import 'package:evercook/core/theme/profile_theme.dart';
 import 'package:evercook/core/utils/logger.dart';
 import 'package:evercook/core/utils/pick_image.dart';
 import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';

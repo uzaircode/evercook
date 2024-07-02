@@ -66,6 +66,7 @@ class CustomSearch extends SearchDelegate<String> {
                 profile['name'],
                 style: const TextStyle(
                   fontWeight: FontWeight.w500,
+                  color: Color.fromARGB(255, 122, 122, 122),
                 ),
               ),
               onTap: () {

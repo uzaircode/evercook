@@ -1,5 +1,4 @@
 import 'package:email_validator/email_validator.dart';
-import 'package:evercook/core/common/pages/home/dashboard.dart';
 import 'package:evercook/core/common/widgets/loader.dart';
 import 'package:evercook/core/common/widgets/snackbar/show_fail_snackbar.dart';
 import 'package:evercook/core/common/widgets/snackbar/show_success_snackbar.dart';

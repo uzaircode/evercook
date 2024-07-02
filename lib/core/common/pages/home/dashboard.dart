@@ -1,3 +1,5 @@
+import 'package:evercook/core/theme/bloc/theme_bloc.dart';
+import 'package:evercook/core/theme/profile_theme.dart';
 import 'package:evercook/features/cookbook/presentation/pages/cookbook_page.dart';
 import 'package:evercook/features/meal_plan/presentation/pages/view_meal_plan.dart';
 import 'package:evercook/core/common/pages/home/home_page.dart';
@@ -5,6 +7,7 @@ import 'package:evercook/features/grocery/presentation/pages/grocery_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/add_recipe_pages/add_new_recipe_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/add_recipe_pages/new_recipe_url_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Dashboard extends StatefulWidget {
@@ -117,17 +120,25 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
+  CustomThemeMode _getCurrentThemeMode(Brightness brightness) {
+    var _currentTheme = context.read<ThemeCubit>().state;
+    if (_currentTheme == CustomThemeMode.system) {
+      return brightness == Brightness.dark ? CustomThemeMode.dark : CustomThemeMode.light;
+    }
+    return _currentTheme;
+  }
+
   @override
   Widget build(BuildContext context) {
+    CustomThemeMode effectiveThemeMode = _getCurrentThemeMode(MediaQuery.of(context).platformBrightness);
+
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Color.fromARGB(255, 226, 227, 227)
-                  : Color(0xFF3F3F3F),
+              color: dividerPageTheme[effectiveThemeMode]!,
             ),
           ),
         ),

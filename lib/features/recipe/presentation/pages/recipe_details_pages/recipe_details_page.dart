@@ -131,7 +131,10 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                       );
                     }
                   },
-                  icon: Icon(Icons.more_horiz_outlined),
+                  icon: Icon(
+                    Icons.more_vert_outlined,
+                    color: Theme.of(context).colorScheme.onTertiary,
+                  ),
                 ),
               ),
             ],
@@ -345,7 +348,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
 
   //todo move this widget to widget page
   Widget _buildHeaderImage(String? imageUrl) {
-    LoggerService.logger.d('recipe details: transition_${widget.recipe.id}');
+    LoggerService.logger.d('recipe details: transition_${widget.recipe.name}');
     if (imageUrl == null || imageUrl.isEmpty) {
       return SizedBox.shrink();
     }
@@ -468,41 +471,39 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(right: 5.0),
-        child: Expanded(
-          child: Row(
-            children: [
-              if (icon != null) icon,
-              if (divider != null) divider,
-              SizedBox(width: 5),
-              Flexible(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: Theme.of(context).colorScheme.onBackground,
-                          ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                    const SizedBox(height: 1),
-                    Text(
-                      value,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                      softWrap: false,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
+        child: Row(
+          children: [
+            if (icon != null) icon,
+            if (divider != null) divider,
+            SizedBox(width: 5),
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    value,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    softWrap: false,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

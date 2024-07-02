@@ -39,6 +39,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     RecipeUpload event,
     Emitter<RecipeState> emit,
   ) async {
+    emit(RecipeLoading());
     final res = await _uploadRecipe(UploadRecipeParams(
       userId: event.userId,
       name: event.name,

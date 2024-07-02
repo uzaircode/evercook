@@ -175,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                                 side: BorderSide(color: const Color.fromARGB(255, 186, 185, 185)), //
                               ),
                             ),
-                            onPressed: () async {
+                            onPressed: () {
                               BlocProvider.of<AuthBloc>(context).add(AuthUserSignInWithGoogle());
                             },
                             child: Row(

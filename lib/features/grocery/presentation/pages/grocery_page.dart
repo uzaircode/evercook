@@ -291,7 +291,10 @@ class _GroceryPageState extends State<GroceryPage> {
                   List<String> recipeIds = recipes.keys.toList();
                   _deleteAllRecipe(recipeIds, context);
                 },
-                icon: Icon(Icons.delete_outlined),
+                icon: Icon(
+                  Icons.delete_outlined,
+                  color: Theme.of(context).colorScheme.onTertiary,
+                ),
               ),
             ),
           ],

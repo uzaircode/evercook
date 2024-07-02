@@ -236,7 +236,9 @@ class _AddNewRecipePageState extends State<AddNewRecipePage> {
             ),
             margin: const EdgeInsets.all(8),
             child: IconButton(
-              onPressed: () => uploadRecipe(),
+              onPressed: () {
+                uploadRecipe();
+              },
               icon: Icon(
                 Icons.done_rounded,
                 color: Theme.of(context).colorScheme.onTertiary,

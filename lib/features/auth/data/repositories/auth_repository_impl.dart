@@ -74,9 +74,8 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, User>> signInWithGoogle() async {
     try {
-      await authRemoteDataSource
-          .signInWithGoogle(); // Assuming this method is just for the sign-in process and does not return user data.
-      final user = await authRemoteDataSource.getCurrentUserData(); // This should fetch and return a User object.
+      await authRemoteDataSource.signInWithGoogle();
+      final user = await authRemoteDataSource.getCurrentUserData();
 
       if (user != null) {
         return Right(user);

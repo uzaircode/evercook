@@ -1,23 +1,24 @@
 import 'package:evercook/core/common/widgets/skeleton/skeleton_homepage.dart';
 import 'package:evercook/features/cookbook/presentation/pages/edit_cookbook.dart';
 import 'package:evercook/features/recipe/data/models/recipe_model.dart';
+import 'package:evercook/features/recipe/presentation/pages/community_pages/user_recipe_page.dart';
 import 'package:evercook/features/recipe/presentation/pages/recipe_details_pages/recipe_details_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:evercook/core/utils/logger.dart';
 
-class CookbookDetails extends StatefulWidget {
+class UserCookbookDetails extends StatefulWidget {
   final String cookbookId;
   final String cookbookTitle;
 
-  const CookbookDetails({Key? key, required this.cookbookId, required this.cookbookTitle}) : super(key: key);
+  const UserCookbookDetails({Key? key, required this.cookbookId, required this.cookbookTitle}) : super(key: key);
 
   @override
-  _CookbookDetailsState createState() => _CookbookDetailsState();
+  _UserCookbookDetailsState createState() => _UserCookbookDetailsState();
 }
 
-class _CookbookDetailsState extends State<CookbookDetails> {
+class _UserCookbookDetailsState extends State<UserCookbookDetails> {
   late Future<List<Map<String, dynamic>>> _recipesFuture;
 
   @override
@@ -67,19 +68,6 @@ class _CookbookDetailsState extends State<CookbookDetails> {
             color: Theme.of(context).colorScheme.onTertiary,
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(context, CookbookEditPage.route(widget.cookbookId));
-            },
-            child: Text(
-              'Edit',
-              style: TextStyle(
-                color: Color.fromARGB(255, 221, 56, 32),
-              ),
-            ),
-          )
-        ],
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _recipesFuture,
@@ -96,14 +84,13 @@ class _CookbookDetailsState extends State<CookbookDetails> {
               return ListView.builder(
                 itemCount: recipes.length,
                 itemBuilder: (context, index) {
-                  final recipeData = recipes[index];
-                  LoggerService.logger.d(recipeData);
-                  final recipe = RecipeModel.fromJson(recipeData);
+                  final recipe = recipes[index];
+                  LoggerService.logger.d(recipe);
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        RecipeDetailsPage.route(recipe),
+                        UserRecipePage.route(recipe),
                       );
                     },
                     child: Padding(
@@ -117,14 +104,14 @@ class _CookbookDetailsState extends State<CookbookDetails> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
                               color: Theme.of(context).colorScheme.onPrimaryContainer,
-                              image: recipe.imageUrl != null
+                              image: recipe['image_url'] != null
                                   ? DecorationImage(
-                                      image: NetworkImage(recipe.imageUrl ?? ''),
+                                      image: NetworkImage(recipe['image_url'] ?? ''),
                                       fit: BoxFit.cover,
                                     )
                                   : null,
                             ),
-                            child: recipe.imageUrl == null
+                            child: recipe['image_url'] == null
                                 ? Icon(
                                     Icons.image,
                                     size: 50,
@@ -149,14 +136,14 @@ class _CookbookDetailsState extends State<CookbookDetails> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      recipe.name ?? '(No Title)',
+                                      recipe['name'] ?? '(No Title)',
                                       softWrap: true,
                                       maxLines: 2,
                                       style: Theme.of(context).textTheme.titleSmall,
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      recipe.description ?? '',
+                                      recipe['description'] ?? '',
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context).textTheme.bodySmall,
