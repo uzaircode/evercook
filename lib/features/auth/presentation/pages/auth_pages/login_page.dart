@@ -36,7 +36,9 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
         child: BlocConsumer<auth_bloc.AuthBloc, auth_bloc.AuthState>(

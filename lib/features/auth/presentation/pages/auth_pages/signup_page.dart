@@ -36,6 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
             Future.delayed(
@@ -50,7 +51,6 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
           color: Color.fromARGB(255, 41, 41, 43),
         ),
-        title: Text('App Title'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),

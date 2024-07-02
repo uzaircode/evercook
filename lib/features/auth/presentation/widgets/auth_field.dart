@@ -1,3 +1,4 @@
+import 'package:evercook/core/theme/pallete/light_pallete.dart';
 import 'package:flutter/material.dart';
 
 class AuthField extends StatefulWidget {
@@ -38,9 +39,14 @@ class _AuthFieldState extends State<AuthField> {
     return TextFormField(
       controller: widget.controller,
       decoration: InputDecoration(
-        fillColor: Theme.of(context).colorScheme.tertiary,
+        fillColor: LightPallete.backgroundColor,
         filled: true,
         hintText: widget.hintText,
+        hintStyle: TextStyle(
+          color: Colors.grey,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
         prefixIcon: Icon(widget.icon),
         suffixIcon: widget.isObscureText
             ? IconButton(
@@ -83,7 +89,9 @@ class _AuthFieldState extends State<AuthField> {
           ),
         ),
       ),
-      style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+      style: TextStyle(
+        color: Colors.black,
+      ),
       validator: (value) {
         if (value!.isEmpty) {
           return "${widget.hintText} is missing";
